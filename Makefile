@@ -8,24 +8,28 @@ help:
 	@echo ""
 	@echo "  English Irregular Verb Trainer — Makefile"
 	@echo ""
-	@echo "  make setup    Full setup (Docker, Terraform, venv, seed)"
-	@echo "  make quiz     Start the quiz"
-	@echo "  make stats    Show your progress"
+	@echo "  make up       Start app and DB with Docker Compose"
+	@echo "  make down     Stop and remove containers and volumes"
+	@echo "  make quiz     Start the quiz locally (requires local setup)"
+	@echo "  make stats    Show your progress locally"
 	@echo "  make test     Run pytest"
 	@echo "  make lint     Run ruff linter"
 	@echo "  make clean    Remove venv and cache"
-	@echo "  make destroy  Stop & destroy Postgres container (Terraform)"
 	@echo ""
 
-## setup: Full one-shot setup (same as python start.py)
-setup:
-	python start.py --seed
+## up: Start everything with Docker Compose
+up:
+	docker compose up -d
 
-## quiz: Launch the quiz (setup must have been run first)
+## down: Stop everything and remove DB volume
+down:
+	docker compose down -v
+
+## quiz: Launch the quiz locally
 quiz:
 	$(PYTHON) main.py quiz
 
-## stats: Show quiz stats
+## stats: Show quiz stats locally
 stats:
 	$(PYTHON) main.py stats
 
@@ -41,7 +45,3 @@ lint:
 clean:
 	rm -rf .venv __pycache__ .pytest_cache
 	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-
-## destroy: Destroy the Postgres Terraform container
-destroy:
-	cd terraform && terraform destroy -auto-approve

@@ -137,38 +137,7 @@ Define los modelos de datos (`Verb`, `UserAttempt`) y maneja todas las consultas
 
 ---
 
-### 🏗️ Terraform
 
-**¿Qué es?**
-[Terraform](https://www.terraform.io/) es la herramienta de **Infrastructure as Code (IaC)** más usada en DevOps. Permite definir infraestructura (servidores, bases de datos, redes, contenedores) como archivos de código, y luego crearla o destruirla con un comando.
-
-**¿Para qué se usa acá?**
-Aprovisiona el contenedor de PostgreSQL usando el **Docker Provider** de Terraform. En lugar de ejecutar `docker run` manualmente, Terraform declara el estado deseado y lo ejecuta:
-
-```hcl
-# terraform/main.tf
-resource "docker_container" "postgres" {
-  name  = "english_trainer_db"
-  image = "postgres:15"
-  ...
-}
-```
-
-**Comandos Terraform en este proyecto:**
-```bash
-terraform init            # descarga el provider Docker
-terraform plan            # muestra qué va a crear (sin ejecutar)
-terraform apply           # crea el contenedor PostgreSQL
-terraform destroy         # elimina el contenedor
-terraform output          # muestra el DATABASE_URL generado
-```
-
-**¿Por qué Terraform?**
-- Es la herramienta IaC estándar en la industria (AWS, GCP, Azure, Docker...).
-- El estado de la infraestructura queda documentado en código versionable con Git.
-- Practicar Terraform con Docker local es exactamente lo mismo que usarlo para crear recursos en la nube.
-
----
 
 ### 🐳 Docker
 
@@ -176,13 +145,11 @@ terraform output          # muestra el DATABASE_URL generado
 [Docker](https://www.docker.com/) es la plataforma de contenedores más utilizada en DevOps. Permite empaquetar aplicaciones con todas sus dependencias en una imagen portable que corre igual en cualquier máquina.
 
 **¿Para qué se usa acá?**
-Dos usos:
+1. **PostgreSQL + Web App**: Usamos Docker Compose para orquestar la base de datos oficial `postgres:15` junto con nuestra aplicación web. Así no tenés que instalar PostgreSQL ni Python en tu máquina.
 
-1. **Contenedor de PostgreSQL**: Terraform levanta un contenedor oficial `postgres:15`. Así no tenés que instalar PostgreSQL en tu máquina — Docker lo aísla completamente.
-
-2. **Imagen de la app**: El `Dockerfile` empaqueta la aplicación Python para que cualquiera pueda correrla sin instalar Python ni dependencias:
+2. **Imagen de la app**: El `Dockerfile` empaqueta la aplicación (FastAPI y SPA) para que cualquiera pueda correrla:
    ```bash
-   docker run -it ghcr.io/labordaSebastian/english-verb-trainer quiz
+   docker run -p 8000:8000 -e DATABASE_URL=... ghcr.io/labordaSebastian/english-verb-trainer:latest
    ```
 
 **¿Por qué Docker?**
@@ -268,24 +235,27 @@ Verifica que el código sigue las convenciones de estilo de Python (PEP 8) antes
 english-verb-trainer/
 │
 ├── 📄 main.py                  # Entry point CLI — define los comandos quiz/seed/stats
-├── 🚀 start.py                 # Launcher automático — un solo comando para arrancar todo
 ├── 🐳 Dockerfile               # Imagen Docker de la aplicación
-├── 📋 Makefile                 # Comandos DevOps (make quiz, make test, etc.)
+├── 🐳 docker-compose.yml       # Orquestador (App + PostgreSQL)
+├── 🚀 entrypoint.sh            # Script de inicio del contenedor (seed + uvicorn)
+├── 📋 Makefile                 # Comandos DevOps (make up, make down, make test)
 ├── 📦 requirements.txt         # Dependencias Python
 ├── ⚙️ pyproject.toml           # Configuración del proyecto Python
 ├── 🔒 .env.example             # Variables de entorno de ejemplo
 ├── 🙈 .gitignore               # Archivos excluidos de Git
 │
-├── app/                        # Código fuente de la aplicación
+├── api/                        # Backend REST (FastAPI)
+│   ├── main.py                 # Endpoints y servidor web
+│   └── schemas.py              # Modelos Pydantic
+│
+├── static/                     # Frontend SPA (Single Page App)
+│   └── index.html              # Interfaz web (Dark mode, JS)
+│
+├── app/                        # Lógica core y CLI
 │   ├── database.py             # Conexión SQLAlchemy a PostgreSQL
 │   ├── models.py               # Tablas: Verb y UserAttempt
 │   ├── quiz.py                 # Lógica: validación, estadísticas
 │   └── seed.py                 # 50 verbos irregulares precargados
-│
-├── terraform/                  # Infraestructura como código
-│   ├── main.tf                 # Contenedor PostgreSQL 15 vía Docker Provider
-│   ├── variables.tf            # Variables: nombre DB, usuario, contraseña, puerto
-│   └── outputs.tf              # Output: DATABASE_URL lista para usar
 │
 ├── tests/                      # Tests unitarios
 │   └── test_quiz.py            # 18 tests con SQLite en memoria
@@ -306,28 +276,8 @@ english-verb-trainer/
 |---|---|
 | **Python 3.10+** | [python.org](https://www.python.org/downloads/) |
 | **Docker Desktop** | [docker.com](https://www.docker.com/products/docker-desktop/) |
-| **Terraform CLI** | [developer.hashicorp.com/terraform/install](https://developer.hashicorp.com/terraform/install) |
 
-### ⚡ Arranque en un solo comando
 
-```bash
-# Clona el repositorio
-git clone https://github.com/LabordaSebastian/english-verb-trainer.git
-cd english-verb-trainer
-
-# Lanza todo automáticamente
-python start.py
-```
-
-El script `start.py` hace todo por vos:
-1. Verifica que Docker esté corriendo
-2. Verifica que Terraform esté instalado
-3. Levanta el contenedor PostgreSQL con `terraform apply`
-4. Crea el entorno virtual Python (`.venv`)
-5. Instala las dependencias (`pip install`)
-6. Copia el archivo `.env`
-7. Carga los 50 verbos irregulares en la DB
-8. Lanza el quiz 🎯
 
 ### Comandos disponibles
 
@@ -351,10 +301,11 @@ python main.py seed
 ### Comandos con Makefile (Linux/Mac)
 
 ```bash
-make quiz      # inicia el quiz
+make up        # inicia Postgres y la Web App (Docker Compose)
+make down      # detiene y elimina todo
 make test      # corre los 18 tests
 make lint      # verifica el estilo del código
-make destroy   # detiene y elimina el contenedor Postgres
+make quiz      # corre el modo terminal (requiere python local)
 make clean     # elimina el entorno virtual y caché
 make help      # muestra todos los comandos disponibles
 ```
@@ -395,11 +346,11 @@ git tag v1.0.0 && git push --tags
 Una vez publicada la imagen, cualquier persona puede correr la app así:
 
 ```bash
-# Primero levantá Postgres (con Terraform o Docker Compose)
-# Luego:
-docker run -it --rm \
-  --env DATABASE_URL=postgresql://trainer_user:trainer_pass_2024@host.docker.internal:5432/english_trainer \
-  ghcr.io/labordaSebastian/english-verb-trainer:latest quiz
+```bash
+# Creás un docker-compose.yml con postgres y la app apuntando a la imagen de GHCR:
+docker run -p 8000:8000 \
+  --env DATABASE_URL=postgresql://user:pass@host:5432/db \
+  ghcr.io/labordaSebastian/english-verb-trainer:latest
 ```
 
 ---
