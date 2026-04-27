@@ -35,6 +35,25 @@ Al final de cada sesión ves tu porcentaje de aciertos, y con el comando `stats`
 
 ---
 
+## ⚡ Quick Start — Un solo comando
+
+> Solo necesitás **Docker Desktop** instalado. Nada más.
+
+```bash
+git clone https://github.com/LabordaSebastian/english-verb-trainer.git
+cd english-verb-trainer
+docker compose up
+```
+
+Abrí **http://localhost:8000** en tu browser y listo. 🎯
+
+Docker Compose levanta automáticamente:
+- 🐘 PostgreSQL 15 (con datos persistentes)
+- 🌱 Carga los 50 verbos irregulares
+- 🚀 Web app en http://localhost:8000
+
+---
+
 ## 🛠️ Stack Tecnológico
 
 Este proyecto usa herramientas del mundo real de DevOps. A continuación se explica cada una, para qué sirve y por qué fue elegida.
