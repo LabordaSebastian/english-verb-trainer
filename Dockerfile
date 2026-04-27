@@ -7,11 +7,17 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY app/ ./app/
-COPY main.py .
+COPY app/       ./app/
+COPY api/       ./api/
+COPY static/    ./static/
+COPY main.py    .
+COPY entrypoint.sh .
 
-# Default DATABASE_URL — override at runtime with --env
-ENV DATABASE_URL=postgresql://trainer_user:trainer_pass_2024@host.docker.internal:5432/english_trainer
+RUN chmod +x entrypoint.sh
 
-ENTRYPOINT ["python", "main.py"]
-CMD ["quiz"]
+# Default DATABASE_URL — override via environment / docker-compose
+ENV DATABASE_URL=postgresql://trainer_user:trainer_pass_2024@db:5432/english_trainer
+
+EXPOSE 8000
+
+ENTRYPOINT ["./entrypoint.sh"]
