@@ -7,7 +7,6 @@ Commands:
   python main.py stats         Show your progress summary
 """
 
-import sys
 from typing import Optional
 
 import typer
