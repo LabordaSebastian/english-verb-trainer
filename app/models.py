@@ -18,6 +18,9 @@ class Verb(Base):
     past = Column(String(50), nullable=False)
     participle = Column(String(50), nullable=False)
 
+    # Spanish meaning shown during the quiz
+    meaning = Column(String(150), nullable=True)
+
     # Optional alternative forms (e.g. "learned / learnt")
     past_alt = Column(String(50), nullable=True)
     participle_alt = Column(String(50), nullable=True)
