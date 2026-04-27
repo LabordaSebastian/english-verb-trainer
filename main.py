@@ -11,6 +11,7 @@ import sys
 from typing import Optional
 
 import typer
+from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 
 from app.database import engine, SessionLocal
@@ -33,9 +34,15 @@ BANNER = """
 
 
 def _init_db():
-    """Create tables if they do not exist yet."""
+    """Create tables if they do not exist yet, and run lightweight migrations."""
     try:
         Base.metadata.create_all(bind=engine)
+        # Migration: add 'meaning' column if it was added after initial deploy
+        with engine.connect() as conn:
+            conn.execute(text(
+                "ALTER TABLE verbs ADD COLUMN IF NOT EXISTS meaning VARCHAR(150)"
+            ))
+            conn.commit()
     except OperationalError as e:
         typer.echo(
             "\n❌  Cannot connect to PostgreSQL.\n"
@@ -129,6 +136,8 @@ def quiz(
             question_count += 1
             typer.echo(f"\n  Question {question_count}/{rounds}")
             typer.echo(f"  Base verb:  {v.base.upper()}")
+            if v.meaning:
+                typer.echo(f"  Meaning:    {v.meaning}")
             typer.echo("  Type the  Past Tense  and  Past Participle  separated by a space.")
 
             raw = typer.prompt("  Your answer").strip()
