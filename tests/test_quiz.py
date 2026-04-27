@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 
 from app.database import Base
 from app.models import Verb, UserAttempt
-from app.quiz import get_random_verb, validate_and_log, get_stats
+from app.quiz import get_verb_by_base, get_shuffled_verbs, validate_and_log, get_stats
 
 
 # ─── fixtures ───────────────────────────────────────────────────────────────
@@ -73,24 +73,42 @@ class TestVerbCheckAnswer:
 
 # ─── get_random_verb ─────────────────────────────────────────────────────────
 
-class TestGetRandomVerb:
+class TestGetVerbByBase:
     def test_returns_verb_by_base(self, db, sample_verb):
-        result = get_random_verb(db, base="read")
+        result = get_verb_by_base(db, base="read")
         assert result is not None
         assert result.base == "read"
 
     def test_returns_none_for_unknown_verb(self, db):
-        result = get_random_verb(db, base="xyzunknown")
+        result = get_verb_by_base(db, base="xyzunknown")
         assert result is None
 
+
+class TestGetShuffledVerbs:
     def test_returns_none_when_db_empty(self, db):
-        result = get_random_verb(db)
-        assert result is None
+        result = get_shuffled_verbs(db)
+        assert result == []
 
-    def test_returns_random_verb_when_populated(self, db, sample_verb):
-        result = get_random_verb(db)
-        assert result is not None
-        assert result.base == "read"
+    def test_returns_all_verbs_when_populated(self, db, sample_verb):
+        result = get_shuffled_verbs(db)
+        assert len(result) == 1
+        assert result[0].base == "read"
+
+    def test_limit_respected(self, db):
+        # Insert 3 verbs
+        for base, past, part in [("go", "went", "gone"), ("do", "did", "done"), ("run", "ran", "run")]:
+            db.add(Verb(base=base, past=past, participle=part))
+        db.commit()
+        result = get_shuffled_verbs(db, limit=2)
+        assert len(result) == 2
+
+    def test_no_duplicates_in_result(self, db):
+        for base, past, part in [("go", "went", "gone"), ("do", "did", "done"), ("run", "ran", "run")]:
+            db.add(Verb(base=base, past=past, participle=part))
+        db.commit()
+        result = get_shuffled_verbs(db)
+        bases = [v.base for v in result]
+        assert len(bases) == len(set(bases)), "Duplicate verbs found in shuffled list"
 
 
 # ─── validate_and_log ────────────────────────────────────────────────────────
