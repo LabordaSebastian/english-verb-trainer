@@ -491,6 +491,13 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     const quiz = document.getElementById('screen-quiz');
     if (!quiz.classList.contains('active')) return;
+
+    // If focused on the first input, move to the second one
+    if (document.activeElement.id === 'input-past' && !state.checked) {
+      document.getElementById('input-part').focus();
+      return;
+    }
+
     if (!state.checked) checkAnswer();
     else nextQuestion();
   }
