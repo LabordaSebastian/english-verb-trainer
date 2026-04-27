@@ -1,18 +1,32 @@
 # 🎯 English Irregular Verb Trainer — DevOps Edition
 
-> Aplicación de línea de comandos para practicar verbos irregulares en inglés, construida con un stack de herramientas reales de DevOps: Python, PostgreSQL, Terraform y GitHub Actions.
+> Aplicación híbrida (CLI + Web UI) para practicar verbos irregulares en inglés, construida con un stack de herramientas reales de DevOps: Python, PostgreSQL, Docker y GitHub Actions.
 
 [![CI](https://github.com/LabordaSebastian/english-verb-trainer/actions/workflows/ci.yml/badge.svg)](https://github.com/LabordaSebastian/english-verb-trainer/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?logo=postgresql)](https://www.postgresql.org/)
-[![Terraform](https://img.shields.io/badge/Terraform-1.3%2B-7B42BC?logo=terraform)](https://www.terraform.io/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
 ## 📖 ¿Qué hace esta aplicación?
 
-El programa te pregunta un verbo en inglés en su forma base (por ejemplo **READ**) y vos tenés que responder con el **pasado simple** y el **participio pasado**, separados por un espacio:
+El programa cuenta con una interfaz web moderna y también funciona en modo consola. Te pregunta un verbo en inglés en su forma base (por ejemplo **READ**) y vos tenés que responder con el **pasado simple** y el **participio pasado**, separados por un espacio.
+
+### ✨ Web UI (Dark Mode)
+
+<p align="center">
+  <img src="assets/home.png" width="45%" alt="Home Screen">
+  <img src="assets/quiz.png" width="45%" alt="Quiz Screen">
+</p>
+<p align="center">
+  <img src="assets/results.png" width="45%" alt="Results Screen">
+  <img src="assets/stats.png" width="45%" alt="Stats Screen">
+</p>
+
+### 💻 CLI (Terminal)
+
 
 ```
 Base verb:  READ
