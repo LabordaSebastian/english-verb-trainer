@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎯 English Verb Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#09090f;--surface:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);
+  --purple:#8b5cf6;--blue:#3b82f6;--green:#10b981;--red:#ef4444;--yellow:#f59e0b;
+  --text:#e2e8f0;--muted:#64748b;--radius:16px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* Animated background orbs */
+body::before,body::after{content:'';position:fixed;border-radius:50%;filter:blur(80px);opacity:.15;pointer-events:none;animation:drift 12s ease-in-out infinite alternate}
+body::before{width:600px;height:600px;background:var(--purple);top:-200px;left:-200px}
+body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:-150px;animation-delay:-6s}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(60px,40px)}}
+
+/* Layout */
+.app{max-width:680px;margin:0 auto;padding:24px 16px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
+
+/* Screens */
+.screen{width:100%;display:none;animation:fadeIn .4s ease}
+.screen.active{display:flex;flex-direction:column;align-items:center;gap:24px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* Glass card */
+.card{background:var(--surface);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--radius);padding:32px;width:100%}
+
+/* Logo */
+.logo{font-size:40px;font-weight:900;text-align:center;letter-spacing:-1px;background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{color:var(--muted);font-size:14px;text-align:center;margin-top:-8px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;border-radius:12px;font-weight:600;font-size:15px;cursor:pointer;border:none;transition:all .2s;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 24px rgba(139,92,246,.35)}
+.btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text)}
+.btn-secondary:hover{border-color:var(--purple);background:rgba(139,92,246,.1)}
+.btn-sm{padding:10px 20px;font-size:13px}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* Round selector */
+.rounds-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.round-btn{padding:10px 22px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-weight:600;font-size:14px;transition:all .2s}
+.round-btn.selected,.round-btn:hover{border-color:var(--purple);background:rgba(139,92,246,.15);color:var(--purple)}
+
+/* Progress bar */
+.progress-wrap{width:100%;background:rgba(255,255,255,.07);border-radius:99px;height:6px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--purple),var(--blue));border-radius:99px;transition:width .5s ease}
+.progress-label{font-size:12px;color:var(--muted);text-align:right}
+
+/* Verb display */
+.verb-base{font-size:56px;font-weight:900;text-align:center;letter-spacing:-2px;background:linear-gradient(135deg,#fff,rgba(255,255,255,.7));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.verb-meaning{text-align:center;color:var(--muted);font-size:15px;margin-top:8px;font-style:italic}
+
+/* Inputs */
+.inputs-row{display:flex;gap:12px;width:100%}
+.input-group{flex:1;display:flex;flex-direction:column;gap:6px}
+.input-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+.input-field{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--text);font-size:16px;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;width:100%}
+.input-field:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.15)}
+.input-field.correct{border-color:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,.15)}
+.input-field.wrong{border-color:var(--red);box-shadow:0 0 0 3px rgba(239,68,68,.15)}
+.input-field:disabled{opacity:.6}
+
+/* Feedback */
+.feedback{width:100%;border-radius:12px;padding:16px 20px;font-weight:600;font-size:15px;display:none;animation:fadeIn .3s ease;line-height:1.5}
+.feedback.correct{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:var(--green)}
+.feedback.wrong{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red)}
+.feedback.show{display:block}
+.feedback .also{font-size:12px;color:var(--muted);margin-top:4px;font-weight:400}
+
+/* Results */
+.score-circle{width:140px;height:140px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto;border:4px solid var(--purple);background:rgba(139,92,246,.1)}
+.score-pct{font-size:36px;font-weight:900;background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.score-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+
+/* Wrong verbs list */
+.wrong-list{display:flex;flex-direction:column;gap:8px;width:100%;max-height:280px;overflow-y:auto}
+.wrong-item{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.15);border-radius:10px;font-size:13px}
+.wrong-item .verb-name{font-weight:700;color:var(--text)}
+.wrong-item .correct-forms{color:var(--muted)}
+
+/* Stats */
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;width:100%}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.stat-num{font-size:28px;font-weight:800}
+.stat-name{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+.hardest-list{display:flex;flex-direction:column;gap:8px;width:100%}
+.hardest-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px}
+.hardest-verb{font-weight:700;width:110px;font-size:14px}
+.hardest-bar-wrap{flex:1;background:rgba(255,255,255,.07);border-radius:99px;height:6px;overflow:hidden}
+.hardest-bar{height:100%;background:linear-gradient(90deg,var(--red),var(--yellow));border-radius:99px}
+.hardest-count{font-size:12px;color:var(--muted);width:50px;text-align:right}
+
+/* Spinner */
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spin .7s linear infinite;margin:16px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Action row */
+.action-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* Empty state */
+.empty{text-align:center;color:var(--muted);padding:32px;font-size:14px}
+
+/* Confetti particle */
+.confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;animation:confettiFall 1.2s ease-out forwards}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── HOME ───────────────────────────────────────── -->
+  <div id="screen-home" class="screen active">
+    <div style="text-align:center">
+      <div class="logo">🎯 Verb Trainer</div>
+      <div class="subtitle">English Irregular Verbs — DevOps Edition</div>
+    </div>
+
+    <div class="card" style="text-align:center;display:flex;flex-direction:column;gap:20px">
+      <div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:12px">How many questions?</div>
+        <div class="rounds-row">
+          <button class="round-btn selected" data-rounds="10">10</button>
+          <button class="round-btn" data-rounds="20">20</button>
+          <button class="round-btn" data-rounds="50">50</button>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-start" style="width:100%;font-size:17px;padding:16px">
+        ▶&nbsp; Start Quiz
+      </button>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-secondary btn-sm" id="btn-go-stats">📊 My Stats</button>
+      <button class="btn btn-secondary btn-sm" id="btn-seed">🌱 Reload Verbs</button>
+    </div>
+    <div id="seed-msg" style="font-size:13px;color:var(--muted);display:none"></div>
+  </div>
+
+  <!-- ── QUIZ ───────────────────────────────────────── -->
+  <div id="screen-quiz" class="screen">
+    <div style="width:100%;display:flex;flex-direction:column;gap:6px">
+      <div class="progress-label" id="progress-label">Question 1 / 10</div>
+      <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:20px">
+      <div style="width:100%;text-align:center;display:flex;flex-direction:column;gap:6px">
+        <div class="verb-base" id="verb-base">READ</div>
+        <div class="verb-meaning" id="verb-meaning">leer</div>
+      </div>
+
+      <div class="inputs-row">
+        <div class="input-group">
+          <span class="input-label">Past Tense</span>
+          <input class="input-field" id="input-past" type="text" placeholder="e.g. read" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="input-group">
+          <span class="input-label">Past Participle</span>
+          <input class="input-field" id="input-part" type="text" placeholder="e.g. read" autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+
+      <div class="action-row" style="width:100%">
+        <button class="btn btn-primary" id="btn-check" style="flex:1">Check ✓</button>
+        <button class="btn btn-secondary" id="btn-next" style="flex:1;display:none">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESULTS ─────────────────────────────────────── -->
+  <div id="screen-results" class="screen">
+    <div class="logo" style="font-size:28px">Quiz Complete! 🏆</div>
+
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:24px">
+      <div class="score-circle">
+        <div class="score-pct" id="result-pct">0%</div>
+        <div class="score-label" id="result-label">0 / 0</div>
+      </div>
+
+      <div style="width:100%">
+        <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">Mistakes</div>
+        <div class="wrong-list" id="wrong-list">
+          <div class="empty">🎉 Perfect score! No mistakes.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-primary" id="btn-play-again">▶ Play Again</button>
+      <button class="btn btn-secondary" id="btn-results-stats">📊 Stats</button>
+    </div>
+  </div>
+
+  <!-- ── STATS ──────────────────────────────────────── -->
+  <div id="screen-stats" class="screen">
+    <div class="logo" style="font-size:28px">📊 Your Progress</div>
+
+    <div id="stats-loading"><div class="spinner"></div></div>
+
+    <div id="stats-content" style="width:100%;display:none;flex-direction:column;gap:16px">
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-num" id="s-total">0</div><div class="stat-name">Total</div></div>
+        <div class="stat-box"><div class="stat-num" style="color:var(--green)" id="s-correct">0</div><div class="stat-name">Correct</div></div>
+        <div class="stat-box"><div class="stat-num" style="color:var(--red)" id="s-wrong">0</div><div class="stat-name">Wrong</div></div>
+        <div class="stat-box"><div class="stat-num" style="color:var(--purple)" id="s-acc">0%</div><div class="stat-name">Accuracy</div></div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px">🔥 Hardest Verbs</div>
+        <div class="hardest-list" id="hardest-list">
+          <div class="empty">No mistakes yet! Keep it up 🎉</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-secondary" id="btn-stats-home">← Back to Home</button>
+  </div>
+
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────
+const state = {
+  rounds: 10,
+  verbs: [],       // [{id, base, meaning}]
+  index: 0,
+  correct: 0,
+  wrongs: [],      // [{base, correct_past, correct_participle}]
+  checked: false,
+};
+
+// ── API ──────────────────────────────────────────────
+const api = {
+  async getVerbs(count) {
+    const r = await fetch(`/api/verbs/quiz?count=${count}`);
+    return r.json();
+  },
+  async submitAttempt(verb_id, past_given, participle_given) {
+    const r = await fetch('/api/attempts', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({verb_id, past_given, participle_given}),
+    });
+    return r.json();
+  },
+  async getStats() {
+    const r = await fetch('/api/stats');
+    return r.json();
+  },
+  async seed() {
+    const r = await fetch('/api/seed', {method:'POST'});
+    return r.json();
+  },
+};
+
+// ── Screen navigation ────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+// ── Confetti ─────────────────────────────────────────
+function launchConfetti() {
+  const colors = ['#8b5cf6','#3b82f6','#10b981','#f59e0b','#ec4899'];
+  for (let i = 0; i < 50; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.cssText = `
+      left:${Math.random()*100}vw;
+      top:${Math.random()*50}vh;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-delay:${Math.random()*0.6}s;
+      animation-duration:${0.8 + Math.random()*0.8}s;
+      transform:rotate(${Math.random()*360}deg);
+    `;
+    document.body.appendChild(p);
+    p.addEventListener('animationend', () => p.remove());
+  }
+}
+
+// ── Quiz ─────────────────────────────────────────────
+async function startQuiz() {
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('btn-start').textContent = 'Loading…';
+
+  state.verbs = await api.getVerbs(state.rounds);
+  state.index = 0;
+  state.correct = 0;
+  state.wrongs = [];
+
+  document.getElementById('btn-start').disabled = false;
+  document.getElementById('btn-start').innerHTML = '▶&nbsp; Start Quiz';
+
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const v = state.verbs[state.index];
+  const total = state.verbs.length;
+  const num = state.index + 1;
+
+  document.getElementById('verb-base').textContent = v.base.toUpperCase();
+  document.getElementById('verb-meaning').textContent = v.meaning || '';
+  document.getElementById('progress-label').textContent = `Question ${num} / ${total}`;
+  document.getElementById('progress-bar').style.width = `${((num - 1) / total) * 100}%`;
+
+  const pastEl = document.getElementById('input-past');
+  const partEl = document.getElementById('input-part');
+  pastEl.value = '';
+  partEl.value = '';
+  pastEl.className = 'input-field';
+  partEl.className = 'input-field';
+  pastEl.disabled = false;
+  partEl.disabled = false;
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.innerHTML = '';
+
+  document.getElementById('btn-check').style.display = '';
+  document.getElementById('btn-next').style.display = 'none';
+
+  state.checked = false;
+  pastEl.focus();
+}
+
+async function checkAnswer() {
+  if (state.checked) return;
+  const past = document.getElementById('input-past').value.trim();
+  const part = document.getElementById('input-part').value.trim();
+  if (!past || !part) {
+    document.getElementById('input-past').focus();
+    return;
+  }
+
+  state.checked = true;
+  document.getElementById('btn-check').disabled = true;
+
+  const v = state.verbs[state.index];
+  const result = await api.submitAttempt(v.id, past, part);
+
+  const pastEl = document.getElementById('input-past');
+  const partEl = document.getElementById('input-part');
+  const fb = document.getElementById('feedback');
+
+  pastEl.disabled = true;
+  partEl.disabled = true;
+
+  if (result.correct) {
+    state.correct++;
+    pastEl.className = 'input-field correct';
+    partEl.className = 'input-field correct';
+    fb.className = 'feedback correct show';
+    fb.innerHTML = `✅ Correct! &nbsp;<strong>${v.base.toUpperCase()} → ${result.correct_past} → ${result.correct_participle}</strong>`;
+    launchConfetti();
+  } else {
+    pastEl.className = 'input-field wrong';
+    partEl.className = 'input-field wrong';
+    fb.className = 'feedback wrong show';
+    let html = `❌ Wrong! &nbsp;<strong>${v.base.toUpperCase()} → ${result.correct_past} → ${result.correct_participle}</strong>`;
+    if (result.also_accepted) {
+      html += `<div class="also">Also accepted: ${result.also_accepted}</div>`;
+    }
+    fb.innerHTML = html;
+    state.wrongs.push({base: v.base, past: result.correct_past, part: result.correct_participle});
+  }
+
+  document.getElementById('btn-check').disabled = false;
+  document.getElementById('btn-check').style.display = 'none';
+
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.style.display = '';
+  nextBtn.textContent = state.index + 1 < state.verbs.length ? 'Next →' : 'See Results 🏆';
+}
+
+function nextQuestion() {
+  state.index++;
+  if (state.index >= state.verbs.length) {
+    showResults();
+  } else {
+    renderQuestion();
+  }
+}
+
+// ── Results ──────────────────────────────────────────
+function showResults() {
+  const total = state.verbs.length;
+  const pct = total > 0 ? Math.round((state.correct / total) * 100) : 0;
+
+  document.getElementById('result-pct').textContent = pct + '%';
+  document.getElementById('result-label').textContent = `${state.correct} / ${total} correct`;
+
+  const list = document.getElementById('wrong-list');
+  if (state.wrongs.length === 0) {
+    list.innerHTML = '<div class="empty">🎉 Perfect score! No mistakes.</div>';
+  } else {
+    list.innerHTML = state.wrongs.map(w =>
+      `<div class="wrong-item">
+        <span class="verb-name">${w.base.toUpperCase()}</span>
+        <span class="correct-forms">${w.past} → ${w.part}</span>
+      </div>`
+    ).join('');
+  }
+
+  showScreen('results');
+  if (pct === 100) launchConfetti();
+}
+
+// ── Stats ─────────────────────────────────────────────
+async function loadStats() {
+  showScreen('stats');
+  document.getElementById('stats-loading').style.display = 'block';
+  document.getElementById('stats-content').style.display = 'none';
+
+  const data = await api.getStats();
+
+  document.getElementById('s-total').textContent = data.total;
+  document.getElementById('s-correct').textContent = data.correct;
+  document.getElementById('s-wrong').textContent = data.wrong;
+  document.getElementById('s-acc').textContent = data.accuracy + '%';
+
+  const maxErrors = data.hardest_verbs.length > 0 ? data.hardest_verbs[0].errors : 1;
+  const hardestEl = document.getElementById('hardest-list');
+  if (data.hardest_verbs.length === 0) {
+    hardestEl.innerHTML = '<div class="empty">No mistakes yet! Keep it up 🎉</div>';
+  } else {
+    hardestEl.innerHTML = data.hardest_verbs.map(v =>
+      `<div class="hardest-item">
+        <span class="hardest-verb">${v.verb.toUpperCase()}</span>
+        <div class="hardest-bar-wrap"><div class="hardest-bar" style="width:${(v.errors/maxErrors)*100}%"></div></div>
+        <span class="hardest-count">${v.errors} error${v.errors>1?'s':''}</span>
+      </div>`
+    ).join('');
+  }
+
+  document.getElementById('stats-loading').style.display = 'none';
+  document.getElementById('stats-content').style.display = 'flex';
+}
+
+// ── Event listeners ───────────────────────────────────
+document.querySelectorAll('.round-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.round-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    state.rounds = parseInt(btn.dataset.rounds);
+  });
+});
+
+document.getElementById('btn-start').addEventListener('click', startQuiz);
+document.getElementById('btn-check').addEventListener('click', checkAnswer);
+document.getElementById('btn-next').addEventListener('click', nextQuestion);
+document.getElementById('btn-play-again').addEventListener('click', () => showScreen('home'));
+document.getElementById('btn-results-stats').addEventListener('click', loadStats);
+document.getElementById('btn-go-stats').addEventListener('click', loadStats);
+document.getElementById('btn-stats-home').addEventListener('click', () => showScreen('home'));
+
+document.getElementById('btn-seed').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-seed');
+  const msg = document.getElementById('seed-msg');
+  btn.disabled = true;
+  btn.textContent = '⏳ Loading…';
+  const data = await api.seed();
+  btn.disabled = false;
+  btn.textContent = '🌱 Reload Verbs';
+  msg.textContent = `✅ ${data.added} added, ${data.updated} updated.`;
+  msg.style.display = 'block';
+  setTimeout(() => { msg.style.display = 'none'; }, 3000);
+});
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const quiz = document.getElementById('screen-quiz');
+    if (!quiz.classList.contains('active')) return;
+    if (!state.checked) checkAnswer();
+    else nextQuestion();
+  }
+});
+</script>
+</body>
+</html>
