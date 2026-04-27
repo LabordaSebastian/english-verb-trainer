@@ -7,15 +7,22 @@ from sqlalchemy.orm import Session
 from app.models import Verb, UserAttempt
 
 
-def get_random_verb(db: Session, base: str | None = None) -> Verb | None:
-    """Return a random verb, or look up a specific one by base form."""
-    if base:
-        return db.query(Verb).filter(Verb.base == base.lower()).first()
-    count = db.query(Verb).count()
-    if count == 0:
-        return None
-    offset = random.randint(0, count - 1)
-    return db.query(Verb).offset(offset).first()
+def get_verb_by_base(db: Session, base: str) -> Verb | None:
+    """Look up a specific verb by its base form."""
+    return db.query(Verb).filter(Verb.base == base.lower()).first()
+
+
+def get_shuffled_verbs(db: Session, limit: int | None = None) -> list[Verb]:
+    """Return all verbs in random order, optionally capped to `limit`.
+
+    Using a shuffled list (instead of repeated random picks) guarantees
+    no verb appears twice in a single quiz session.
+    """
+    verbs = db.query(Verb).all()
+    random.shuffle(verbs)
+    if limit is not None:
+        verbs = verbs[:limit]
+    return verbs
 
 
 def validate_and_log(

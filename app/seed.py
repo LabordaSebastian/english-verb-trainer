@@ -13,7 +13,7 @@ IRREGULAR_VERBS = [
     ("do",          "did",       "done",       None,       None),
     ("go",          "went",      "gone",       None,       None),
     ("say",         "said",      "said",       None,       None),
-    ("get",         "got",       "gotten",     None,       "got"),
+    ("get",         "got",       "gotten",     None,       None),
     ("make",        "made",      "made",       None,       None),
     ("know",        "knew",      "known",      None,       None),
     ("think",       "thought",   "thought",    None,       None),
@@ -62,14 +62,24 @@ IRREGULAR_VERBS = [
 # fmt: on
 
 
-def seed_verbs(db: Session) -> int:
-    """Insert verbs if they don't exist yet. Returns number of verbs added."""
+def seed_verbs(db: Session) -> tuple[int, int]:
+    """Upsert verbs — insert new ones and update existing ones.
+
+    Returns (added, updated) counts.
+    """
     from app.models import Verb  # local import to avoid circular deps
 
-    added = 0
+    added = updated = 0
     for base, past, participle, past_alt, participle_alt in IRREGULAR_VERBS:
-        exists = db.query(Verb).filter_by(base=base).first()
-        if not exists:
+        existing = db.query(Verb).filter_by(base=base).first()
+        if existing:
+            # Update all fields in case data was corrected
+            existing.past = past
+            existing.participle = participle
+            existing.past_alt = past_alt
+            existing.participle_alt = participle_alt
+            updated += 1
+        else:
             verb = Verb(
                 base=base,
                 past=past,
@@ -81,4 +91,4 @@ def seed_verbs(db: Session) -> int:
             added += 1
 
     db.commit()
-    return added
+    return added, updated

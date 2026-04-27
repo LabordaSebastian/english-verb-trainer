@@ -65,11 +65,11 @@ def seed():
     db = SessionLocal()
     try:
         from app.seed import seed_verbs
-        count = seed_verbs(db)
-        if count:
-            typer.echo(f"\n✅  {count} verb(s) added to the database.\n")
+        added, updated = seed_verbs(db)
+        if added:
+            typer.echo(f"\n✅  {added} verb(s) added, {updated} updated.\n")
         else:
-            typer.echo("\nℹ️   All verbs are already in the database.\n")
+            typer.echo(f"\nℹ️   All verbs up to date ({updated} refreshed).\n")
     finally:
         db.close()
 
@@ -87,7 +87,7 @@ def quiz(
     _init_db()
     db = SessionLocal()
     try:
-        from app.quiz import get_random_verb, validate_and_log
+        from app.quiz import get_verb_by_base, get_shuffled_verbs, validate_and_log
 
         typer.echo(BANNER)
 
@@ -104,12 +104,28 @@ def quiz(
         typer.echo(f"  Starting quiz — {rounds} question(s). Type 'q' to quit.\n")
         typer.echo("─" * 48)
 
-        for _ in range(rounds):
-            v = get_random_verb(db, base=verb)
-            if v is None:
+        # Build the question list for this session
+        if verb:
+            # Specific verb mode: repeat it for every round
+            single = get_verb_by_base(db, base=verb)
+            if single is None:
                 typer.echo(f"\n❌  Verb '{verb}' not found in the database.\n")
-                break
+                raise typer.Exit(code=1)
+            question_list = [single] * rounds
+        else:
+            # Random mode: shuffle all verbs, take up to `rounds` (no repeats)
+            question_list = get_shuffled_verbs(db, limit=rounds)
+            if not question_list:
+                typer.echo("⚠️  No verbs found. Run:  python main.py seed\n")
+                raise typer.Exit(code=1)
+            if len(question_list) < rounds:
+                typer.echo(
+                    f"  ℹ️   Only {len(question_list)} verbs available — "
+                    f"quiz will have {len(question_list)} question(s).\n"
+                )
+                rounds = len(question_list)
 
+        for v in question_list:
             question_count += 1
             typer.echo(f"\n  Question {question_count}/{rounds}")
             typer.echo(f"  Base verb:  {v.base.upper()}")
