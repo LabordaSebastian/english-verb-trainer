@@ -367,7 +367,10 @@ async function checkAnswer() {
     pastEl.className = 'input-field correct';
     partEl.className = 'input-field correct';
     fb.className = 'feedback correct show';
-    fb.innerHTML = `✅ Correct! &nbsp;<strong>${v.base.toUpperCase()} → ${result.correct_past} → ${result.correct_participle}</strong>`;
+    // Use the actual input the user typed so alternative valid forms show correctly
+    const pastVal = past.toLowerCase();
+    const partVal = part.toLowerCase();
+    fb.innerHTML = `✅ Correct! &nbsp;<strong>${v.base.toUpperCase()} → ${pastVal} → ${partVal}</strong>`;
     launchConfetti();
   } else {
     pastEl.className = 'input-field wrong';

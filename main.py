@@ -163,7 +163,7 @@ def quiz(
 
             if is_correct:
                 correct_count += 1
-                typer.echo(f"\n  ✅  Correct!  {v.base.upper()} → {v.past} → {v.participle}")
+                typer.echo(f"\n  ✅  Correct!  {v.base.upper()} → {past_in.lower()} → {part_in.lower()}")
             else:
                 typer.echo(f"\n  ❌  Wrong!    {v.base.upper()} → {v.past} → {v.participle}")
                 if v.past_alt or v.participle_alt:
