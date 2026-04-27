@@ -37,12 +37,18 @@ def _init_db():
     """Create tables if they do not exist yet, and run lightweight migrations."""
     try:
         Base.metadata.create_all(bind=engine)
-        # Migration: add 'meaning' column if it was added after initial deploy
+        # Safe migration: only ALTER TABLE if the column doesn't exist yet.
+        # Using information_schema avoids acquiring a table lock on every startup.
         with engine.connect() as conn:
-            conn.execute(text(
-                "ALTER TABLE verbs ADD COLUMN IF NOT EXISTS meaning VARCHAR(150)"
-            ))
-            conn.commit()
+            exists = conn.execute(text(
+                "SELECT 1 FROM information_schema.columns "
+                "WHERE table_name='verbs' AND column_name='meaning'"
+            )).fetchone()
+            if not exists:
+                conn.execute(text(
+                    "ALTER TABLE verbs ADD COLUMN meaning VARCHAR(150)"
+                ))
+                conn.commit()
     except OperationalError as e:
         typer.echo(
             "\n❌  Cannot connect to PostgreSQL.\n"
@@ -52,6 +58,7 @@ def _init_db():
             err=True,
         )
         raise typer.Exit(code=1)
+
 
 
 def _get_db():

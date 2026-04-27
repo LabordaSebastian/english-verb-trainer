@@ -13,7 +13,11 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://trainer_user:trainer_pass_2024@localhost:5432/english_trainer")
 
-engine = create_engine(DATABASE_URL, echo=False)
+engine = create_engine(
+    DATABASE_URL,
+    echo=False,
+    connect_args={"connect_timeout": 10},   # fail fast instead of hanging
+)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
