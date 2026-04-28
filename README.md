@@ -166,6 +166,10 @@ Define los modelos de datos (`Verb`, `UserAttempt`) y maneja todas las consultas
    docker run -p 8000:8000 -e DATABASE_URL=... ghcr.io/labordaSebastian/english-verb-trainer:latest
    ```
 
+<p align="center">
+  <img src="assets/Diagrama_infraestructura.png" width="420" alt="Diagrama de infraestructura Docker Compose">
+</p>
+
 **¿Por qué Docker?**
 - Elimina el clásico problema de "en mi máquina funciona".
 - Permite distribuir la app fácilmente a través de GitHub Container Registry (GHCR).
