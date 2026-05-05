@@ -166,6 +166,7 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
     <div class="action-row">
       <button class="btn btn-secondary btn-sm" id="btn-go-stats">📊 My Stats</button>
       <button class="btn btn-secondary btn-sm" id="btn-go-review">📖 Review</button>
+      <button class="btn btn-secondary btn-sm" id="btn-go-tense-quiz">🎯 Tenses Quiz</button>
       <button class="btn btn-secondary btn-sm" id="btn-seed">🌱 Reload Verbs</button>
     </div>
     <div id="seed-msg" style="font-size:13px;color:var(--muted);display:none"></div>
@@ -259,7 +260,70 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
     <div style="width:100%;max-height:65vh;overflow-y:auto;padding-right:4px;" id="review-list">
       <!-- Content populated by JS -->
     </div>
-    <button class="btn btn-secondary" id="btn-review-home">← Back to Home</button>
+    <button class="btn btn-secondary" id="btn-review-home" style="margin-top:16px;">← Back to Home</button>
+  </div>
+
+  <!-- ── TENSE QUIZ SELECT ──────────────────────────── -->
+  <div id="screen-tense-select" class="screen">
+    <div class="logo" style="font-size:28px">🎯 Tenses Quiz</div>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:16px;text-align:center;">Select the tenses you want to practice:</div>
+    
+    <div class="card" style="width:100%;max-height:50vh;overflow-y:auto;text-align:left;margin-bottom:20px;padding:12px;">
+      <div id="tense-checkboxes" style="display:flex;flex-direction:column;gap:8px;">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <div class="action-row" style="width:100%">
+      <button class="btn btn-secondary" id="btn-tense-select-home" style="flex:1">← Back</button>
+      <button class="btn btn-primary" id="btn-start-tense-quiz" style="flex:1">Start Quiz ▶</button>
+    </div>
+  </div>
+
+  <!-- ── TENSE QUIZ ─────────────────────────────────── -->
+  <div id="screen-tense-quiz" class="screen">
+    <div style="width:100%;display:flex;flex-direction:column;gap:6px">
+      <div class="progress-label" id="t-progress-label">Question 1 / 10</div>
+      <div class="progress-wrap"><div class="progress-bar" id="t-progress-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:20px;width:100%">
+      <div style="width:100%;text-align:center;display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:12px;color:var(--blue);font-weight:700;text-transform:uppercase;letter-spacing:1px;" id="t-question-type">Tense</div>
+        <div style="font-size:18px;font-weight:500;color:var(--text);line-height:1.4" id="t-question-text">Question text here</div>
+      </div>
+
+      <div id="t-options" style="width:100%;display:flex;flex-direction:column;gap:8px;">
+        <!-- Buttons appended here by JS -->
+      </div>
+
+      <div class="action-row" style="width:100%;margin-top:10px;">
+        <button class="btn btn-primary" id="t-btn-next" style="flex:1;display:none">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TENSE QUIZ RESULTS ─────────────────────────── -->
+  <div id="screen-tense-results" class="screen">
+    <div class="logo" style="font-size:28px">Quiz Complete! 🏆</div>
+
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:24px;width:100%">
+      <div class="score-circle">
+        <div class="score-pct" id="t-result-pct">0%</div>
+        <div class="score-label" id="t-result-label">0 / 0</div>
+      </div>
+
+      <div style="width:100%;max-height:40vh;overflow-y:auto;padding-right:4px;">
+        <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">Mistakes</div>
+        <div class="wrong-list" id="t-wrong-list">
+          <div class="empty">🎉 Perfect score! No mistakes.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-secondary" id="btn-tense-results-home">← Back to Home</button>
+    </div>
   </div>
 
 </div>
@@ -512,6 +576,15 @@ document.getElementById('btn-go-review').addEventListener('click', () => {
 });
 document.getElementById('btn-review-home').addEventListener('click', () => showScreen('home'));
 
+// Tense Quiz Listeners
+document.getElementById('btn-go-tense-quiz').addEventListener('click', () => {
+  initTenseSelect();
+});
+document.getElementById('btn-tense-select-home').addEventListener('click', () => showScreen('home'));
+document.getElementById('btn-start-tense-quiz').addEventListener('click', startTenseQuiz);
+document.getElementById('t-btn-next').addEventListener('click', nextTenseQuestion);
+document.getElementById('btn-tense-results-home').addEventListener('click', () => showScreen('home'));
+
 document.getElementById('btn-seed').addEventListener('click', async () => {
   const btn = document.getElementById('btn-seed');
   const msg = document.getElementById('seed-msg');
@@ -716,6 +789,222 @@ function renderTensesReview() {
       </div>
     </div>
   `).join('');
+}
+
+// ── Tense Quiz Logic ─────────────────────────────────
+
+const tenseQuestions = {
+  "1. SIMPLE PRESENT": [
+    { q: "Translate: Yo trabajo todos los días.", options: ["I am working every day.", "I work every day.", "I works every day."], a: 1 },
+    { q: "What auxiliary is used for negative sentences with 'he/she/it'?", options: ["don't", "doesn't", "isn't"], a: 1 },
+    { q: "Complete: She _____ here.", options: ["don't work", "doesn't works", "doesn't work"], a: 2 },
+  ],
+  "2. PRESENT CONTINUOUS": [
+    { q: "Translate: Ellos están jugando fútbol.", options: ["They are play football.", "They playing football.", "They're playing football."], a: 2 },
+    { q: "When do we use Present Continuous?", options: ["Rutinas", "Acciones en progreso ahora", "Acciones terminadas"], a: 1 },
+    { q: "Complete: She _____ sleeping.", options: ["aren't", "doesn't", "isn't"], a: 2 },
+  ],
+  "3. SIMPLE PAST": [
+    { q: "Translate: Yo no lo visité.", options: ["I didn't visit him.", "I didn't visited him.", "I wasn't visit him."], a: 0 },
+    { q: "What is the auxiliary for Yes/No questions?", options: ["Do/Does", "Was/Were", "Did"], a: 2 },
+    { q: "Complete: Where _____ you go?", options: ["did", "do", "were"], a: 0 },
+  ],
+  "4. PAST CONTINUOUS": [
+    { q: "Translate: Yo no estaba estudiando.", options: ["I didn't studying.", "I wasn't studying.", "I wasn't study."], a: 1 },
+    { q: "What is the formula for affirmative?", options: ["was/were + verb -ing", "did + verb base", "had + verb -ing"], a: 0 },
+    { q: "Complete: _____ you studying?", options: ["Did", "Were", "Was"], a: 1 },
+  ],
+  "5. PRESENT PERFECT": [
+    { q: "Translate: Yo no he terminado.", options: ["I didn't finish.", "I haven't finish.", "I haven't finished."], a: 2 },
+    { q: "What is the formula?", options: ["have/has + participio pasado", "had + participio pasado", "have/has + verbo base"], a: 0 },
+    { q: "Complete: _____ you finished?", options: ["Do", "Did", "Have"], a: 2 },
+  ],
+  "6. PRESENT PERFECT CONTINUOUS": [
+    { q: "Translate: Yo he estado estudiando por horas.", options: ["I've been studying for hours.", "I had been studying for hours.", "I have studying for hours."], a: 0 },
+    { q: "What is the formula?", options: ["have/has + verb -ing", "have/has been + verb -ing", "had been + verb -ing"], a: 1 },
+  ],
+  "7. PAST PERFECT": [
+    { q: "Translate: Yo no había terminado.", options: ["I hadn't finish.", "I haven't finished.", "I hadn't finished."], a: 2 },
+    { q: "What is the auxiliary?", options: ["have/has", "had", "was"], a: 1 },
+  ],
+  "8. PAST PERFECT CONTINUOUS": [
+    { q: "Translate: Yo no había estado trabajando.", options: ["I haven't been working.", "I hadn't been working.", "I wasn't working."], a: 1 },
+    { q: "What is the formula?", options: ["had been + verb -ing", "was/were + verb -ing", "have been + verb -ing"], a: 0 },
+  ],
+  "9. FUTURE SIMPLE (WILL)": [
+    { q: "Translate: Te llamaré.", options: ["I call you.", "I'll call you.", "I'm calling you."], a: 1 },
+    { q: "What is the auxiliary for negative sentences?", options: ["don't", "am not", "won't"], a: 2 },
+  ],
+  "10. FUTURE CONTINUOUS": [
+    { q: "Translate: Yo no estaré trabajando.", options: ["I won't work.", "I'm not working.", "I won't be working."], a: 2 },
+    { q: "What is the formula?", options: ["will + verb base", "will be + verb -ing", "am going to + verb -ing"], a: 1 },
+  ],
+  "11. FUTURE PERFECT": [
+    { q: "Translate: Yo habré terminado.", options: ["I'll have finished.", "I'll finish.", "I have finished."], a: 0 },
+    { q: "What is the formula?", options: ["will have + participio pasado", "will be + participio pasado", "will + participio pasado"], a: 0 },
+  ],
+  "12. FUTURE PERFECT CONTINUOUS": [
+    { q: "Translate: Yo no habré estado trabajando.", options: ["I won't have been working.", "I won't be working.", "I haven't been working."], a: 0 },
+    { q: "What is the formula?", options: ["will have + verb -ing", "will be + verb -ing", "will have been + verb -ing"], a: 2 },
+  ],
+  "🌟 EXTRA: GOING TO": [
+    { q: "Translate: No voy a estudiar.", options: ["I don't going to study.", "I'm not going to study.", "I won't study."], a: 1 },
+    { q: "When do we use 'Going to'?", options: ["Predicciones lejanas", "Rutinas", "Planes e intenciones"], a: 2 },
+  ],
+  "🌟 EXTRA: WANT TO": [
+    { q: "Translate: Yo quiero viajar.", options: ["I wanting to travel.", "I want travel.", "I want to travel."], a: 2 },
+    { q: "Complete: Why _____ you want to travel?", options: ["are", "do", "does"], a: 1 },
+  ],
+  "🌟 EXTRA: HAVE TO": [
+    { q: "Translate: No tengo que trabajar.", options: ["I haven't to work.", "I don't have to work.", "I hasn't to work."], a: 1 },
+    { q: "What is the meaning of 'Have to'?", options: ["Deseo", "Posibilidad", "Obligación"], a: 2 },
+  ]
+};
+
+const tenseQuizState = {
+  selectedTenses: [],
+  questions: [],
+  index: 0,
+  correct: 0,
+  mistakes: []
+};
+
+function initTenseSelect() {
+  const container = document.getElementById('tense-checkboxes');
+  container.innerHTML = tensesData.map(t => `
+    <label style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:background 0.2s;">
+      <input type="checkbox" value="${t.name}" class="tense-cb" style="width:18px;height:18px;accent-color:var(--purple);">
+      <span style="color:var(--text);font-size:15px;font-weight:500;">${t.name}</span>
+    </label>
+  `).join('');
+  showScreen('tense-select');
+}
+
+function startTenseQuiz() {
+  const checkboxes = document.querySelectorAll('.tense-cb:checked');
+  tenseQuizState.selectedTenses = Array.from(checkboxes).map(cb => cb.value);
+  
+  if (tenseQuizState.selectedTenses.length === 0) {
+    alert("Please select at least one tense!");
+    return;
+  }
+
+  let pool = [];
+  tenseQuizState.selectedTenses.forEach(tName => {
+    if (tenseQuestions[tName]) {
+      tenseQuestions[tName].forEach(q => {
+        pool.push({ ...q, tenseName: tName });
+      });
+    }
+  });
+
+  pool.sort(() => Math.random() - 0.5);
+
+  tenseQuizState.questions = pool;
+  tenseQuizState.index = 0;
+  tenseQuizState.correct = 0;
+  tenseQuizState.mistakes = [];
+
+  showScreen('tense-quiz');
+  renderTenseQuestion();
+}
+
+function renderTenseQuestion() {
+  const q = tenseQuizState.questions[tenseQuizState.index];
+  const total = tenseQuizState.questions.length;
+
+  document.getElementById('t-progress-label').textContent = `Question ${tenseQuizState.index + 1} / ${total}`;
+  document.getElementById('t-progress-bar').style.width = `${((tenseQuizState.index)/total)*100}%`;
+
+  document.getElementById('t-question-type').textContent = q.tenseName;
+  document.getElementById('t-question-text').textContent = q.q;
+
+  const optsContainer = document.getElementById('t-options');
+  optsContainer.innerHTML = '';
+  
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-secondary';
+    btn.style.width = '100%';
+    btn.style.textAlign = 'left';
+    btn.style.padding = '14px 20px';
+    btn.style.justifyContent = 'flex-start';
+    btn.style.fontSize = '15px';
+    btn.textContent = opt;
+    btn.onclick = () => checkTenseAnswer(idx, btn);
+    optsContainer.appendChild(btn);
+  });
+
+  document.getElementById('t-btn-next').style.display = 'none';
+}
+
+function checkTenseAnswer(selectedIndex, btnElement) {
+  const q = tenseQuizState.questions[tenseQuizState.index];
+  const allBtns = document.getElementById('t-options').querySelectorAll('button');
+  
+  allBtns.forEach(b => {
+    b.disabled = true;
+    b.style.opacity = '0.7';
+  });
+
+  btnElement.style.opacity = '1';
+
+  if (selectedIndex === q.a) {
+    btnElement.style.background = 'rgba(16, 185, 129, 0.15)';
+    btnElement.style.borderColor = 'var(--green)';
+    btnElement.style.color = 'var(--green)';
+    tenseQuizState.correct++;
+  } else {
+    btnElement.style.background = 'rgba(239, 68, 68, 0.15)';
+    btnElement.style.borderColor = 'var(--red)';
+    btnElement.style.color = 'var(--red)';
+    
+    allBtns[q.a].style.opacity = '1';
+    allBtns[q.a].style.background = 'rgba(16, 185, 129, 0.15)';
+    allBtns[q.a].style.borderColor = 'var(--green)';
+    allBtns[q.a].style.color = 'var(--green)';
+    
+    tenseQuizState.mistakes.push({
+      tenseName: q.tenseName,
+      q: q.q,
+      correctOption: q.options[q.a]
+    });
+  }
+
+  document.getElementById('t-btn-next').style.display = 'block';
+  document.getElementById('t-progress-bar').style.width = `${((tenseQuizState.index + 1)/tenseQuizState.questions.length)*100}%`;
+}
+
+function nextTenseQuestion() {
+  tenseQuizState.index++;
+  if (tenseQuizState.index >= tenseQuizState.questions.length) {
+    finishTenseQuiz();
+  } else {
+    renderTenseQuestion();
+  }
+}
+
+function finishTenseQuiz() {
+  showScreen('tense-results');
+  const total = tenseQuizState.questions.length;
+  const pct = total > 0 ? Math.round((tenseQuizState.correct / total) * 100) : 0;
+
+  document.getElementById('t-result-pct').textContent = `${pct}%`;
+  document.getElementById('t-result-label').textContent = `${tenseQuizState.correct} / ${total}`;
+
+  const wrongList = document.getElementById('t-wrong-list');
+  if (tenseQuizState.mistakes.length === 0) {
+    wrongList.innerHTML = '<div class="empty">🎉 Perfect score! No mistakes.</div>';
+    if (total > 0) launchConfetti();
+  } else {
+    wrongList.innerHTML = tenseQuizState.mistakes.map(m => `
+      <div class="wrong-item" style="padding:16px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:12px;border-left:3px solid var(--red);">
+        <div style="font-size:12px;color:var(--blue);margin-bottom:6px;font-weight:600;text-transform:uppercase;">${m.tenseName}</div>
+        <div style="color:var(--text);font-size:15px;margin-bottom:10px">${m.q}</div>
+        <div style="color:var(--green);font-size:14px;font-weight:600;background:rgba(16, 185, 129, 0.1);padding:6px 10px;border-radius:4px;display:inline-block;">✓ ${m.correctOption}</div>
+      </div>
+    `).join('');
+  }
 }
 </script>
 </body>
