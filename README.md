@@ -63,7 +63,7 @@ Abrí **http://localhost:8000** en tu browser y listo. 🎯
 
 Docker Compose levanta automáticamente:
 - 🐘 PostgreSQL 15 (con datos persistentes)
-- 🌱 Carga los 50 verbos irregulares
+- 🌱 Carga los 100 verbos irregulares
 - 🚀 Web app en http://localhost:8000
 
 ---
@@ -124,7 +124,7 @@ Almacena dos tablas:
 
 | Tabla | Contenido |
 |---|---|
-| `verbs` | Los 50 verbos irregulares (base, pasado, participio, formas alternativas) |
+| `verbs` | Los 100 verbos irregulares (base, pasado, participio, formas alternativas) |
 | `user_attempts` | Cada intento del usuario: qué respondió, si fue correcto, y cuándo |
 
 Gracias a `user_attempts`, la aplicación puede mostrarte estadísticas reales: cuántos aciertos tuviste, cuál es tu precisión y qué verbos te cuestan más.
@@ -396,7 +396,9 @@ tests/test_quiz.py::TestVerbCheckAnswer::test_alt_form_accepted      PASSED
 
 ---
 
-## 📚 Los 50 Verbos Irregulares
+## 📚 Los 100 Verbos Irregulares
+
+### Verbos 1–50
 
 | Base | Pasado | Participio |
 |---|---|---|
@@ -405,7 +407,7 @@ tests/test_quiz.py::TestVerbCheckAnswer::test_alt_form_accepted      PASSED
 | do | did | done |
 | go | went | gone |
 | say | said | said |
-| get | got | gotten / got |
+| get | got | gotten |
 | make | made | made |
 | know | knew | known |
 | think | thought | thought |
@@ -450,6 +452,61 @@ tests/test_quiz.py::TestVerbCheckAnswer::test_alt_form_accepted      PASSED
 | break | broke | broken |
 | learn | learned | learned / learnt |
 | forget | forgot | forgotten / forgot |
+
+### Verbos 51–100
+
+| Base | Pasado | Participio |
+|---|---|---|
+| catch | caught | caught |
+| fight | fought | fought |
+| teach | taught | taught |
+| sell | sold | sold |
+| choose | chose | chosen |
+| sleep | slept | slept |
+| win | won | won |
+| hang | hung | hung |
+| draw | drew | drawn |
+| fly | flew | flown |
+| wear | wore | worn |
+| throw | threw | thrown |
+| steal | stole | stolen |
+| hide | hid | hidden |
+| shake | shook | shaken |
+| wake | woke | woken |
+| rise | rose | risen |
+| bite | bit | bitten |
+| swim | swam | swum |
+| sing | sang | sung |
+| ring | rang | rung |
+| drink | drank | drunk |
+| eat | ate | eaten |
+| feed | fed | fed |
+| lend | lent | lent |
+| bend | bent | bent |
+| burn | burned | burned / burnt |
+| dream | dreamed | dreamed / dreamt |
+| kneel | knelt | knelt |
+| sweep | swept | swept |
+| weep | wept | wept |
+| creep | crept | crept |
+| leap | leaped | leaped / leapt |
+| deal | dealt | dealt |
+| knit | knit | knit / knitted |
+| hit | hit | hit |
+| hurt | hurt | hurt |
+| cost | cost | cost |
+| spread | spread | spread |
+| shed | shed | shed |
+| split | split | split |
+| beat | beat | beaten |
+| forbid | forbade | forbidden |
+| forgive | forgave | forgiven |
+| undertake | undertook | undertaken |
+| overcome | overcame | overcome |
+| withdraw | withdrew | withdrawn |
+| mistake | mistook | mistaken |
+| arise | arose | arisen |
+| bind | bound | bound |
 
 ---
 
