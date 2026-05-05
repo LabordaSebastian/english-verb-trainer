@@ -116,6 +116,25 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
 
 /* Scrollbar */
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+
+/* Review section */
+.tense-card {background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;transition:all .2s;text-align:left;}
+.tense-header {padding:16px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:700;background:rgba(255,255,255,.02);}
+.tense-header:hover {background:rgba(255,255,255,.05);}
+.tense-title {color:var(--text);font-size:15px;text-transform:uppercase;letter-spacing:.5px;}
+.tense-icon {transition:transform .3s;color:var(--muted);font-size:12px;}
+.tense-content {padding:0 20px;max-height:0;overflow:hidden;transition:max-height .3s ease, padding .3s ease;opacity:0;}
+.tense-card.expanded {border-color:var(--purple);box-shadow:0 4px 20px rgba(139,92,246,.1);}
+.tense-card.expanded .tense-icon {transform:rotate(180deg);}
+.tense-card.expanded .tense-content {padding:20px;max-height:1000px;opacity:1;overflow-y:auto;}
+.tense-section {margin-bottom:16px;}
+.tense-section:last-child {margin-bottom:0;}
+.tense-section ul {margin:8px 0 0 20px;color:var(--muted);font-size:14px;line-height:1.5;}
+.tense-note {background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:var(--yellow);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;}
+.structure-block {margin-top:12px;background:rgba(0,0,0,.2);padding:12px;border-radius:8px;}
+.structure-type {font-weight:600;font-size:13px;color:var(--blue);margin-bottom:4px;}
+.structure-formula {font-family:monospace;font-size:13px;color:var(--text);background:rgba(255,255,255,.05);padding:6px;border-radius:4px;margin-bottom:6px;display:inline-block;border:1px solid rgba(255,255,255,.1);}
+.structure-examples {color:var(--muted);font-size:13px;line-height:1.6;}
 </style>
 </head>
 <body>
@@ -146,6 +165,7 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
 
     <div class="action-row">
       <button class="btn btn-secondary btn-sm" id="btn-go-stats">📊 My Stats</button>
+      <button class="btn btn-secondary btn-sm" id="btn-go-review">📖 Review</button>
       <button class="btn btn-secondary btn-sm" id="btn-seed">🌱 Reload Verbs</button>
     </div>
     <div id="seed-msg" style="font-size:13px;color:var(--muted);display:none"></div>
@@ -231,6 +251,15 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
     </div>
 
     <button class="btn btn-secondary" id="btn-stats-home">← Back to Home</button>
+  </div>
+
+  <!-- ── REVIEW ─────────────────────────────────────── -->
+  <div id="screen-review" class="screen">
+    <div class="logo" style="font-size:28px">📖 Tense Review</div>
+    <div style="width:100%;max-height:65vh;overflow-y:auto;padding-right:4px;" id="review-list">
+      <!-- Content populated by JS -->
+    </div>
+    <button class="btn btn-secondary" id="btn-review-home">← Back to Home</button>
   </div>
 
 </div>
@@ -475,6 +504,14 @@ document.getElementById('btn-results-stats').addEventListener('click', loadStats
 document.getElementById('btn-go-stats').addEventListener('click', loadStats);
 document.getElementById('btn-stats-home').addEventListener('click', () => showScreen('home'));
 
+document.getElementById('btn-go-review').addEventListener('click', () => {
+  if (document.getElementById('review-list').children.length === 0) {
+    renderTensesReview();
+  }
+  showScreen('review');
+});
+document.getElementById('btn-review-home').addEventListener('click', () => showScreen('home'));
+
 document.getElementById('btn-seed').addEventListener('click', async () => {
   const btn = document.getElementById('btn-seed');
   const msg = document.getElementById('seed-msg');
@@ -504,6 +541,182 @@ document.addEventListener('keydown', e => {
     else nextQuestion();
   }
 });
+
+const tensesData = [
+  {
+    name: "1. SIMPLE PRESENT",
+    usage: ["Rutinas, hábitos, hechos generales, estados permanentes.", "Se usa con adverbios como: always, usually, often, sometimes, never", "También con verbos estáticos: like, love, know, believe, understand"],
+    structure: [
+      { type: "Afirmativa", formula: "Sujeto + verbo base (+ -s en he/she/it)", examples: ["I work every day.", "She works every day.", "He likes coffee."] },
+      { type: "Negativa", formula: "Sujeto + don't / doesn't + verbo base", examples: ["I don't work on Sundays.", "She doesn't work here."] },
+      { type: "Yes/No Questions", formula: "Do/Does + sujeto + verbo base?", examples: ["Do you work here?", "Does he like pizza?"] },
+      { type: "WH Questions", formula: "WH + do/does + sujeto + verbo base?", examples: ["Where do you live?", "Why does she study English?"] }
+    ]
+  },
+  {
+    name: "2. PRESENT CONTINUOUS",
+    usage: ["Acciones en progreso ahora", "Situaciones temporales", "Planes cercanos"],
+    structure: [
+      { type: "Afirmativa", formula: "Sujeto + am/is/are + verbo -ing", examples: ["I'm studying now.", "They're playing football."] },
+      { type: "Negativa", formula: "Sujeto + am/is/are + not + verbo -ing", examples: ["She isn't sleeping.", "We aren't working."] },
+      { type: "Yes/No Questions", formula: "Am/Is/Are + sujeto + verbo -ing?", examples: ["Are you studying?", "Is he working?"] },
+      { type: "WH Questions", formula: "WH + am/is/are + sujeto + verbo -ing?", examples: ["What are you doing?"] }
+    ],
+    note: "⚠️ No usar con verbos como know, like (I know the answer.)"
+  },
+  {
+    name: "3. SIMPLE PAST",
+    usage: ["Acciones terminadas en el pasado", "Eventos específicos"],
+    structure: [
+      { type: "Afirmativa", formula: "Sujeto + verbo en pasado (regular -ed / irregular)", examples: ["I visited my friend.", "She went home."] },
+      { type: "Negativa", formula: "Sujeto + didn't + verbo base", examples: ["I didn't visit him."] },
+      { type: "Yes/No Questions", formula: "Did + sujeto + verbo base?", examples: ["Did you go?"] },
+      { type: "WH Questions", formula: "WH + did + sujeto + verbo base?", examples: ["Where did you go?"] }
+    ]
+  },
+  {
+    name: "4. PAST CONTINUOUS",
+    usage: ["Acción en progreso en el pasado", "Interrupciones"],
+    structure: [
+      { type: "Afirmativa", formula: "Sujeto + was/were + verbo -ing", examples: ["I was studying.", "They were working."] },
+      { type: "Negativa", formula: "Sujeto + wasn't/weren't + verbo -ing", examples: ["I wasn't studying."] },
+      { type: "Yes/No Questions", formula: "Was/Were + sujeto + verbo -ing?", examples: ["Were you studying?"] },
+      { type: "WH Questions", formula: "WH + was/were + sujeto + verbo -ing?", examples: ["What were you doing?"] }
+    ]
+  },
+  {
+    name: "5. PRESENT PERFECT",
+    usage: ["Experiencias", "Acciones recientes", "Resultados"],
+    structure: [
+      { type: "Afirmativa", formula: "Sujeto + have/has + participio pasado", examples: ["I've finished.", "She's gone."] },
+      { type: "Negativa", formula: "Sujeto + haven't/hasn't + participio pasado", examples: ["I haven't finished."] },
+      { type: "Yes/No Questions", formula: "Have/Has + sujeto + participio pasado?", examples: ["Have you finished?"] },
+      { type: "WH Questions", formula: "WH + have/has + sujeto + participio pasado?", examples: ["Where have you been?"] }
+    ]
+  },
+  {
+    name: "6. PRESENT PERFECT CONTINUOUS",
+    usage: ["Acción que empezó en el pasado y continúa"],
+    structure: [
+      { type: "Afirmativa", formula: "Sujeto + have/has been + verbo -ing", examples: ["I've been studying for hours."] },
+      { type: "Negativa", formula: "Sujeto + haven't/hasn't been + verbo -ing", examples: ["I haven't been studying."] },
+      { type: "Yes/No Questions", formula: "Have/Has + sujeto + been + verbo -ing?", examples: ["Have you been studying?"] },
+      { type: "WH Questions", formula: "WH + have/has + sujeto + been + verbo -ing?", examples: ["How long have you been studying?"] }
+    ]
+  },
+  {
+    name: "7. PAST PERFECT",
+    usage: ["Acción anterior a otra en el pasado"],
+    structure: [
+      { type: "Afirmativa", formula: "Sujeto + had + participio pasado", examples: ["I'd finished before he arrived."] },
+      { type: "Negativa", formula: "Sujeto + hadn't + participio pasado", examples: ["I hadn't finished."] },
+      { type: "Yes/No Questions", formula: "Had + sujeto + participio pasado?", examples: ["Had you finished?"] },
+      { type: "WH Questions", formula: "WH + had + sujeto + participio pasado?", examples: ["Why had you left?"] }
+    ]
+  },
+  {
+    name: "8. PAST PERFECT CONTINUOUS",
+    usage: ["Duración antes de otra acción pasada"],
+    structure: [
+      { type: "Afirmativa", formula: "Sujeto + had been + verbo -ing", examples: ["I'd been working for hours."] },
+      { type: "Negativa", formula: "Sujeto + hadn't been + verbo -ing", examples: ["I hadn't been working."] },
+      { type: "Yes/No Questions", formula: "Had + sujeto + been + verbo -ing?", examples: ["Had you been working?"] },
+      { type: "WH Questions", formula: "WH + had + sujeto + been + verbo -ing?", examples: ["How long had you been working?"] }
+    ]
+  },
+  {
+    name: "9. FUTURE SIMPLE (WILL)",
+    usage: ["Decisiones espontáneas", "Promesas", "Predicciones"],
+    structure: [
+      { type: "Afirmativa", formula: "Sujeto + will + verbo base", examples: ["I'll call you."] },
+      { type: "Negativa", formula: "Sujeto + won't + verbo base", examples: ["I won't call you."] },
+      { type: "Yes/No Questions", formula: "Will + sujeto + verbo base?", examples: ["Will you call me?"] },
+      { type: "WH Questions", formula: "WH + will + sujeto + verbo base?", examples: ["When will you call me?"] }
+    ]
+  },
+  {
+    name: "10. FUTURE CONTINUOUS",
+    usage: ["Acción en progreso en el futuro"],
+    structure: [
+      { type: "Afirmativa", formula: "Sujeto + will be + verbo -ing", examples: ["I'll be working."] },
+      { type: "Negativa", formula: "Sujeto + won't be + verbo -ing", examples: ["I won't be working."] },
+      { type: "Yes/No Questions", formula: "Will + sujeto + be + verbo -ing?", examples: ["Will you be working?"] },
+      { type: "WH Questions", formula: "WH + will + sujeto + be + verbo -ing?", examples: ["What will you be doing?"] }
+    ]
+  },
+  {
+    name: "11. FUTURE PERFECT",
+    usage: ["Acción completada antes de un momento futuro"],
+    structure: [
+      { type: "Afirmativa", formula: "Sujeto + will have + participio pasado", examples: ["I'll have finished."] },
+      { type: "Negativa", formula: "Sujeto + won't have + participio pasado", examples: ["I won't have finished."] },
+      { type: "Yes/No Questions", formula: "Will + sujeto + have + participio pasado?", examples: ["Will you have finished?"] },
+      { type: "WH Questions", formula: "WH + will + sujeto + have + participio pasado?", examples: ["When will you have finished?"] }
+    ]
+  },
+  {
+    name: "12. FUTURE PERFECT CONTINUOUS",
+    usage: ["Duración hasta un punto futuro"],
+    structure: [
+      { type: "Afirmativa", formula: "Sujeto + will have been + verbo -ing", examples: ["I'll have been working for hours."] },
+      { type: "Negativa", formula: "Sujeto + won't have been + verbo -ing", examples: ["I won't have been working."] },
+      { type: "Yes/No Questions", formula: "Will + sujeto + have been + verbo -ing?", examples: ["Will you have been working?"] },
+      { type: "WH Questions", formula: "WH + will + sujeto + have been + verbo -ing?", examples: ["How long will you have been working?"] }
+    ]
+  },
+  {
+    name: "🌟 EXTRA: GOING TO",
+    usage: ["Planes / intención"],
+    structure: [
+      { type: "Ejemplos", formula: "Sujeto + am/is/are + going to + verbo base", examples: ["I'm going to study.", "I'm not going to study.", "Are you going to study?", "What are you going to do?"] }
+    ]
+  },
+  {
+    name: "🌟 EXTRA: WANT TO",
+    usage: ["Deseos"],
+    structure: [
+      { type: "Ejemplos", formula: "Sujeto + want/wants to + verbo base", examples: ["I want to travel.", "I don't want to travel.", "Do you want to travel?", "Why do you want to travel?"] }
+    ]
+  },
+  {
+    name: "🌟 EXTRA: HAVE TO",
+    usage: ["Obligación"],
+    structure: [
+      { type: "Ejemplos", formula: "Sujeto + have/has to + verbo base", examples: ["I have to work.", "I don't have to work.", "Do you have to work?", "Why do you have to work?"] }
+    ]
+  }
+];
+
+function renderTensesReview() {
+  const container = document.getElementById('review-list');
+  container.innerHTML = tensesData.map((t, i) => `
+    <div class="tense-card">
+      <div class="tense-header" onclick="this.parentElement.classList.toggle('expanded')">
+        <div class="tense-title">${t.name}</div>
+        <div class="tense-icon">▼</div>
+      </div>
+      <div class="tense-content">
+        <div class="tense-section">
+          <strong>🔹 Uso:</strong>
+          <ul>${t.usage.map(u => `<li>${u}</li>`).join('')}</ul>
+        </div>
+        ${t.note ? `<div class="tense-note">${t.note}</div>` : ''}
+        <div class="tense-section">
+          <strong>🔸 Estructura:</strong>
+          ${t.structure.map(s => `
+            <div class="structure-block">
+              <div class="structure-type">${s.type}</div>
+              <div class="structure-formula">${s.formula}</div>
+              <div class="structure-examples">
+                ${s.examples.map(ex => `<div><em>${ex}</em></div>`).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
 </script>
 </body>
 </html>
