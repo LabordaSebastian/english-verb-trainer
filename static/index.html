@@ -278,6 +278,9 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
       <button class="btn btn-secondary" id="btn-tense-select-home" style="flex:1">← Back</button>
       <button class="btn btn-primary" id="btn-start-tense-quiz" style="flex:1">Start Quiz ▶</button>
     </div>
+    <div style="margin-top:16px;">
+      <button class="btn btn-secondary btn-sm" id="btn-go-tense-stats">📊 View Stats</button>
+    </div>
   </div>
 
   <!-- ── TENSE QUIZ ─────────────────────────────────── -->
@@ -323,7 +326,30 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
 
     <div class="action-row">
       <button class="btn btn-secondary" id="btn-tense-results-home">← Back to Home</button>
+      <button class="btn btn-secondary" id="btn-tense-results-stats">📊 View Stats</button>
     </div>
+  </div>
+
+  <!-- ── TENSE QUIZ STATS ───────────────────────────── -->
+  <div id="screen-tense-stats" class="screen">
+    <div class="logo" style="font-size:28px">📊 Tense Quiz Stats</div>
+
+    <div id="t-stats-content" style="width:100%;display:flex;flex-direction:column;gap:16px">
+      <div class="stat-row" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="stat-box"><div class="stat-num" id="ts-total">0</div><div class="stat-name">Total</div></div>
+        <div class="stat-box"><div class="stat-num" style="color:var(--green)" id="ts-correct">0</div><div class="stat-name">Correct</div></div>
+        <div class="stat-box"><div class="stat-num" style="color:var(--purple)" id="ts-acc">0%</div><div class="stat-name">Accuracy</div></div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px">🔥 Frequent Mistakes</div>
+        <div class="hardest-list" id="ts-mistakes-list" style="max-height:40vh;overflow-y:auto;padding-right:4px;">
+          <div class="empty">No mistakes yet! Keep it up 🎉</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-secondary" id="btn-tense-stats-back">← Back</button>
   </div>
 
 </div>
@@ -584,6 +610,9 @@ document.getElementById('btn-tense-select-home').addEventListener('click', () =>
 document.getElementById('btn-start-tense-quiz').addEventListener('click', startTenseQuiz);
 document.getElementById('t-btn-next').addEventListener('click', nextTenseQuestion);
 document.getElementById('btn-tense-results-home').addEventListener('click', () => showScreen('home'));
+document.getElementById('btn-go-tense-stats').addEventListener('click', loadTenseStats);
+document.getElementById('btn-tense-results-stats').addEventListener('click', loadTenseStats);
+document.getElementById('btn-tense-stats-back').addEventListener('click', () => showScreen('tense-select'));
 
 document.getElementById('btn-seed').addEventListener('click', async () => {
   const btn = document.getElementById('btn-seed');
@@ -620,20 +649,20 @@ const tensesData = [
     name: "1. SIMPLE PRESENT",
     usage: ["Rutinas, hábitos, hechos generales, estados permanentes.", "Se usa con adverbios como: always, usually, often, sometimes, never", "También con verbos estáticos: like, love, know, believe, understand"],
     structure: [
-      { type: "Afirmativa", formula: "Sujeto + verbo base (+ -s en he/she/it)", examples: ["I work every day.", "She works every day.", "He likes coffee."] },
-      { type: "Negativa", formula: "Sujeto + don't / doesn't + verbo base", examples: ["I don't work on Sundays.", "She doesn't work here."] },
-      { type: "Yes/No Questions", formula: "Do/Does + sujeto + verbo base?", examples: ["Do you work here?", "Does he like pizza?"] },
-      { type: "WH Questions", formula: "WH + do/does + sujeto + verbo base?", examples: ["Where do you live?", "Why does she study English?"] }
+      { type: "Afirmativa", formula: "Sujeto + verbo base (+ -s en he/she/it)", examples: [{en: "I work every day.", es: "Trabajo todos los días."}, {en: "She works every day.", es: "Ella trabaja todos los días."}, {en: "He likes coffee.", es: "A él le gusta el café."}] },
+      { type: "Negativa", formula: "Sujeto + don't / doesn't + verbo base", examples: [{en: "I don't work on Sundays.", es: "No trabajo los domingos."}, {en: "She doesn't work here.", es: "Ella no trabaja aquí."}] },
+      { type: "Yes/No Questions", formula: "Do/Does + sujeto + verbo base?", examples: [{en: "Do you work here?", es: "¿Trabajas aquí?"}, {en: "Does he like pizza?", es: "¿A él le gusta la pizza?"}] },
+      { type: "WH Questions", formula: "WH + do/does + sujeto + verbo base?", examples: [{en: "Where do you live?", es: "¿Dónde vives?"}, {en: "Why does she study English?", es: "¿Por qué estudia ella inglés?"}] }
     ]
   },
   {
     name: "2. PRESENT CONTINUOUS",
     usage: ["Acciones en progreso ahora", "Situaciones temporales", "Planes cercanos"],
     structure: [
-      { type: "Afirmativa", formula: "Sujeto + am/is/are + verbo -ing", examples: ["I'm studying now.", "They're playing football."] },
-      { type: "Negativa", formula: "Sujeto + am/is/are + not + verbo -ing", examples: ["She isn't sleeping.", "We aren't working."] },
-      { type: "Yes/No Questions", formula: "Am/Is/Are + sujeto + verbo -ing?", examples: ["Are you studying?", "Is he working?"] },
-      { type: "WH Questions", formula: "WH + am/is/are + sujeto + verbo -ing?", examples: ["What are you doing?"] }
+      { type: "Afirmativa", formula: "Sujeto + am/is/are + verbo -ing", examples: [{en: "I'm studying now.", es: "Estoy estudiando ahora."}, {en: "They're playing football.", es: "Ellos están jugando fútbol."}] },
+      { type: "Negativa", formula: "Sujeto + am/is/are + not + verbo -ing", examples: [{en: "She isn't sleeping.", es: "Ella no está durmiendo."}, {en: "We aren't working.", es: "Nosotros no estamos trabajando."}] },
+      { type: "Yes/No Questions", formula: "Am/Is/Are + sujeto + verbo -ing?", examples: [{en: "Are you studying?", es: "¿Estás estudiando?"}, {en: "Is he working?", es: "¿Él está trabajando?"}] },
+      { type: "WH Questions", formula: "WH + am/is/are + sujeto + verbo -ing?", examples: [{en: "What are you doing?", es: "¿Qué estás haciendo?"}] }
     ],
     note: "⚠️ No usar con verbos como know, like (I know the answer.)"
   },
@@ -641,121 +670,130 @@ const tensesData = [
     name: "3. SIMPLE PAST",
     usage: ["Acciones terminadas en el pasado", "Eventos específicos"],
     structure: [
-      { type: "Afirmativa", formula: "Sujeto + verbo en pasado (regular -ed / irregular)", examples: ["I visited my friend.", "She went home."] },
-      { type: "Negativa", formula: "Sujeto + didn't + verbo base", examples: ["I didn't visit him."] },
-      { type: "Yes/No Questions", formula: "Did + sujeto + verbo base?", examples: ["Did you go?"] },
-      { type: "WH Questions", formula: "WH + did + sujeto + verbo base?", examples: ["Where did you go?"] }
+      { type: "Afirmativa", formula: "Sujeto + verbo en pasado (regular -ed / irregular)", examples: [{en: "I visited my friend.", es: "Visité a mi amigo."}, {en: "She went home.", es: "Ella fue a casa."}] },
+      { type: "Negativa", formula: "Sujeto + didn't + verbo base", examples: [{en: "I didn't visit him.", es: "No lo visité."}] },
+      { type: "Yes/No Questions", formula: "Did + sujeto + verbo base?", examples: [{en: "Did you go?", es: "¿Fuiste?"}] },
+      { type: "WH Questions", formula: "WH + did + sujeto + verbo base?", examples: [{en: "Where did you go?", es: "¿A dónde fuiste?"}] }
     ]
   },
   {
     name: "4. PAST CONTINUOUS",
     usage: ["Acción en progreso en el pasado", "Interrupciones"],
     structure: [
-      { type: "Afirmativa", formula: "Sujeto + was/were + verbo -ing", examples: ["I was studying.", "They were working."] },
-      { type: "Negativa", formula: "Sujeto + wasn't/weren't + verbo -ing", examples: ["I wasn't studying."] },
-      { type: "Yes/No Questions", formula: "Was/Were + sujeto + verbo -ing?", examples: ["Were you studying?"] },
-      { type: "WH Questions", formula: "WH + was/were + sujeto + verbo -ing?", examples: ["What were you doing?"] }
+      { type: "Afirmativa", formula: "Sujeto + was/were + verbo -ing", examples: [{en: "I was studying.", es: "Estaba estudiando."}, {en: "They were working.", es: "Ellos estaban trabajando."}] },
+      { type: "Negativa", formula: "Sujeto + wasn't/weren't + verbo -ing", examples: [{en: "I wasn't studying.", es: "No estaba estudiando."}] },
+      { type: "Yes/No Questions", formula: "Was/Were + sujeto + verbo -ing?", examples: [{en: "Were you studying?", es: "¿Estabas estudiando?"}] },
+      { type: "WH Questions", formula: "WH + was/were + sujeto + verbo -ing?", examples: [{en: "What were you doing?", es: "¿Qué estabas haciendo?"}] }
     ]
   },
   {
     name: "5. PRESENT PERFECT",
     usage: ["Experiencias", "Acciones recientes", "Resultados"],
     structure: [
-      { type: "Afirmativa", formula: "Sujeto + have/has + participio pasado", examples: ["I've finished.", "She's gone."] },
-      { type: "Negativa", formula: "Sujeto + haven't/hasn't + participio pasado", examples: ["I haven't finished."] },
-      { type: "Yes/No Questions", formula: "Have/Has + sujeto + participio pasado?", examples: ["Have you finished?"] },
-      { type: "WH Questions", formula: "WH + have/has + sujeto + participio pasado?", examples: ["Where have you been?"] }
+      { type: "Afirmativa", formula: "Sujeto + have/has + participio pasado", examples: [{en: "I've finished.", es: "He terminado."}, {en: "She's gone.", es: "Ella se ha ido."}] },
+      { type: "Negativa", formula: "Sujeto + haven't/hasn't + participio pasado", examples: [{en: "I haven't finished.", es: "No he terminado."}] },
+      { type: "Yes/No Questions", formula: "Have/Has + sujeto + participio pasado?", examples: [{en: "Have you finished?", es: "¿Has terminado?"}] },
+      { type: "WH Questions", formula: "WH + have/has + sujeto + participio pasado?", examples: [{en: "Where have you been?", es: "¿Dónde has estado?"}] }
     ]
   },
   {
     name: "6. PRESENT PERFECT CONTINUOUS",
     usage: ["Acción que empezó en el pasado y continúa"],
     structure: [
-      { type: "Afirmativa", formula: "Sujeto + have/has been + verbo -ing", examples: ["I've been studying for hours."] },
-      { type: "Negativa", formula: "Sujeto + haven't/hasn't been + verbo -ing", examples: ["I haven't been studying."] },
-      { type: "Yes/No Questions", formula: "Have/Has + sujeto + been + verbo -ing?", examples: ["Have you been studying?"] },
-      { type: "WH Questions", formula: "WH + have/has + sujeto + been + verbo -ing?", examples: ["How long have you been studying?"] }
+      { type: "Afirmativa", formula: "Sujeto + have/has been + verbo -ing", examples: [{en: "I've been studying for hours.", es: "He estado estudiando por horas."}] },
+      { type: "Negativa", formula: "Sujeto + haven't/hasn't been + verbo -ing", examples: [{en: "I haven't been studying.", es: "No he estado estudiando."}] },
+      { type: "Yes/No Questions", formula: "Have/Has + sujeto + been + verbo -ing?", examples: [{en: "Have you been studying?", es: "¿Has estado estudiando?"}] },
+      { type: "WH Questions", formula: "WH + have/has + sujeto + been + verbo -ing?", examples: [{en: "How long have you been studying?", es: "¿Cuánto tiempo has estado estudiando?"}] }
     ]
   },
   {
     name: "7. PAST PERFECT",
     usage: ["Acción anterior a otra en el pasado"],
     structure: [
-      { type: "Afirmativa", formula: "Sujeto + had + participio pasado", examples: ["I'd finished before he arrived."] },
-      { type: "Negativa", formula: "Sujeto + hadn't + participio pasado", examples: ["I hadn't finished."] },
-      { type: "Yes/No Questions", formula: "Had + sujeto + participio pasado?", examples: ["Had you finished?"] },
-      { type: "WH Questions", formula: "WH + had + sujeto + participio pasado?", examples: ["Why had you left?"] }
+      { type: "Afirmativa", formula: "Sujeto + had + participio pasado", examples: [{en: "I'd finished before he arrived.", es: "Había terminado antes de que él llegara."}] },
+      { type: "Negativa", formula: "Sujeto + hadn't + participio pasado", examples: [{en: "I hadn't finished.", es: "No había terminado."}] },
+      { type: "Yes/No Questions", formula: "Had + sujeto + participio pasado?", examples: [{en: "Had you finished?", es: "¿Habías terminado?"}] },
+      { type: "WH Questions", formula: "WH + had + sujeto + participio pasado?", examples: [{en: "Why had you left?", es: "¿Por qué te habías ido?"}] }
     ]
   },
   {
     name: "8. PAST PERFECT CONTINUOUS",
     usage: ["Duración antes de otra acción pasada"],
     structure: [
-      { type: "Afirmativa", formula: "Sujeto + had been + verbo -ing", examples: ["I'd been working for hours."] },
-      { type: "Negativa", formula: "Sujeto + hadn't been + verbo -ing", examples: ["I hadn't been working."] },
-      { type: "Yes/No Questions", formula: "Had + sujeto + been + verbo -ing?", examples: ["Had you been working?"] },
-      { type: "WH Questions", formula: "WH + had + sujeto + been + verbo -ing?", examples: ["How long had you been working?"] }
+      { type: "Afirmativa", formula: "Sujeto + had been + verbo -ing", examples: [{en: "I'd been working for hours.", es: "Había estado trabajando por horas."}] },
+      { type: "Negativa", formula: "Sujeto + hadn't been + verbo -ing", examples: [{en: "I hadn't been working.", es: "No había estado trabajando."}] },
+      { type: "Yes/No Questions", formula: "Had + sujeto + been + verbo -ing?", examples: [{en: "Had you been working?", es: "¿Habías estado trabajando?"}] },
+      { type: "WH Questions", formula: "WH + had + sujeto + been + verbo -ing?", examples: [{en: "How long had you been working?", es: "¿Cuánto tiempo habías estado trabajando?"}] }
     ]
   },
   {
     name: "9. FUTURE SIMPLE (WILL)",
     usage: ["Decisiones espontáneas", "Promesas", "Predicciones"],
     structure: [
-      { type: "Afirmativa", formula: "Sujeto + will + verbo base", examples: ["I'll call you."] },
-      { type: "Negativa", formula: "Sujeto + won't + verbo base", examples: ["I won't call you."] },
-      { type: "Yes/No Questions", formula: "Will + sujeto + verbo base?", examples: ["Will you call me?"] },
-      { type: "WH Questions", formula: "WH + will + sujeto + verbo base?", examples: ["When will you call me?"] }
+      { type: "Afirmativa", formula: "Sujeto + will + verbo base", examples: [{en: "I'll call you.", es: "Te llamaré."}] },
+      { type: "Negativa", formula: "Sujeto + won't + verbo base", examples: [{en: "I won't call you.", es: "No te llamaré."}] },
+      { type: "Yes/No Questions", formula: "Will + sujeto + verbo base?", examples: [{en: "Will you call me?", es: "¿Me llamarás?"}] },
+      { type: "WH Questions", formula: "WH + will + sujeto + verbo base?", examples: [{en: "When will you call me?", es: "¿Cuándo me llamarás?"}] }
     ]
   },
   {
     name: "10. FUTURE CONTINUOUS",
     usage: ["Acción en progreso en el futuro"],
     structure: [
-      { type: "Afirmativa", formula: "Sujeto + will be + verbo -ing", examples: ["I'll be working."] },
-      { type: "Negativa", formula: "Sujeto + won't be + verbo -ing", examples: ["I won't be working."] },
-      { type: "Yes/No Questions", formula: "Will + sujeto + be + verbo -ing?", examples: ["Will you be working?"] },
-      { type: "WH Questions", formula: "WH + will + sujeto + be + verbo -ing?", examples: ["What will you be doing?"] }
+      { type: "Afirmativa", formula: "Sujeto + will be + verbo -ing", examples: [{en: "I'll be working.", es: "Estaré trabajando."}] },
+      { type: "Negativa", formula: "Sujeto + won't be + verbo -ing", examples: [{en: "I won't be working.", es: "No estaré trabajando."}] },
+      { type: "Yes/No Questions", formula: "Will + sujeto + be + verbo -ing?", examples: [{en: "Will you be working?", es: "¿Estarás trabajando?"}] },
+      { type: "WH Questions", formula: "WH + will + sujeto + be + verbo -ing?", examples: [{en: "What will you be doing?", es: "¿Qué estarás haciendo?"}] }
     ]
   },
   {
     name: "11. FUTURE PERFECT",
     usage: ["Acción completada antes de un momento futuro"],
     structure: [
-      { type: "Afirmativa", formula: "Sujeto + will have + participio pasado", examples: ["I'll have finished."] },
-      { type: "Negativa", formula: "Sujeto + won't have + participio pasado", examples: ["I won't have finished."] },
-      { type: "Yes/No Questions", formula: "Will + sujeto + have + participio pasado?", examples: ["Will you have finished?"] },
-      { type: "WH Questions", formula: "WH + will + sujeto + have + participio pasado?", examples: ["When will you have finished?"] }
+      { type: "Afirmativa", formula: "Sujeto + will have + participio pasado", examples: [{en: "I'll have finished.", es: "Habré terminado."}] },
+      { type: "Negativa", formula: "Sujeto + won't have + participio pasado", examples: [{en: "I won't have finished.", es: "No habré terminado."}] },
+      { type: "Yes/No Questions", formula: "Will + sujeto + have + participio pasado?", examples: [{en: "Will you have finished?", es: "¿Habrás terminado?"}] },
+      { type: "WH Questions", formula: "WH + will + sujeto + have + participio pasado?", examples: [{en: "When will you have finished?", es: "¿Cuándo habrás terminado?"}] }
     ]
   },
   {
     name: "12. FUTURE PERFECT CONTINUOUS",
     usage: ["Duración hasta un punto futuro"],
     structure: [
-      { type: "Afirmativa", formula: "Sujeto + will have been + verbo -ing", examples: ["I'll have been working for hours."] },
-      { type: "Negativa", formula: "Sujeto + won't have been + verbo -ing", examples: ["I won't have been working."] },
-      { type: "Yes/No Questions", formula: "Will + sujeto + have been + verbo -ing?", examples: ["Will you have been working?"] },
-      { type: "WH Questions", formula: "WH + will + sujeto + have been + verbo -ing?", examples: ["How long will you have been working?"] }
+      { type: "Afirmativa", formula: "Sujeto + will have been + verbo -ing", examples: [{en: "I'll have been working for hours.", es: "Habré estado trabajando por horas."}] },
+      { type: "Negativa", formula: "Sujeto + won't have been + verbo -ing", examples: [{en: "I won't have been working.", es: "No habré estado trabajando."}] },
+      { type: "Yes/No Questions", formula: "Will + sujeto + have been + verbo -ing?", examples: [{en: "Will you have been working?", es: "¿Habrás estado trabajando?"}] },
+      { type: "WH Questions", formula: "WH + will + sujeto + have been + verbo -ing?", examples: [{en: "How long will you have been working?", es: "¿Cuánto tiempo habrás estado trabajando?"}] }
     ]
   },
   {
     name: "🌟 EXTRA: GOING TO",
     usage: ["Planes / intención"],
     structure: [
-      { type: "Ejemplos", formula: "Sujeto + am/is/are + going to + verbo base", examples: ["I'm going to study.", "I'm not going to study.", "Are you going to study?", "What are you going to do?"] }
+      { type: "Afirmativa", formula: "Sujeto + am/is/are + going to + verbo base", examples: [{en: "I'm going to study.", es: "Voy a estudiar."}] },
+      { type: "Negativa", formula: "Sujeto + am/is/are + not + going to + verbo base", examples: [{en: "I'm not going to study.", es: "No voy a estudiar."}] },
+      { type: "Yes/No Questions", formula: "Am/Is/Are + sujeto + going to + verbo base?", examples: [{en: "Are you going to study?", es: "¿Vas a estudiar?"}] },
+      { type: "WH Questions", formula: "WH + am/is/are + sujeto + going to + verbo base?", examples: [{en: "What are you going to do?", es: "¿Qué vas a hacer?"}] }
     ]
   },
   {
     name: "🌟 EXTRA: WANT TO",
     usage: ["Deseos"],
     structure: [
-      { type: "Ejemplos", formula: "Sujeto + want/wants to + verbo base", examples: ["I want to travel.", "I don't want to travel.", "Do you want to travel?", "Why do you want to travel?"] }
+      { type: "Afirmativa", formula: "Sujeto + want/wants to + verbo base", examples: [{en: "I want to travel.", es: "Quiero viajar."}] },
+      { type: "Negativa", formula: "Sujeto + don't/doesn't + want to + verbo base", examples: [{en: "I don't want to travel.", es: "No quiero viajar."}] },
+      { type: "Yes/No Questions", formula: "Do/Does + sujeto + want to + verbo base?", examples: [{en: "Do you want to travel?", es: "¿Quieres viajar?"}] },
+      { type: "WH Questions", formula: "WH + do/does + sujeto + want to + verbo base?", examples: [{en: "Why do you want to travel?", es: "¿Por qué quieres viajar?"}] }
     ]
   },
   {
     name: "🌟 EXTRA: HAVE TO",
     usage: ["Obligación"],
     structure: [
-      { type: "Ejemplos", formula: "Sujeto + have/has to + verbo base", examples: ["I have to work.", "I don't have to work.", "Do you have to work?", "Why do you have to work?"] }
+      { type: "Afirmativa", formula: "Sujeto + have/has to + verbo base", examples: [{en: "I have to work.", es: "Tengo que trabajar."}] },
+      { type: "Negativa", formula: "Sujeto + don't/doesn't + have to + verbo base", examples: [{en: "I don't have to work.", es: "No tengo que trabajar."}] },
+      { type: "Yes/No Questions", formula: "Do/Does + sujeto + have to + verbo base?", examples: [{en: "Do you have to work?", es: "¿Tienes que trabajar?"}] },
+      { type: "WH Questions", formula: "WH + do/does + sujeto + have to + verbo base?", examples: [{en: "Why do you have to work?", es: "¿Por qué tienes que trabajar?"}] }
     ]
   }
 ];
@@ -781,7 +819,7 @@ function renderTensesReview() {
               <div class="structure-type">${s.type}</div>
               <div class="structure-formula">${s.formula}</div>
               <div class="structure-examples">
-                ${s.examples.map(ex => `<div><em>${ex}</em></div>`).join('')}
+                ${s.examples.map(ex => `<div><em>${ex.en}</em> <span style="color:var(--muted);font-size:12px;display:block;margin-bottom:4px;">(${ex.es})</span></div>`).join('')}
               </div>
             </div>
           `).join('')}
@@ -793,73 +831,71 @@ function renderTensesReview() {
 
 // ── Tense Quiz Logic ─────────────────────────────────
 
-const tenseQuestions = {
-  "1. SIMPLE PRESENT": [
-    { q: "Translate: Yo trabajo todos los días.", options: ["I am working every day.", "I work every day.", "I works every day."], a: 1 },
-    { q: "What auxiliary is used for negative sentences with 'he/she/it'?", options: ["don't", "doesn't", "isn't"], a: 1 },
-    { q: "Complete: She _____ here.", options: ["don't work", "doesn't works", "doesn't work"], a: 2 },
-  ],
-  "2. PRESENT CONTINUOUS": [
-    { q: "Translate: Ellos están jugando fútbol.", options: ["They are play football.", "They playing football.", "They're playing football."], a: 2 },
-    { q: "When do we use Present Continuous?", options: ["Rutinas", "Acciones en progreso ahora", "Acciones terminadas"], a: 1 },
-    { q: "Complete: She _____ sleeping.", options: ["aren't", "doesn't", "isn't"], a: 2 },
-  ],
-  "3. SIMPLE PAST": [
-    { q: "Translate: Yo no lo visité.", options: ["I didn't visit him.", "I didn't visited him.", "I wasn't visit him."], a: 0 },
-    { q: "What is the auxiliary for Yes/No questions?", options: ["Do/Does", "Was/Were", "Did"], a: 2 },
-    { q: "Complete: Where _____ you go?", options: ["did", "do", "were"], a: 0 },
-  ],
-  "4. PAST CONTINUOUS": [
-    { q: "Translate: Yo no estaba estudiando.", options: ["I didn't studying.", "I wasn't studying.", "I wasn't study."], a: 1 },
-    { q: "What is the formula for affirmative?", options: ["was/were + verb -ing", "did + verb base", "had + verb -ing"], a: 0 },
-    { q: "Complete: _____ you studying?", options: ["Did", "Were", "Was"], a: 1 },
-  ],
-  "5. PRESENT PERFECT": [
-    { q: "Translate: Yo no he terminado.", options: ["I didn't finish.", "I haven't finish.", "I haven't finished."], a: 2 },
-    { q: "What is the formula?", options: ["have/has + participio pasado", "had + participio pasado", "have/has + verbo base"], a: 0 },
-    { q: "Complete: _____ you finished?", options: ["Do", "Did", "Have"], a: 2 },
-  ],
-  "6. PRESENT PERFECT CONTINUOUS": [
-    { q: "Translate: Yo he estado estudiando por horas.", options: ["I've been studying for hours.", "I had been studying for hours.", "I have studying for hours."], a: 0 },
-    { q: "What is the formula?", options: ["have/has + verb -ing", "have/has been + verb -ing", "had been + verb -ing"], a: 1 },
-  ],
-  "7. PAST PERFECT": [
-    { q: "Translate: Yo no había terminado.", options: ["I hadn't finish.", "I haven't finished.", "I hadn't finished."], a: 2 },
-    { q: "What is the auxiliary?", options: ["have/has", "had", "was"], a: 1 },
-  ],
-  "8. PAST PERFECT CONTINUOUS": [
-    { q: "Translate: Yo no había estado trabajando.", options: ["I haven't been working.", "I hadn't been working.", "I wasn't working."], a: 1 },
-    { q: "What is the formula?", options: ["had been + verb -ing", "was/were + verb -ing", "have been + verb -ing"], a: 0 },
-  ],
-  "9. FUTURE SIMPLE (WILL)": [
-    { q: "Translate: Te llamaré.", options: ["I call you.", "I'll call you.", "I'm calling you."], a: 1 },
-    { q: "What is the auxiliary for negative sentences?", options: ["don't", "am not", "won't"], a: 2 },
-  ],
-  "10. FUTURE CONTINUOUS": [
-    { q: "Translate: Yo no estaré trabajando.", options: ["I won't work.", "I'm not working.", "I won't be working."], a: 2 },
-    { q: "What is the formula?", options: ["will + verb base", "will be + verb -ing", "am going to + verb -ing"], a: 1 },
-  ],
-  "11. FUTURE PERFECT": [
-    { q: "Translate: Yo habré terminado.", options: ["I'll have finished.", "I'll finish.", "I have finished."], a: 0 },
-    { q: "What is the formula?", options: ["will have + participio pasado", "will be + participio pasado", "will + participio pasado"], a: 0 },
-  ],
-  "12. FUTURE PERFECT CONTINUOUS": [
-    { q: "Translate: Yo no habré estado trabajando.", options: ["I won't have been working.", "I won't be working.", "I haven't been working."], a: 0 },
-    { q: "What is the formula?", options: ["will have + verb -ing", "will be + verb -ing", "will have been + verb -ing"], a: 2 },
-  ],
-  "🌟 EXTRA: GOING TO": [
-    { q: "Translate: No voy a estudiar.", options: ["I don't going to study.", "I'm not going to study.", "I won't study."], a: 1 },
-    { q: "When do we use 'Going to'?", options: ["Predicciones lejanas", "Rutinas", "Planes e intenciones"], a: 2 },
-  ],
-  "🌟 EXTRA: WANT TO": [
-    { q: "Translate: Yo quiero viajar.", options: ["I wanting to travel.", "I want travel.", "I want to travel."], a: 2 },
-    { q: "Complete: Why _____ you want to travel?", options: ["are", "do", "does"], a: 1 },
-  ],
-  "🌟 EXTRA: HAVE TO": [
-    { q: "Translate: No tengo que trabajar.", options: ["I haven't to work.", "I don't have to work.", "I hasn't to work."], a: 1 },
-    { q: "What is the meaning of 'Have to'?", options: ["Deseo", "Posibilidad", "Obligación"], a: 2 },
-  ]
-};
+function generateTenseQuestions(selectedTenseNames) {
+  let pool = [];
+
+  const allUsages = [];
+  const allFormulas = []; // Store as objects {type, formula}
+  tensesData.forEach(t => {
+    t.usage.forEach(u => allUsages.push(u));
+    t.structure.forEach(s => allFormulas.push({type: s.type, formula: s.formula}));
+  });
+
+  selectedTenseNames.forEach(tName => {
+    const t = tensesData.find(x => x.name === tName);
+    if (!t) return;
+
+    // 1. Usage Question
+    const correctUsage = t.usage[Math.floor(Math.random() * t.usage.length)];
+    const otherUsages = allUsages.filter(u => !t.usage.includes(u)).sort(() => Math.random() - 0.5);
+    
+    // We use 4 options total
+    const optsU = [correctUsage];
+    for (let i = 0; i < 3 && i < otherUsages.length; i++) {
+        optsU.push(otherUsages[i]);
+    }
+    optsU.sort(() => Math.random() - 0.5);
+
+    pool.push({
+      tenseName: tName,
+      type: 'Usage',
+      q: `When do we use ${t.name.split('. ')[1] || t.name}?`,
+      options: optsU,
+      a: optsU.indexOf(correctUsage)
+    });
+
+    // 2. Structure Questions (one for each type: Afirmativa, Negativa, Yes/No, WH)
+    t.structure.forEach(s => {
+      const correctFormula = s.formula;
+      
+      // Make distractors difficult: Get other formulas of the EXACT same type
+      let sameTypeFormulas = allFormulas.filter(f => f.type === s.type && f.formula !== correctFormula).map(f => f.formula);
+      
+      if (sameTypeFormulas.length < 3) {
+        const otherFormulas = allFormulas.filter(f => f.formula !== correctFormula).map(f => f.formula);
+        sameTypeFormulas = sameTypeFormulas.concat(otherFormulas);
+      }
+      
+      sameTypeFormulas = [...new Set(sameTypeFormulas)].sort(() => Math.random() - 0.5);
+      
+      const optsS = [correctFormula];
+      for (let i = 0; i < 3 && i < sameTypeFormulas.length; i++) {
+        optsS.push(sameTypeFormulas[i]);
+      }
+      optsS.sort(() => Math.random() - 0.5);
+
+      pool.push({
+        tenseName: tName,
+        type: `Structure (${s.type})`,
+        q: `What is the formula for ${s.type.toLowerCase()} sentences?`,
+        options: optsS,
+        a: optsS.indexOf(correctFormula)
+      });
+    });
+  });
+
+  return pool;
+}
 
 const tenseQuizState = {
   selectedTenses: [],
@@ -889,15 +925,7 @@ function startTenseQuiz() {
     return;
   }
 
-  let pool = [];
-  tenseQuizState.selectedTenses.forEach(tName => {
-    if (tenseQuestions[tName]) {
-      tenseQuestions[tName].forEach(q => {
-        pool.push({ ...q, tenseName: tName });
-      });
-    }
-  });
-
+  let pool = generateTenseQuestions(tenseQuizState.selectedTenses);
   pool.sort(() => Math.random() - 0.5);
 
   tenseQuizState.questions = pool;
@@ -1002,6 +1030,44 @@ function finishTenseQuiz() {
         <div style="font-size:12px;color:var(--blue);margin-bottom:6px;font-weight:600;text-transform:uppercase;">${m.tenseName}</div>
         <div style="color:var(--text);font-size:15px;margin-bottom:10px">${m.q}</div>
         <div style="color:var(--green);font-size:14px;font-weight:600;background:rgba(16, 185, 129, 0.1);padding:6px 10px;border-radius:4px;display:inline-block;">✓ ${m.correctOption}</div>
+      </div>
+    `).join('');
+  }
+
+  // Save to LocalStorage
+  if (total > 0) {
+    const stats = JSON.parse(localStorage.getItem('tenseQuizStats')) || { total: 0, correct: 0, mistakes: [] };
+    stats.total += total;
+    stats.correct += tenseQuizState.correct;
+    
+    tenseQuizState.mistakes.forEach(m => {
+      if (!stats.mistakes.find(existing => existing.q === m.q)) {
+        stats.mistakes.unshift(m);
+      }
+    });
+    stats.mistakes = stats.mistakes.slice(0, 30); // Keep top 30 mistakes
+    
+    localStorage.setItem('tenseQuizStats', JSON.stringify(stats));
+  }
+}
+
+function loadTenseStats() {
+  showScreen('tense-stats');
+  const stats = JSON.parse(localStorage.getItem('tenseQuizStats')) || { total: 0, correct: 0, mistakes: [] };
+  
+  document.getElementById('ts-total').textContent = stats.total;
+  document.getElementById('ts-correct').textContent = stats.correct;
+  document.getElementById('ts-acc').textContent = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) + '%' : '0%';
+
+  const mistakesList = document.getElementById('ts-mistakes-list');
+  if (stats.mistakes.length === 0) {
+    mistakesList.innerHTML = '<div class="empty">No mistakes yet! Keep it up 🎉</div>';
+  } else {
+    mistakesList.innerHTML = stats.mistakes.map(m => `
+      <div class="wrong-item" style="padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;flex-direction:column;align-items:flex-start;">
+        <div style="font-size:12px;color:var(--blue);margin-bottom:4px;font-weight:600;">${m.tenseName}</div>
+        <div style="color:var(--text);font-size:14px;margin-bottom:6px">${m.q}</div>
+        <div style="color:var(--green);font-size:13px;font-weight:600;">✓ ${m.correctOption}</div>
       </div>
     `).join('');
   }
