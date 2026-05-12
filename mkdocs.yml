@@ -1,0 +1,89 @@
+site_name: English Verb Trainer — DevOps Docs
+site_description: Complete technical documentation for the English Irregular Verb Trainer
+site_author: Sebastian Laborda
+site_url: https://labordasebastian.github.io/english-verb-trainer/
+
+repo_url: https://github.com/LabordaSebastian/english-verb-trainer
+repo_name: LabordaSebastian/english-verb-trainer
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.select
+    - content.tabs.link
+    - content.footnote.backlinks
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: indigo
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: indigo
+      toggle:
+        icon: material/lightbulb
+        name: Switch to light mode
+
+plugins:
+  - search:
+      lang: es
+  - awesome-pages
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [.]
+          options:
+            show_source: true
+            show_root_heading: true
+            heading_level: 2
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      use_pygments: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji
+  - toc:
+      permalink: true
+  - tables
+  - footnotes
+
+nav:
+  - Home: index.md
+  - Quick Start: quick-start.md
+  - Project Structure: structure.md
+  - Architecture & Design:
+      - Overview: architecture/overview.md
+      - Data Flow: architecture/data-flow.md
+      - Component Diagram: architecture/components.md
+  - CLI Reference: cli-reference.md
+  - API Reference:
+      - REST Endpoints: api/endpoints.md
+      - Pydantic Schemas: api/schemas.md
+  - Database:
+      - Models & Schema: database/models.md
+      - Relationships: database/relationships.md
+  - Development:
+      - Setup: development/setup.md
+      - Testing: development/testing.md
+      - Contributing: development/contributing.md
