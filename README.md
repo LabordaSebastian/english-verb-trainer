@@ -2,11 +2,11 @@
 
 > Aplicación híbrida (CLI + Web UI) para practicar verbos irregulares en inglés, construida con un stack de herramientas reales de DevOps: Python, PostgreSQL, Docker y GitHub Actions.
 
+[![Docs](https://img.shields.io/badge/Docs-MkDocs-blue?logo=markdown)](https://labordasebastian.github.io/english-verb-trainer/)
 [![CI](https://github.com/LabordaSebastian/english-verb-trainer/actions/workflows/ci.yml/badge.svg)](https://github.com/LabordaSebastian/english-verb-trainer/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?logo=postgresql)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://www.docker.com/)
-[![Docs](https://img.shields.io/badge/Docs-MkDocs-blue?logo=markdown)](https://labordasebastian.github.io/english-verb-trainer/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
