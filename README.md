@@ -6,6 +6,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?logo=postgresql)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://www.docker.com/)
+[![Docs](https://img.shields.io/badge/Docs-MkDocs-blue?logo=markdown)](https://labordasebastian.github.io/english-verb-trainer/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
@@ -46,6 +47,21 @@ Your answer: > goed gone
 ```
 
 Al final de cada sesión ves tu porcentaje de aciertos, y con el comando `stats` podés ver qué verbos te están costando más.
+
+---
+
+## 📚 Documentación completa
+
+Para una guía detallada sobre arquitectura, desarrollo y deployment, consulta la **[documentación oficial](https://labordasebastian.github.io/english-verb-trainer/)**.
+
+En la documentación encontrarás:
+- **Quick Start** — Cómo levantar el proyecto en 5 minutos
+- **Guías técnicas** — Arquitectura, flujo de datos, modelos de BD
+- **Referencia API** — Endpoints, esquemas, ejemplos
+- **CLI Reference** — Todos los comandos disponibles
+- **Guía de desarrollo** — Setup local, testing, contribuciones
+
+[→ Acceder a la documentación](https://labordasebastian.github.io/english-verb-trainer/)
 
 ---
 
