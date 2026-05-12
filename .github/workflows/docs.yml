@@ -37,6 +37,8 @@ jobs:
 
       - name: Build documentation
         run: |
+          # Inject production site_url for correct canonical URLs on GitHub Pages
+          sed -i '/^site_name:/a\site_url: https://labordasebastian.github.io/english-verb-trainer/' mkdocs.yml
           mkdocs build
 
       - name: Upload artifacts

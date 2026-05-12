@@ -88,7 +88,7 @@ graph LR
 
 1. **New to the project?** → [Quick Start](quick-start.md)
 2. **Need API documentation?** → [REST Endpoints](api/endpoints.md)
-3. **Troubleshooting?** → [FAQ](#faq) (coming soon)
+3. **Troubleshooting?** → [Quick Start](quick-start.md#troubleshooting)
 
 ## 📝 License
 
