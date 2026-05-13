@@ -366,9 +366,18 @@ const state = {
 };
 
 // ── API ──────────────────────────────────────────────
+function showError(msg) {
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;padding:14px 24px;border-radius:12px;font-weight:600;font-size:14px;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:fadeIn .3s ease;max-width:90%;text-align:center';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, 4000);
+}
+
 const api = {
   async getVerbs(count) {
     const r = await fetch(`/api/verbs/quiz?count=${count}`);
+    if (!r.ok) throw new Error(`Failed to load verbs (${r.status})`);
     return r.json();
   },
   async submitAttempt(verb_id, past_given, participle_given) {
@@ -377,14 +386,17 @@ const api = {
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({verb_id, past_given, participle_given}),
     });
+    if (!r.ok) throw new Error(`Failed to submit answer (${r.status})`);
     return r.json();
   },
   async getStats() {
     const r = await fetch('/api/stats');
+    if (!r.ok) throw new Error(`Failed to load stats (${r.status})`);
     return r.json();
   },
   async seed() {
     const r = await fetch('/api/seed', {method:'POST'});
+    if (!r.ok) throw new Error(`Failed to seed database (${r.status})`);
     return r.json();
   },
 };
@@ -419,7 +431,15 @@ async function startQuiz() {
   document.getElementById('btn-start').disabled = true;
   document.getElementById('btn-start').textContent = 'Loading…';
 
-  state.verbs = await api.getVerbs(state.rounds);
+  try {
+    state.verbs = await api.getVerbs(state.rounds);
+  } catch (e) {
+    showError(e.message);
+    document.getElementById('btn-start').disabled = false;
+    document.getElementById('btn-start').innerHTML = '▶&nbsp; Start Quiz';
+    return;
+  }
+
   state.index = 0;
   state.correct = 0;
   state.wrongs = [];
@@ -474,7 +494,15 @@ async function checkAnswer() {
   document.getElementById('btn-check').disabled = true;
 
   const v = state.verbs[state.index];
-  const result = await api.submitAttempt(v.id, past, part);
+  let result;
+  try {
+    result = await api.submitAttempt(v.id, past, part);
+  } catch (e) {
+    showError(e.message);
+    state.checked = false;
+    document.getElementById('btn-check').disabled = false;
+    return;
+  }
 
   const pastEl = document.getElementById('input-past');
   const partEl = document.getElementById('input-part');
@@ -552,7 +580,15 @@ async function loadStats() {
   document.getElementById('stats-loading').style.display = 'block';
   document.getElementById('stats-content').style.display = 'none';
 
-  const data = await api.getStats();
+  let data;
+  try {
+    data = await api.getStats();
+  } catch (e) {
+    showError(e.message);
+    document.getElementById('stats-loading').style.display = 'none';
+    showScreen('home');
+    return;
+  }
 
   document.getElementById('s-total').textContent = data.total;
   document.getElementById('s-correct').textContent = data.correct;
@@ -619,10 +655,14 @@ document.getElementById('btn-seed').addEventListener('click', async () => {
   const msg = document.getElementById('seed-msg');
   btn.disabled = true;
   btn.textContent = '⏳ Loading…';
-  const data = await api.seed();
+  try {
+    const data = await api.seed();
+    msg.textContent = `✅ ${data.added} added, ${data.updated} updated.`;
+  } catch (e) {
+    msg.textContent = `❌ ${e.message}`;
+  }
   btn.disabled = false;
   btn.textContent = '🌱 Reload Verbs';
-  msg.textContent = `✅ ${data.added} added, ${data.updated} updated.`;
   msg.style.display = 'block';
   setTimeout(() => { msg.style.display = 'none'; }, 3000);
 });
