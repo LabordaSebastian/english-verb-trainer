@@ -46,7 +46,11 @@ STATIC_DIR = Path(__file__).parent.parent / "static"
 def get_quiz_verbs(count: int = 10, db: Session = Depends(get_db)):
     """Return N shuffled verbs for a quiz session (no correct forms exposed)."""
     verbs = get_shuffled_verbs(db, limit=count)
-    return [QuizVerb(id=v.id, base=v.base, meaning=v.meaning) for v in verbs]
+    result = []
+    for v in verbs:
+        assert v.id is not None and v.base is not None
+        result.append(QuizVerb(id=v.id, base=v.base, meaning=v.meaning))
+    return result
 
 
 @app.post("/api/attempts", response_model=AttemptResponse, tags=["quiz"])
@@ -70,6 +74,7 @@ def submit_attempt(attempt: AttemptRequest, db: Session = Depends(get_db)):
         )
         also_accepted = f"{past_display} → {part_display}"
 
+    assert verb.past is not None and verb.participle is not None
     return AttemptResponse(
         correct=correct,
         correct_past=verb.past,

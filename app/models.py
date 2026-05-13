@@ -1,9 +1,10 @@
 """SQLAlchemy ORM models."""
 
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, relationship
 
 from app.database import Base
 
@@ -25,7 +26,7 @@ class Verb(Base):
     past_alt = Column(String(50), nullable=True)
     participle_alt = Column(String(50), nullable=True)
 
-    attempts = relationship(
+    attempts: Mapped[list["UserAttempt"]] = relationship(
         "UserAttempt", back_populates="verb", cascade="all, delete-orphan"
     )
 
@@ -36,6 +37,7 @@ class Verb(Base):
         """Return True if both answers match the stored forms (case-insensitive).
         Also accepts alternative forms when present.
         """
+        assert self.past is not None and self.participle is not None
         past_ok = past_input.strip().lower() in self._valid_forms(
             self.past, self.past_alt
         )
@@ -64,7 +66,7 @@ class UserAttempt(Base):
     is_correct = Column(Boolean, nullable=False)
     attempted_at = Column(DateTime, default=datetime.utcnow)
 
-    verb = relationship("Verb", back_populates="attempts")
+    verb: Mapped[Optional["Verb"]] = relationship("Verb", back_populates="attempts")
 
     def __repr__(self) -> str:
         return f"<UserAttempt verb_id={self.verb_id} correct={self.is_correct}>"

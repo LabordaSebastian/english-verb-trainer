@@ -80,6 +80,7 @@ pytest tests/ -v --lf  # Run last failed
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from app.database import Base
 from app.models import Verb, UserAttempt
@@ -90,13 +91,16 @@ from app.quiz import validate_and_log, get_stats
 @pytest.fixture(scope="function")
 def db():
     """In-memory SQLite session for fast, isolated tests."""
-    engine = create_engine("sqlite:///:memory:")
+    engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
     Base.metadata.create_all(bind=engine)
     Session = sessionmaker(bind=engine)
     session = Session()
     yield session
     session.close()
-    Base.metadata.drop_all(bind=engine)
 
 # ─── Tests ───────────────────────────────────────────────────────
 
@@ -116,16 +120,27 @@ class TestVerbCheckAnswer:
 ### Database Fixture
 
 ```python
+from sqlalchemy.pool import StaticPool
+
 @pytest.fixture
 def db():
     """In-memory SQLite for test isolation."""
-    engine = create_engine("sqlite:///:memory:")
+    engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
     Base.metadata.create_all(bind=engine)
     Session = sessionmaker(bind=engine)
     session = Session()
     yield session  # Test uses this
     session.close()  # Cleanup
 ```
+
+> `StaticPool` is required for tests that use `TestClient` or `CliRunner`,
+> since ASGI/Click invocations may run in a different thread. Without it,
+> SQLite's in-memory database creates a new empty database per connection,
+> causing "no such table" errors.
 
 ### Sample Data Fixtures
 
@@ -299,10 +314,11 @@ def test_invalid_verb_id_raises(db):
 
 ```
 tests/
-├── test_quiz.py           # app/quiz.py tests
-├── test_models.py         # app/models.py tests
-├── test_api_endpoints.py  # api/main.py tests (future)
-└── conftest.py            # Shared fixtures
+├── test_api.py            # FastAPI endpoint tests (TestClient)
+├── test_cli.py            # Typer CLI command tests (CliRunner)
+├── test_quiz.py           # app/quiz.py unit tests
+├── test_seed.py           # app/seed.py unit tests
+└── conftest.py            # Shared fixtures (db, sample_verb, etc.)
 ```
 
 ### By Class
@@ -387,10 +403,11 @@ pytest tests/ --cov=app --cov-report=term-missing
 
 Output:
 ```
-app/database.py         98%   coverage
+app/database.py         50%   coverage  [Missing: 16, 36-40, 45-55]
 app/models.py          100%   coverage
-app/quiz.py             85%   coverage  [Missing: 45, 67]
-app/seed.py             60%   coverage  [Missing: 10-20]
+app/quiz.py            100%   coverage
+app/seed.py            100%   coverage
+TOTAL                   88%   coverage
 ```
 
 ### Improve Coverage

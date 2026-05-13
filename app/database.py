@@ -18,10 +18,12 @@ if not DATABASE_URL:
         "Create a .env file with DATABASE_URL=postgresql://user:pass@host:5432/dbname"
     )
 
+_is_sqlite = DATABASE_URL.startswith("sqlite") if DATABASE_URL else False
+
 engine = create_engine(
     DATABASE_URL,
     echo=False,
-    connect_args={"connect_timeout": 10},
+    connect_args={"connect_timeout": 10} if not _is_sqlite else {},
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

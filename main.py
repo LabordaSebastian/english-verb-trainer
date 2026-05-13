@@ -113,6 +113,7 @@ def quiz(
         for v in question_list:
             question_count += 1
             typer.echo(f"\n  Question {question_count}/{rounds}")
+            assert v.base is not None
             typer.echo(f"  Base verb:  {v.base.upper()}")
             if v.meaning:
                 typer.echo(f"  Meaning:    {v.meaning}")

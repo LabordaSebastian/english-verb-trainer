@@ -205,8 +205,11 @@ make clean             # Remove venv and cache
 │   ├── main.py
 │   └── schemas.py
 ├── tests/                  # Test suite
+│   ├── test_api.py
+│   ├── test_cli.py
 │   ├── test_quiz.py
-│   └── conftest.py (future)
+│   ├── test_seed.py
+│   └── conftest.py
 ├── static/                 # Frontend
 │   └── index.html
 ├── docs/                   # Documentation
