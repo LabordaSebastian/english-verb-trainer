@@ -6,6 +6,6 @@ httpx>=0.27
 mypy>=1.10
 ruff>=0.15.12
 mkdocs>=1.5
-mkdocs-material>=9.5
+mkdocs-material>=9.7.6
 mkdocs-awesome-pages-plugin>=2.9
 mkdocstrings[python]>=0.24
