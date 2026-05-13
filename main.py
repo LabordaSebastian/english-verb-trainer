@@ -1,18 +1,19 @@
 """English Irregular Verb Trainer — CLI entry point.
 
 Commands:
-  python main.py seed          Load 50 irregular verbs into PostgreSQL
+  python main.py seed          Load 100 irregular verbs into PostgreSQL
   python main.py quiz          Start a random quiz session
   python main.py quiz --verb read   Practice a specific verb
   python main.py stats         Show your progress summary
 """
 
 import typer
-from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 
-from app.database import SessionLocal, engine
-from app.models import Base
+from app.database import SessionLocal, run_migrations
+from app.models import Verb
+from app.quiz import get_shuffled_verbs, get_stats, get_verb_by_base, validate_and_log
+from app.seed import seed_verbs
 
 app = typer.Typer(
     name="verb-trainer",
@@ -25,27 +26,15 @@ app = typer.Typer(
 BANNER = """
 ╔══════════════════════════════════════════════╗
 ║   🎯  English Irregular Verb Trainer         ║
-║       DevOps Edition  |  PostgreSQL + TF     ║
+║          DevOps Edition  |  Docker           ║
 ╚══════════════════════════════════════════════╝
 """
 
 
 def _init_db():
-    """Create tables if they do not exist yet, and run lightweight migrations."""
+    """Create tables and run migrations."""
     try:
-        Base.metadata.create_all(bind=engine)
-        # Safe migration: only ALTER TABLE if the column doesn't exist yet.
-        # Using information_schema avoids acquiring a table lock on every startup.
-        with engine.connect() as conn:
-            exists = conn.execute(
-                text(
-                    "SELECT 1 FROM information_schema.columns "
-                    "WHERE table_name='verbs' AND column_name='meaning'"
-                )
-            ).fetchone()
-            if not exists:
-                conn.execute(text("ALTER TABLE verbs ADD COLUMN meaning VARCHAR(150)"))
-                conn.commit()
+        run_migrations()
     except OperationalError as e:
         typer.echo(
             "\n❌  Cannot connect to PostgreSQL.\n"
@@ -57,26 +46,15 @@ def _init_db():
         raise typer.Exit(code=1) from None
 
 
-def _get_db():
-    db = SessionLocal()
-    try:
-        return db
-    except Exception:
-        db.close()
-        raise
-
-
 # ─── commands ───────────────────────────────────────────────────────────────
 
 
 @app.command()
 def seed():
-    """Load the 50 most common irregular verbs into the database."""
+    """Load the 100 irregular verbs into the database."""
     _init_db()
     db = SessionLocal()
     try:
-        from app.seed import seed_verbs
-
         added, updated = seed_verbs(db)
         if added:
             typer.echo(f"\n✅  {added} verb(s) added, {updated} updated.\n")
@@ -99,13 +77,7 @@ def quiz(
     _init_db()
     db = SessionLocal()
     try:
-        from app.quiz import get_shuffled_verbs, get_verb_by_base, validate_and_log
-
         typer.echo(BANNER)
-
-        # Check DB has verbs
-        from app.models import Verb
-
         total_verbs = db.query(Verb).count()
         if total_verbs == 0:
             typer.echo("⚠️  No verbs found. Run:  python main.py seed\n")
@@ -202,8 +174,6 @@ def stats():
     _init_db()
     db = SessionLocal()
     try:
-        from app.quiz import get_stats
-
         data = get_stats(db)
 
         typer.echo(BANNER)

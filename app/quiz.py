@@ -2,9 +2,12 @@
 
 import random
 
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.models import UserAttempt, Verb
+
+TOP_HARDEST_VERBS = 5
 
 
 def get_verb_by_base(db: Session, base: str) -> Verb | None:
@@ -51,16 +54,13 @@ def get_stats(db: Session) -> dict:
     correct = db.query(UserAttempt).filter_by(is_correct=True).count()
     wrong = total - correct
 
-    # Top 5 verbs with most mistakes
-    from sqlalchemy import func
-
     hardest = (
         db.query(Verb.base, func.count(UserAttempt.id).label("errors"))
         .join(UserAttempt, UserAttempt.verb_id == Verb.id)
         .filter(UserAttempt.is_correct == False)  # noqa: E712
         .group_by(Verb.base)
         .order_by(func.count(UserAttempt.id).desc())
-        .limit(5)
+        .limit(TOP_HARDEST_VERBS)
         .all()
     )
 

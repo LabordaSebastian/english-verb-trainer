@@ -1,6 +1,6 @@
 """Pydantic schemas for the FastAPI REST layer."""
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class QuizVerb(BaseModel):
@@ -14,7 +14,7 @@ class QuizVerb(BaseModel):
 class AttemptRequest(BaseModel):
     """Answer submitted by the user."""
 
-    verb_id: int
+    verb_id: int = Field(..., gt=0, description="Must be a positive integer")
     past_given: str
     participle_given: str
 
@@ -25,7 +25,14 @@ class AttemptResponse(BaseModel):
     correct: bool
     correct_past: str
     correct_participle: str
-    also_accepted: str | None  # e.g. "learned / learnt"
+    also_accepted: str | None
+
+
+class HardestVerb(BaseModel):
+    """A single verb entry in the hardest-verbs ranking."""
+
+    verb: str
+    errors: int
 
 
 class StatsResponse(BaseModel):
@@ -35,7 +42,7 @@ class StatsResponse(BaseModel):
     correct: int
     wrong: int
     accuracy: float
-    hardest_verbs: list[dict]
+    hardest_verbs: list[HardestVerb]
 
 
 class SeedResponse(BaseModel):
