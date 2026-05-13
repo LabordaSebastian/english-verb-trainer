@@ -25,7 +25,9 @@ class Verb(Base):
     past_alt = Column(String(50), nullable=True)
     participle_alt = Column(String(50), nullable=True)
 
-    attempts = relationship("UserAttempt", back_populates="verb", cascade="all, delete-orphan")
+    attempts = relationship(
+        "UserAttempt", back_populates="verb", cascade="all, delete-orphan"
+    )
 
     def __repr__(self) -> str:
         return f"<Verb base={self.base!r} past={self.past!r} participle={self.participle!r}>"
@@ -34,8 +36,12 @@ class Verb(Base):
         """Return True if both answers match the stored forms (case-insensitive).
         Also accepts alternative forms when present.
         """
-        past_ok = past_input.strip().lower() in self._valid_forms(self.past, self.past_alt)
-        part_ok = participle_input.strip().lower() in self._valid_forms(self.participle, self.participle_alt)
+        past_ok = past_input.strip().lower() in self._valid_forms(
+            self.past, self.past_alt
+        )
+        part_ok = participle_input.strip().lower() in self._valid_forms(
+            self.participle, self.participle_alt
+        )
         return past_ok and part_ok
 
     @staticmethod
@@ -61,6 +67,4 @@ class UserAttempt(Base):
     verb = relationship("Verb", back_populates="attempts")
 
     def __repr__(self) -> str:
-        return (
-            f"<UserAttempt verb_id={self.verb_id} correct={self.is_correct}>"
-        )
+        return f"<UserAttempt verb_id={self.verb_id} correct={self.is_correct}>"

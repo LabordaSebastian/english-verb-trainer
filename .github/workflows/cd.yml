@@ -84,11 +84,11 @@ jobs:
           generate_release_notes: true
           body: |
             ## 🚀 Quick Start
-            
+
             ```bash
             git clone https://github.com/${{ github.repository }}.git
             cd english-verb-trainer
             docker compose up
             ```
-            
+
             Open **http://localhost:8000** in your browser.

@@ -4,7 +4,7 @@ import random
 
 from sqlalchemy.orm import Session
 
-from app.models import Verb, UserAttempt
+from app.models import UserAttempt, Verb
 
 
 def get_verb_by_base(db: Session, base: str) -> Verb | None:
@@ -53,6 +53,7 @@ def get_stats(db: Session) -> dict:
 
     # Top 5 verbs with most mistakes
     from sqlalchemy import func
+
     hardest = (
         db.query(Verb.base, func.count(UserAttempt.id).label("errors"))
         .join(UserAttempt, UserAttempt.verb_id == Verb.id)

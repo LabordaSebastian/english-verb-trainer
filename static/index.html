@@ -267,7 +267,7 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
   <div id="screen-tense-select" class="screen">
     <div class="logo" style="font-size:28px">🎯 Tenses Quiz</div>
     <div style="font-size:14px;color:var(--muted);margin-bottom:16px;text-align:center;">Select the tenses you want to practice:</div>
-    
+
     <div class="card" style="width:100%;max-height:50vh;overflow-y:auto;text-align:left;margin-bottom:20px;padding:12px;">
       <div id="tense-checkboxes" style="display:flex;flex-direction:column;gap:8px;">
         <!-- Populated by JS -->
@@ -848,7 +848,7 @@ function generateTenseQuestions(selectedTenseNames) {
     // 1. Usage Question
     const correctUsage = t.usage[Math.floor(Math.random() * t.usage.length)];
     const otherUsages = allUsages.filter(u => !t.usage.includes(u)).sort(() => Math.random() - 0.5);
-    
+
     // We use 4 options total
     const optsU = [correctUsage];
     for (let i = 0; i < 3 && i < otherUsages.length; i++) {
@@ -867,17 +867,17 @@ function generateTenseQuestions(selectedTenseNames) {
     // 2. Structure Questions (one for each type: Afirmativa, Negativa, Yes/No, WH)
     t.structure.forEach(s => {
       const correctFormula = s.formula;
-      
+
       // Make distractors difficult: Get other formulas of the EXACT same type
       let sameTypeFormulas = allFormulas.filter(f => f.type === s.type && f.formula !== correctFormula).map(f => f.formula);
-      
+
       if (sameTypeFormulas.length < 3) {
         const otherFormulas = allFormulas.filter(f => f.formula !== correctFormula).map(f => f.formula);
         sameTypeFormulas = sameTypeFormulas.concat(otherFormulas);
       }
-      
+
       sameTypeFormulas = [...new Set(sameTypeFormulas)].sort(() => Math.random() - 0.5);
-      
+
       const optsS = [correctFormula];
       for (let i = 0; i < 3 && i < sameTypeFormulas.length; i++) {
         optsS.push(sameTypeFormulas[i]);
@@ -919,7 +919,7 @@ function initTenseSelect() {
 function startTenseQuiz() {
   const checkboxes = document.querySelectorAll('.tense-cb:checked');
   tenseQuizState.selectedTenses = Array.from(checkboxes).map(cb => cb.value);
-  
+
   if (tenseQuizState.selectedTenses.length === 0) {
     alert("Please select at least one tense!");
     return;
@@ -949,7 +949,7 @@ function renderTenseQuestion() {
 
   const optsContainer = document.getElementById('t-options');
   optsContainer.innerHTML = '';
-  
+
   q.options.forEach((opt, idx) => {
     const btn = document.createElement('button');
     btn.className = 'btn btn-secondary';
@@ -969,7 +969,7 @@ function renderTenseQuestion() {
 function checkTenseAnswer(selectedIndex, btnElement) {
   const q = tenseQuizState.questions[tenseQuizState.index];
   const allBtns = document.getElementById('t-options').querySelectorAll('button');
-  
+
   allBtns.forEach(b => {
     b.disabled = true;
     b.style.opacity = '0.7';
@@ -986,12 +986,12 @@ function checkTenseAnswer(selectedIndex, btnElement) {
     btnElement.style.background = 'rgba(239, 68, 68, 0.15)';
     btnElement.style.borderColor = 'var(--red)';
     btnElement.style.color = 'var(--red)';
-    
+
     allBtns[q.a].style.opacity = '1';
     allBtns[q.a].style.background = 'rgba(16, 185, 129, 0.15)';
     allBtns[q.a].style.borderColor = 'var(--green)';
     allBtns[q.a].style.color = 'var(--green)';
-    
+
     tenseQuizState.mistakes.push({
       tenseName: q.tenseName,
       q: q.q,
@@ -1039,14 +1039,14 @@ function finishTenseQuiz() {
     const stats = JSON.parse(localStorage.getItem('tenseQuizStats')) || { total: 0, correct: 0, mistakes: [] };
     stats.total += total;
     stats.correct += tenseQuizState.correct;
-    
+
     tenseQuizState.mistakes.forEach(m => {
       if (!stats.mistakes.find(existing => existing.q === m.q)) {
         stats.mistakes.unshift(m);
       }
     });
     stats.mistakes = stats.mistakes.slice(0, 30); // Keep top 30 mistakes
-    
+
     localStorage.setItem('tenseQuizStats', JSON.stringify(stats));
   }
 }
@@ -1054,7 +1054,7 @@ function finishTenseQuiz() {
 function loadTenseStats() {
   showScreen('tense-stats');
   const stats = JSON.parse(localStorage.getItem('tenseQuizStats')) || { total: 0, correct: 0, mistakes: [] };
-  
+
   document.getElementById('ts-total').textContent = stats.total;
   document.getElementById('ts-correct').textContent = stats.correct;
   document.getElementById('ts-acc').textContent = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) + '%' : '0%';

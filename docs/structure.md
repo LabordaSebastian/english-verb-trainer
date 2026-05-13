@@ -14,6 +14,7 @@ english-verb-trainer/
 │   ├── Makefile                # Convenience commands (make up, make test, etc.)
 │   ├── .env.example            # Environment variables template
 │   ├── .gitignore              # Git exclusions
+│   ├── .dockerignore           # Docker build exclusions (venv, cache, docs, etc.)
 │   ├── .pre-commit-config.yaml # Pre-commit hooks configuration
 │   ├── mkdocs.yml              # Documentation site configuration
 │   └── requirements.txt        # Python dependencies
@@ -61,9 +62,9 @@ english-verb-trainer/
 │       ├── workflows/
 │       │   ├── ci.yml          # Continuous Integration (lint + test)
 │       │   ├── cd.yml          # Continuous Delivery (release + Docker push)
-│       │   └── docs.yml        # Docs deployment to GitHub Pages
+│       │   ├── docs.yml        # Docs deployment to GitHub Pages
+│       │   └── dependabot.yml  # Automatic dependency updates
 │       │
-│       └── ISSUE_TEMPLATE/     # GitHub issue templates
 │
 ├── 📦 Docker
 │   └── entrypoint.sh           # Container startup script (seed + uvicorn)
@@ -101,14 +102,18 @@ dependencies = [...]
 ### 2. Docker Configuration
 
 **`Dockerfile`** — Builds the container image:
-- Multi-stage build for optimization
 - Non-root user for security
+- Python 3.12 slim base image
 - FastAPI + uvicorn to serve the app
+
+**`.dockerignore`** — Excludes development files from Docker build context:
+- Virtual environment, git history, caches, docs, tests
+- Reduces build context size and improves security
 
 **`docker-compose.yml`** — Orchestrates multiple containers:
 - PostgreSQL 15 service with persistent volume
 - FastAPI app service with health checks
-- Environment variable configuration
+- Credentials via environment variables (overridable via `.env`)
 
 **`entrypoint.sh`** — Container startup script:
 - Seeds database with 100 irregular verbs
@@ -184,6 +189,10 @@ Single-page application (SPA) with:
 - Builds MkDocs site
 - Pushes to GitHub Pages
 
+**`.github/dependabot.yml`** — Automatic dependency updates:
+- Weekly checks for pip, Docker, and GitHub Actions updates
+- Creates pull requests automatically
+
 ## Module Dependencies
 
 ```mermaid
@@ -245,11 +254,14 @@ Docker image:      ~200MB (Python 3.12 slim base)
 
 ## Environment Variables
 
-See `.env.example` for available variables:
+See `.env.example` for the required variable:
 
 ```bash
-DATABASE_URL=postgresql://user:pass@host:5432/db
+POSTGRES_PASSWORD=your_secure_password_here
+DATABASE_URL=postgresql://trainer_user:${POSTGRES_PASSWORD}@localhost:5432/english_trainer
 ```
+
+> **Note:** `DATABASE_URL` is **required** — the application will not start without it. The default was removed to prevent accidental credential exposure.
 
 Environment-specific configs can be managed via:
 - `.env` files (local development)

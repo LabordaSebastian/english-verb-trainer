@@ -20,7 +20,7 @@ A hybrid application (CLI + Web UI) for practicing English irregular verbs, buil
 | Python Version | 3.10+ |
 | Database | PostgreSQL 15 |
 | Test Coverage | 70%+ |
-| Docker Images | Multi-stage, non-root user |
+| Docker Security | Non-root user, slim base, .dockerignore |
 | CI/CD Platform | GitHub Actions |
 | API Framework | FastAPI |
 | CLI Framework | Typer |
@@ -64,8 +64,7 @@ graph LR
 ## 🔐 Key Features
 
 ✅ **Production-Ready**
-- Multi-stage Docker builds
-- Security best practices (non-root user, minimal attack surface)
+- Security best practices (non-root user, minimal attack surface, .dockerignore)
 - Type hints and static analysis
 
 ✅ **Comprehensive Testing**
@@ -76,7 +75,7 @@ graph LR
 ✅ **CI/CD Automation**
 - Automated linting and type checking
 - Test matrix across Python 3.10, 3.11, 3.12
-- Container image scanning
+- Dependency scanning via Dependabot (pip, Docker, Actions)
 - Automated releases with GitHub Container Registry
 
 ✅ **Developer Experience**

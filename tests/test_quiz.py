@@ -5,19 +5,21 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.database import Base
-from app.models import Verb, UserAttempt
-from app.quiz import get_verb_by_base, get_shuffled_verbs, validate_and_log, get_stats
-
+from app.models import UserAttempt, Verb
+from app.quiz import get_shuffled_verbs, get_stats, get_verb_by_base, validate_and_log
 
 # ─── fixtures ───────────────────────────────────────────────────────────────
+
 
 @pytest.fixture(scope="function")
 def db():
     """In-memory SQLite session for fast, isolated tests (no Postgres needed)."""
-    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
+    engine = create_engine(
+        "sqlite:///:memory:", connect_args={"check_same_thread": False}
+    )
     Base.metadata.create_all(bind=engine)
-    Session = sessionmaker(bind=engine)
-    session = Session()
+    session_factory = sessionmaker(bind=engine)
+    session = session_factory()
     yield session
     session.close()
     Base.metadata.drop_all(bind=engine)
@@ -36,7 +38,13 @@ def sample_verb(db):
 @pytest.fixture
 def verb_with_alt(db):
     """Insert LEARN with alternative forms (learned / learnt)."""
-    verb = Verb(base="learn", past="learned", participle="learned", past_alt="learnt", participle_alt="learnt")
+    verb = Verb(
+        base="learn",
+        past="learned",
+        participle="learned",
+        past_alt="learnt",
+        participle_alt="learnt",
+    )
     db.add(verb)
     db.commit()
     db.refresh(verb)
@@ -44,6 +52,7 @@ def verb_with_alt(db):
 
 
 # ─── Verb.check_answer ───────────────────────────────────────────────────────
+
 
 class TestVerbCheckAnswer:
     def test_correct_lowercase(self, sample_verb):
@@ -73,6 +82,7 @@ class TestVerbCheckAnswer:
 
 # ─── get_random_verb ─────────────────────────────────────────────────────────
 
+
 class TestGetVerbByBase:
     def test_returns_verb_by_base(self, db, sample_verb):
         result = get_verb_by_base(db, base="read")
@@ -96,14 +106,22 @@ class TestGetShuffledVerbs:
 
     def test_limit_respected(self, db):
         # Insert 3 verbs
-        for base, past, part in [("go", "went", "gone"), ("do", "did", "done"), ("run", "ran", "run")]:
+        for base, past, part in [
+            ("go", "went", "gone"),
+            ("do", "did", "done"),
+            ("run", "ran", "run"),
+        ]:
             db.add(Verb(base=base, past=past, participle=part))
         db.commit()
         result = get_shuffled_verbs(db, limit=2)
         assert len(result) == 2
 
     def test_no_duplicates_in_result(self, db):
-        for base, past, part in [("go", "went", "gone"), ("do", "did", "done"), ("run", "ran", "run")]:
+        for base, past, part in [
+            ("go", "went", "gone"),
+            ("do", "did", "done"),
+            ("run", "ran", "run"),
+        ]:
             db.add(Verb(base=base, past=past, participle=part))
         db.commit()
         result = get_shuffled_verbs(db)
@@ -112,6 +130,7 @@ class TestGetShuffledVerbs:
 
 
 # ─── validate_and_log ────────────────────────────────────────────────────────
+
 
 class TestValidateAndLog:
     def test_correct_answer_logged(self, db, sample_verb):
@@ -136,6 +155,7 @@ class TestValidateAndLog:
 
 # ─── get_stats ───────────────────────────────────────────────────────────────
 
+
 class TestGetStats:
     def test_empty_stats(self, db):
         stats = get_stats(db)
@@ -144,8 +164,8 @@ class TestGetStats:
         assert stats["accuracy"] == 0.0
 
     def test_stats_with_attempts(self, db, sample_verb):
-        validate_and_log(db, sample_verb, "read", "read")   # correct
-        validate_and_log(db, sample_verb, "readed", "read") # wrong
+        validate_and_log(db, sample_verb, "read", "read")  # correct
+        validate_and_log(db, sample_verb, "readed", "read")  # wrong
         stats = get_stats(db)
         assert stats["total"] == 2
         assert stats["correct"] == 1

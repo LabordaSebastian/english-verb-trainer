@@ -44,6 +44,12 @@ build/
 *.swp
 *.swo
 
+# Improvement plan (local working doc)
+IMPROVEMENT_PLAN.md
+
+# MkDocs output
+site/
+
 # OS
 .DS_Store
 Thumbs.db
