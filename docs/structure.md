@@ -127,7 +127,7 @@ dependencies = [...]
 ### 3. Application Modules
 
 #### `app/database.py`
-SQLAlchemy engine and session factory. Reads `DATABASE_URL` from environment.
+SQLAlchemy engine, session factory, and `run_migrations()` for schema management. Reads `DATABASE_URL` from environment.
 
 #### `app/models.py`
 Two ORM models:
@@ -155,9 +155,10 @@ Contains tuple of 100 irregular verbs and `seed_verbs()` function to populate th
 
 **`api/schemas.py`** — Pydantic models for request/response validation:
 - `QuizVerb` — Verb data (without correct answers)
-- `AttemptRequest` — User's submitted answer
+- `AttemptRequest` — User's submitted answer (validates `verb_id > 0`)
 - `AttemptResponse` — Result with correct answer
-- `StatsResponse` — User statistics
+- `HardestVerb` — Typed entry in the hardest-verbs ranking
+- `StatsResponse` — User statistics with typed `list[HardestVerb]`
 - `SeedResponse` — Seed operation result
 
 ### 5. Frontend (`static/index.html`)
