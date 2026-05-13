@@ -109,10 +109,7 @@ pip install -r requirements.txt
 Verify the app is working:
 
 ```bash
-# Should return 200 OK
-curl http://localhost:8000/health
-
-# Should list available verbs
+# Should list available verbs (seed first via docker compose or python main.py seed)
 curl http://localhost:8000/api/verbs/quiz?count=5
 ```
 

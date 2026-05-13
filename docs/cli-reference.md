@@ -116,7 +116,7 @@ $ python main.py quiz
 ❌  Cannot connect to PostgreSQL.
     Make sure the container is running:
 
-    cd terraform && terraform apply
+    docker compose up -d db
 ```
 
 ---

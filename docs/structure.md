@@ -42,7 +42,11 @@ english-verb-trainer/
 ├── 🧪 Testing
 │   ├── tests/
 │   │   ├── __init__.py
-│   │   └── test_quiz.py        # 18+ unit tests (in-memory SQLite)
+│   │   ├── conftest.py         # Shared fixtures (db, sample_verb, three_verbs)
+│   │   ├── test_api.py         # FastAPI endpoint integration tests (TestClient)
+│   │   ├── test_cli.py         # Typer CLI command tests (CliRunner)
+│   │   ├── test_quiz.py        # Unit tests for quiz logic
+│   │   └── test_seed.py        # Unit tests for seed function
 │   │
 │   └── .pytest_cache/          # Pytest cache (git ignored)
 │
@@ -151,7 +155,6 @@ Contains tuple of 100 irregular verbs and `seed_verbs()` function to populate th
 - `POST /api/attempts` — Submit an answer
 - `GET /api/stats` — View user statistics
 - `POST /api/seed` — Reload verb database
-- `GET /health` — Health check for load balancers
 
 **`api/schemas.py`** — Pydantic models for request/response validation:
 - `QuizVerb` — Verb data (without correct answers)
@@ -169,13 +172,13 @@ Single-page application (SPA) with:
 - Dark mode CSS
 - Communicates with FastAPI backend via REST
 
-### 6. Testing (`tests/test_quiz.py`)
+### 6. Testing (`tests/`)
 
-18+ unit tests using:
+52 unit/integration tests across 4 test files:
 - **In-memory SQLite** for isolation (no PostgreSQL needed)
 - **pytest** as the test runner
-- **Fixtures** for test data
-- Tests cover: validation, shuffling, logging, statistics
+- **Fixtures** in `conftest.py` for shared test data
+- Tests cover: validation, shuffling, logging, statistics, API endpoints, CLI commands, seed function
 
 ### 7. CI/CD Workflows
 
@@ -214,7 +217,7 @@ graph TB
     F --> D
     F --> G["api/schemas.py<br/>(Pydantic)"]
 
-    H["tests/test_quiz.py<br/>(pytest)"] --> C
+    H["tests/*.py<br/>(pytest)"] --> C
     H --> D
     H --> B
 
@@ -230,7 +233,7 @@ Contains business logic, database models, and utilities. **Single source of trut
 Exposes `app/` functionality as REST endpoints. Can be replaced with another interface (e.g., GraphQL) without touching core logic.
 
 ### `tests/` — Quality Assurance
-Unit tests that validate business logic in isolation. Uses in-memory SQLite.
+Unit and integration tests using in-memory SQLite for fast isolation.
 
 ### `docs/` — Documentation
 MkDocs source files. Auto-deployed to GitHub Pages on each commit to `main`.
