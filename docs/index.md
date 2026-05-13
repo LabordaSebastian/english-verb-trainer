@@ -20,7 +20,7 @@ A hybrid application (CLI + Web UI) for practicing English irregular verbs, buil
 | Python Version | 3.10+ |
 | Database | PostgreSQL 15 |
 | Test Coverage | 70%+ |
-| Docker Security | Non-root user, slim base, .dockerignore |
+| Docker Security | Non-root user, slim base |
 | CI/CD Platform | GitHub Actions |
 | API Framework | FastAPI |
 | CLI Framework | Typer |

@@ -21,7 +21,7 @@ High-level system design and technology choices.
 │  - GET /api/verbs    │  - quiz                              │
 │  - POST /api/attempts│  - stats                             │
 │  - GET /api/stats    │  - seed                              │
-│  - GET /health       │                                      │
+│  - GET /api/seed     │                                      │
 └──────────────────────┬──────────────────────────────────────┘
                        │
                        ▼
@@ -297,4 +297,4 @@ Currently **minimal**. Future phases will add:
 - Application metrics (Prometheus)
 - Structured logging (JSON format)
 - Request tracing (OpenTelemetry)
-- Health checks (`GET /health`)
+- Health checks (planned)
