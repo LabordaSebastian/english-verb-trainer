@@ -14,7 +14,7 @@ User's submitted quiz answer.
 
 ```python
 class AttemptRequest(BaseModel):
-    verb_id: int
+    verb_id: int = Field(..., gt=0)
     past_given: str
     participle_given: str
 ```
@@ -29,12 +29,13 @@ class AttemptRequest(BaseModel):
 ```
 
 **Validation**:
-- `verb_id` must be an integer (auto-converted from JSON number)
+- `verb_id` must be a positive integer (`gt=0`)
 - `past_given` must be a string (required)
 - `participle_given` must be a string (required)
 
 **Errors if**:
 - Missing any required field → 422 Unprocessable Entity
+- `verb_id <= 0` → 422 (must be positive)
 - `verb_id` is not a number → auto-conversion fails
 
 ---
@@ -127,12 +128,17 @@ class AttemptResponse(BaseModel):
 User statistics and progress.
 
 ```python
+class HardestVerb(BaseModel):
+    verb: str
+    errors: int
+
+
 class StatsResponse(BaseModel):
     total: int
     correct: int
     wrong: int
     accuracy: float
-    hardest_verbs: list[dict]
+    hardest_verbs: list[HardestVerb]
 ```
 
 **Example**:
@@ -155,7 +161,7 @@ class StatsResponse(BaseModel):
 - `correct` — Number of correct answers
 - `wrong` — Number of incorrect answers
 - `accuracy` — Percentage (0-100), rounded to 1 decimal
-- `hardest_verbs` — List of up to 5 verbs with most errors
+- `hardest_verbs` — List of `HardestVerb` objects (up to 5 verbs with most errors)
 
 **Calculations**:
 ```python
@@ -210,19 +216,15 @@ In JSON:
 }
 ```
 
-### List Types
+### Typed Models
 
 ```python
-hardest_verbs: list[dict]  # List of dictionaries
+hardest_verbs: list[HardestVerb]  # List of typed objects
 ```
 
-In Python:
-```python
-[
-    {"verb": "go", "errors": 5},
-    {"verb": "take", "errors": 3}
-]
-```
+Each `HardestVerb` has:
+- `verb: str` — The verb's base form
+- `errors: int` — Number of incorrect attempts
 
 ### Automatic Type Conversion
 
@@ -238,27 +240,37 @@ Pydantic automatically converts JSON types to Python types:
 
 ---
 
-## Custom Validators (Future)
+## Validators
 
-Currently schemas use default validation. Future versions might add:
+### Built-in Field Constraints
 
 ```python
-from pydantic import validator
+from pydantic import Field
 
 class AttemptRequest(BaseModel):
-    verb_id: int
+    verb_id: int = Field(..., gt=0)  # Must be positive
+    past_given: str
+    participle_given: str
+```
+
+Using `Field(gt=0)` is equivalent to a custom validator but more concise — Pydantic enforces it automatically.
+
+### Future Validators
+
+Potential additions:
+
+```python
+from pydantic import field_validator
+
+class AttemptRequest(BaseModel):
+    verb_id: int = Field(..., gt=0)
     past_given: str
     participle_given: str
 
-    @validator("past_given", "participle_given")
-    def strip_whitespace(cls, v):
-        return v.strip() if isinstance(v, str) else v
-
-    @validator("verb_id")
-    def verb_id_positive(cls, v):
-        if v <= 0:
-            raise ValueError("verb_id must be positive")
-        return v
+    @field_validator("past_given", "participle_given")
+    @classmethod
+    def strip_whitespace(cls, v: str) -> str:
+        return v.strip()
 ```
 
 ---
