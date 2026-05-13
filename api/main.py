@@ -5,7 +5,6 @@ from pathlib import Path
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from api.schemas import (
@@ -15,23 +14,19 @@ from api.schemas import (
     SeedResponse,
     StatsResponse,
 )
-from app.database import SessionLocal, engine
-from app.models import Base, Verb
+from app.database import get_db, run_migrations
+from app.models import Verb
 from app.quiz import get_shuffled_verbs, get_stats, validate_and_log
 
-# ── DB init (same safe migration as CLI) ─────────────────────────────────────
+# ── DB init ───────────────────────────────────────────────────────────────────
 
-Base.metadata.create_all(bind=engine)
-with engine.connect() as _conn:
-    exists = _conn.execute(
-        text(
-            "SELECT 1 FROM information_schema.columns "
-            "WHERE table_name='verbs' AND column_name='meaning'"
-        )
-    ).fetchone()
-    if not exists:
-        _conn.execute(text("ALTER TABLE verbs ADD COLUMN meaning VARCHAR(150)"))
-        _conn.commit()
+try:
+    run_migrations()
+except Exception as e:
+    import logging
+
+    logging.critical("Database initialisation failed: %s", e)
+    raise
 
 # ── App ───────────────────────────────────────────────────────────────────────
 
@@ -42,17 +37,6 @@ app = FastAPI(
 )
 
 STATIC_DIR = Path(__file__).parent.parent / "static"
-
-
-# ── Dependency ────────────────────────────────────────────────────────────────
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 # ── API routes ────────────────────────────────────────────────────────────────
@@ -103,10 +87,17 @@ def get_stats_endpoint(db: Session = Depends(get_db)):
 
 @app.post("/api/seed", response_model=SeedResponse, tags=["admin"])
 def seed_endpoint(db: Session = Depends(get_db)):
-    """Seed or refresh the 50 irregular verbs in the database."""
+    """Seed or refresh the 100 irregular verbs in the database."""
+    from sqlalchemy.exc import IntegrityError
+
     from app.seed import seed_verbs
 
-    added, updated = seed_verbs(db)
+    try:
+        added, updated = seed_verbs(db)
+    except IntegrityError:
+        raise HTTPException(
+            status_code=409, detail="Database integrity error during seed"
+        ) from None
     return SeedResponse(added=added, updated=updated)
 
 

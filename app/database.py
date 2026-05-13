@@ -6,7 +6,7 @@ Reads DATABASE_URL from the .env file (or environment variables).
 import os
 
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 load_dotenv()
@@ -21,7 +21,7 @@ if not DATABASE_URL:
 engine = create_engine(
     DATABASE_URL,
     echo=False,
-    connect_args={"connect_timeout": 10},  # fail fast instead of hanging
+    connect_args={"connect_timeout": 10},
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -36,3 +36,18 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def run_migrations():
+    """Create tables and run safe schema migrations."""
+    Base.metadata.create_all(bind=engine)
+    with engine.connect() as conn:
+        exists = conn.execute(
+            text(
+                "SELECT 1 FROM information_schema.columns "
+                "WHERE table_name='verbs' AND column_name='meaning'"
+            )
+        ).fetchone()
+        if not exists:
+            conn.execute(text("ALTER TABLE verbs ADD COLUMN meaning VARCHAR(150)"))
+            conn.commit()
