@@ -73,10 +73,11 @@ graph LR
 - Coverage reporting
 
 ✅ **CI/CD Automation**
-- Automated linting and type checking
+- Automated linting, type checking, and format verification
+- Security scanning (Bandit SAST + pip-audit + Trivy)
 - Test matrix across Python 3.10, 3.11, 3.12
 - Dependency scanning via Dependabot (pip, Docker, Actions)
-- Automated releases with GitHub Container Registry
+- Automated releases with GitHub Container Registry + provenance attestation
 
 ✅ **Developer Experience**
 - Pre-commit hooks for instant feedback

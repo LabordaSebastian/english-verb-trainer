@@ -60,8 +60,11 @@ python -m venv .venv
 
 ```bash
 pip install --upgrade pip setuptools wheel
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 ```
+
+> `requirements.txt` is a convenience alias that points to `requirements-dev.txt`.
+> Production deployments should use `requirements-prod.txt` (pinned versions).
 
 ### 4. Install Pre-commit Hooks
 
@@ -174,11 +177,15 @@ python main.py seed
 
 ```bash
 make help              # See all commands
+make setup             # Create venv + install all dependencies
 make up                # Start docker-compose
-make down              # Stop docker-compose
+make stop              # Stop containers (keep volumes)
+make destroy           # Stop containers and remove volumes
 make test              # Run tests
-make lint              # Run linting
+make lint              # Run ruff linter
 make quiz              # Start CLI quiz
+make docs-serve        # Serve MkDocs locally with live reload
+make docs-build        # Build static documentation site
 make clean             # Remove venv and cache
 ```
 
@@ -203,13 +210,18 @@ make clean             # Remove venv and cache
 ├── static/                 # Frontend
 │   └── index.html
 ├── docs/                   # Documentation
-├── .env                    # Environment (git ignored)
-├── requirements.txt        # Dependencies
-├── pyproject.toml          # Configuration
-├── Dockerfile              # Container image (non-root user)
-├── .dockerignore           # Build exclusions
-├── docker-compose.yml      # Multi-container setup
-└── Makefile                # Convenience tasks
+├── .env                        # Environment (git ignored)
+├── requirements.txt            # Dev deps (alias → requirements-dev.txt)
+├── requirements-dev.txt        # Dev + testing + docs dependencies
+├── requirements-prod.txt       # Pinned production dependencies
+├── pyproject.toml              # Configuration
+├── Dockerfile                  # Container image (non-root user)
+├── .dockerignore               # Build exclusions
+├── docker-compose.yml          # Multi-container setup
+├── Makefile                    # Convenience tasks
+└── .github/
+    ├── workflows/              # CI/CD pipeline definitions
+    └── dependabot.yml          # Automatic dependency updates
 ```
 
 ---
@@ -298,13 +310,15 @@ Minimum coverage: 70%
 ### Add a New Dependency
 
 ```bash
-# Add to requirements.txt manually or:
+# Add to the appropriate requirements file:
 pip install package_name
-pip freeze > requirements.txt
+pip freeze | grep package_name >> requirements-prod.txt
+# Or for dev-only tools:
+pip freeze | grep package_name >> requirements-dev.txt
 
 # Then commit
-git add requirements.txt
-git commit -m "chore: add package_name dependency"
+git add requirements-*.txt
+git commit -m "chore(deps): add package_name"
 ```
 
 ### Create a New Test
