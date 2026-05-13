@@ -1,55 +1,7 @@
 """Unit tests for quiz logic using an in-memory SQLite database."""
 
-import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-from app.database import Base
-from app.models import UserAttempt, Verb
+from app.models import UserAttempt
 from app.quiz import get_shuffled_verbs, get_stats, get_verb_by_base, validate_and_log
-
-# ─── fixtures ───────────────────────────────────────────────────────────────
-
-
-@pytest.fixture(scope="function")
-def db():
-    """In-memory SQLite session for fast, isolated tests (no Postgres needed)."""
-    engine = create_engine(
-        "sqlite:///:memory:", connect_args={"check_same_thread": False}
-    )
-    Base.metadata.create_all(bind=engine)
-    session_factory = sessionmaker(bind=engine)
-    session = session_factory()
-    yield session
-    session.close()
-    Base.metadata.drop_all(bind=engine)
-
-
-@pytest.fixture
-def sample_verb(db):
-    """Insert the verb READ into the test DB."""
-    verb = Verb(base="read", past="read", participle="read")
-    db.add(verb)
-    db.commit()
-    db.refresh(verb)
-    return verb
-
-
-@pytest.fixture
-def verb_with_alt(db):
-    """Insert LEARN with alternative forms (learned / learnt)."""
-    verb = Verb(
-        base="learn",
-        past="learned",
-        participle="learned",
-        past_alt="learnt",
-        participle_alt="learnt",
-    )
-    db.add(verb)
-    db.commit()
-    db.refresh(verb)
-    return verb
-
 
 # ─── Verb.check_answer ───────────────────────────────────────────────────────
 
@@ -104,29 +56,24 @@ class TestGetShuffledVerbs:
         assert len(result) == 1
         assert result[0].base == "read"
 
-    def test_limit_respected(self, db):
-        # Insert 3 verbs
-        for base, past, part in [
-            ("go", "went", "gone"),
-            ("do", "did", "done"),
-            ("run", "ran", "run"),
-        ]:
-            db.add(Verb(base=base, past=past, participle=part))
-        db.commit()
+    def test_limit_respected(self, db, three_verbs):
         result = get_shuffled_verbs(db, limit=2)
         assert len(result) == 2
 
-    def test_no_duplicates_in_result(self, db):
-        for base, past, part in [
-            ("go", "went", "gone"),
-            ("do", "did", "done"),
-            ("run", "ran", "run"),
-        ]:
-            db.add(Verb(base=base, past=past, participle=part))
-        db.commit()
+    def test_no_duplicates_in_result(self, db, three_verbs):
         result = get_shuffled_verbs(db)
         bases = [v.base for v in result]
         assert len(bases) == len(set(bases)), "Duplicate verbs found in shuffled list"
+
+    def test_get_verb_by_base_case_insensitive(self, db, three_verbs):
+        result = get_verb_by_base(db, base="GO")
+        assert result is not None
+        assert result.base == "go"
+
+    def test_get_verb_by_base_whitespace(self, db, three_verbs):
+        result = get_verb_by_base(db, base="  run  ".strip())
+        assert result is not None
+        assert result.base == "run"
 
 
 # ─── validate_and_log ────────────────────────────────────────────────────────
@@ -151,6 +98,13 @@ class TestValidateAndLog:
         validate_and_log(db, sample_verb, "readed", "read")
         count = db.query(UserAttempt).count()
         assert count == 2
+
+    def test_whitespace_input_stripped(self, db, sample_verb):
+        result = validate_and_log(db, sample_verb, "  read  ", "  read  ")
+        assert result is True
+        attempt = db.query(UserAttempt).first()
+        assert attempt.past_given == "read"
+        assert attempt.participle_given == "read"
 
 
 # ─── get_stats ───────────────────────────────────────────────────────────────
