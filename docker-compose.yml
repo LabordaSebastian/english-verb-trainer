@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_DB: english_trainer
       POSTGRES_USER: trainer_user
-      POSTGRES_PASSWORD: PLACEHOLDER_PASSWORD
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-PLACEHOLDER_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -23,7 +23,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://trainer_user:PLACEHOLDER_PASSWORD@db:5432/english_trainer
+      DATABASE_URL: postgresql://trainer_user:${POSTGRES_PASSWORD:-PLACEHOLDER_PASSWORD}@db:5432/english_trainer
     depends_on:
       db:
         condition: service_healthy

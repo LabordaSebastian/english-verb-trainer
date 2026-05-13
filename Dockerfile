@@ -15,9 +15,11 @@ COPY entrypoint.sh .
 
 RUN chmod +x entrypoint.sh
 
-# Default DATABASE_URL — override via environment / docker-compose
-ENV DATABASE_URL=postgresql://trainer_user:PLACEHOLDER_PASSWORD@db:5432/english_trainer
+# Create non-root user for security
+RUN addgroup --system app && adduser --system --ingroup app app
 
 EXPOSE 8000
+
+USER app
 
 ENTRYPOINT ["./entrypoint.sh"]

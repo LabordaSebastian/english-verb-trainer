@@ -7,16 +7,21 @@ import os
 
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://trainer_user:PLACEHOLDER_PASSWORD@localhost:5432/english_trainer")
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise ValueError(
+        "DATABASE_URL environment variable is not set. "
+        "Create a .env file with DATABASE_URL=postgresql://user:pass@host:5432/dbname"
+    )
 
 engine = create_engine(
     DATABASE_URL,
     echo=False,
-    connect_args={"connect_timeout": 10},   # fail fast instead of hanging
+    connect_args={"connect_timeout": 10},  # fail fast instead of hanging
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

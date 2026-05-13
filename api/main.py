@@ -8,9 +8,6 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.database import SessionLocal, engine
-from app.models import Base, Verb
-from app.quiz import get_shuffled_verbs, get_stats, validate_and_log
 from api.schemas import (
     AttemptRequest,
     AttemptResponse,
@@ -18,15 +15,20 @@ from api.schemas import (
     SeedResponse,
     StatsResponse,
 )
+from app.database import SessionLocal, engine
+from app.models import Base, Verb
+from app.quiz import get_shuffled_verbs, get_stats, validate_and_log
 
 # ── DB init (same safe migration as CLI) ─────────────────────────────────────
 
 Base.metadata.create_all(bind=engine)
 with engine.connect() as _conn:
-    exists = _conn.execute(text(
-        "SELECT 1 FROM information_schema.columns "
-        "WHERE table_name='verbs' AND column_name='meaning'"
-    )).fetchone()
+    exists = _conn.execute(
+        text(
+            "SELECT 1 FROM information_schema.columns "
+            "WHERE table_name='verbs' AND column_name='meaning'"
+        )
+    ).fetchone()
     if not exists:
         _conn.execute(text("ALTER TABLE verbs ADD COLUMN meaning VARCHAR(150)"))
         _conn.commit()
@@ -44,6 +46,7 @@ STATIC_DIR = Path(__file__).parent.parent / "static"
 
 # ── Dependency ────────────────────────────────────────────────────────────────
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -53,6 +56,7 @@ def get_db():
 
 
 # ── API routes ────────────────────────────────────────────────────────────────
+
 
 @app.get("/api/verbs/quiz", response_model=list[QuizVerb], tags=["quiz"])
 def get_quiz_verbs(count: int = 10, db: Session = Depends(get_db)):
@@ -66,14 +70,20 @@ def submit_attempt(attempt: AttemptRequest, db: Session = Depends(get_db)):
     """Validate a user's answer, log the attempt, and return the result."""
     verb = db.query(Verb).filter(Verb.id == attempt.verb_id).first()
     if not verb:
-        raise HTTPException(status_code=404, detail=f"Verb id={attempt.verb_id} not found")
+        raise HTTPException(
+            status_code=404, detail=f"Verb id={attempt.verb_id} not found"
+        )
 
     correct = validate_and_log(db, verb, attempt.past_given, attempt.participle_given)
 
     also_accepted = None
     if verb.past_alt or verb.participle_alt:
         past_display = f"{verb.past} / {verb.past_alt}" if verb.past_alt else verb.past
-        part_display = f"{verb.participle} / {verb.participle_alt}" if verb.participle_alt else verb.participle
+        part_display = (
+            f"{verb.participle} / {verb.participle_alt}"
+            if verb.participle_alt
+            else verb.participle
+        )
         also_accepted = f"{past_display} → {part_display}"
 
     return AttemptResponse(
@@ -95,11 +105,13 @@ def get_stats_endpoint(db: Session = Depends(get_db)):
 def seed_endpoint(db: Session = Depends(get_db)):
     """Seed or refresh the 50 irregular verbs in the database."""
     from app.seed import seed_verbs
+
     added, updated = seed_verbs(db)
     return SeedResponse(added=added, updated=updated)
 
 
 # ── SPA fallback — must be registered LAST ───────────────────────────────────
+
 
 @app.get("/", include_in_schema=False)
 def serve_spa():

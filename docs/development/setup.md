@@ -76,8 +76,10 @@ This automatically runs linting/type-checking before each commit.
 
 ```bash
 cp .env.example .env
-# Edit .env if needed (defaults usually work)
+# Edit .env with your PostgreSQL password
 ```
+
+> **Important:** `DATABASE_URL` is **required** — the application will not start without it. The `.env` file is automatically loaded by docker-compose and python-dotenv.
 
 ### 6. Start PostgreSQL (Docker)
 
@@ -204,7 +206,8 @@ make clean             # Remove venv and cache
 ├── .env                    # Environment (git ignored)
 ├── requirements.txt        # Dependencies
 ├── pyproject.toml          # Configuration
-├── Dockerfile              # Container image
+├── Dockerfile              # Container image (non-root user)
+├── .dockerignore           # Build exclusions
 ├── docker-compose.yml      # Multi-container setup
 └── Makefile                # Convenience tasks
 ```

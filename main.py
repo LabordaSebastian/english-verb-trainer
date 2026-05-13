@@ -7,13 +7,11 @@ Commands:
   python main.py stats         Show your progress summary
 """
 
-from typing import Optional
-
 import typer
 from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 
-from app.database import engine, SessionLocal
+from app.database import SessionLocal, engine
 from app.models import Base
 
 app = typer.Typer(
@@ -39,14 +37,14 @@ def _init_db():
         # Safe migration: only ALTER TABLE if the column doesn't exist yet.
         # Using information_schema avoids acquiring a table lock on every startup.
         with engine.connect() as conn:
-            exists = conn.execute(text(
-                "SELECT 1 FROM information_schema.columns "
-                "WHERE table_name='verbs' AND column_name='meaning'"
-            )).fetchone()
+            exists = conn.execute(
+                text(
+                    "SELECT 1 FROM information_schema.columns "
+                    "WHERE table_name='verbs' AND column_name='meaning'"
+                )
+            ).fetchone()
             if not exists:
-                conn.execute(text(
-                    "ALTER TABLE verbs ADD COLUMN meaning VARCHAR(150)"
-                ))
+                conn.execute(text("ALTER TABLE verbs ADD COLUMN meaning VARCHAR(150)"))
                 conn.commit()
     except OperationalError as e:
         typer.echo(
@@ -57,7 +55,6 @@ def _init_db():
             err=True,
         )
         raise typer.Exit(code=1)
-
 
 
 def _get_db():
@@ -71,6 +68,7 @@ def _get_db():
 
 # ─── commands ───────────────────────────────────────────────────────────────
 
+
 @app.command()
 def seed():
     """Load the 50 most common irregular verbs into the database."""
@@ -78,6 +76,7 @@ def seed():
     db = SessionLocal()
     try:
         from app.seed import seed_verbs
+
         added, updated = seed_verbs(db)
         if added:
             typer.echo(f"\n✅  {added} verb(s) added, {updated} updated.\n")
@@ -89,7 +88,7 @@ def seed():
 
 @app.command()
 def quiz(
-    verb: Optional[str] = typer.Option(
+    verb: str | None = typer.Option(
         None, "--verb", "-v", help="Practice a specific base verb (e.g. --verb read)"
     ),
     rounds: int = typer.Option(
@@ -100,12 +99,13 @@ def quiz(
     _init_db()
     db = SessionLocal()
     try:
-        from app.quiz import get_verb_by_base, get_shuffled_verbs, validate_and_log
+        from app.quiz import get_shuffled_verbs, get_verb_by_base, validate_and_log
 
         typer.echo(BANNER)
 
         # Check DB has verbs
         from app.models import Verb
+
         total_verbs = db.query(Verb).count()
         if total_verbs == 0:
             typer.echo("⚠️  No verbs found. Run:  python main.py seed\n")
@@ -144,7 +144,9 @@ def quiz(
             typer.echo(f"  Base verb:  {v.base.upper()}")
             if v.meaning:
                 typer.echo(f"  Meaning:    {v.meaning}")
-            typer.echo("  Type the  Past Tense  and  Past Participle  separated by a space.")
+            typer.echo(
+                "  Type the  Past Tense  and  Past Participle  separated by a space."
+            )
 
             raw = typer.prompt("  Your answer").strip()
 
@@ -163,20 +165,32 @@ def quiz(
 
             if is_correct:
                 correct_count += 1
-                typer.echo(f"\n  ✅  Correct!  {v.base.upper()} → {past_in.lower()} → {part_in.lower()}")
+                typer.echo(
+                    f"\n  ✅  Correct!  {v.base.upper()} → {past_in.lower()} → {part_in.lower()}"
+                )
             else:
-                typer.echo(f"\n  ❌  Wrong!    {v.base.upper()} → {v.past} → {v.participle}")
+                typer.echo(
+                    f"\n  ❌  Wrong!    {v.base.upper()} → {v.past} → {v.participle}"
+                )
                 if v.past_alt or v.participle_alt:
                     past_display = f"{v.past} / {v.past_alt}" if v.past_alt else v.past
-                    part_display = f"{v.participle} / {v.participle_alt}" if v.participle_alt else v.participle
-                    typer.echo(f"             (also accepted: {past_display} → {part_display})")
+                    part_display = (
+                        f"{v.participle} / {v.participle_alt}"
+                        if v.participle_alt
+                        else v.participle
+                    )
+                    typer.echo(
+                        f"             (also accepted: {past_display} → {part_display})"
+                    )
                 typer.echo(f"             You answered: {past_in} → {part_in}")
 
             typer.echo("─" * 48)
 
         if question_count > 0:
             pct = round((correct_count / question_count) * 100, 1)
-            typer.echo(f"\n  📊  Result: {correct_count}/{question_count} correct ({pct}%)\n")
+            typer.echo(
+                f"\n  📊  Result: {correct_count}/{question_count} correct ({pct}%)\n"
+            )
 
     finally:
         db.close()
@@ -201,7 +215,9 @@ def stats():
         if data["hardest_verbs"]:
             typer.echo("  🔥  Hardest verbs (most mistakes):")
             for i, entry in enumerate(data["hardest_verbs"], 1):
-                typer.echo(f"      {i}. {entry['verb'].upper():<15} — {entry['errors']} error(s)")
+                typer.echo(
+                    f"      {i}. {entry['verb'].upper():<15} — {entry['errors']} error(s)"
+                )
         else:
             typer.echo("  🎉  No mistakes yet! Keep it up.")
 
