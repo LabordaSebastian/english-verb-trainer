@@ -3,15 +3,16 @@ name: Deploy Documentation
 on:
   push:
     branches: [main]
-    paths:
-      - "docs/**"
-      - "mkdocs.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -32,14 +33,10 @@ jobs:
           cache: "pip"
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements-dev.txt
 
       - name: Build documentation
-        run: |
-          # Inject production site_url for correct canonical URLs on GitHub Pages
-          sed -i '/^site_name:/a\site_url: https://labordasebastian.github.io/english-verb-trainer/' mkdocs.yml
-          mkdocs build
+        run: mkdocs build
 
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v3

@@ -1,4 +1,4 @@
-.PHONY: setup quiz stats test clean destroy help
+.PHONY: setup quiz stats test lint clean help docs-serve docs-build up stop destroy
 
 PYTHON := .venv/bin/python
 PIP    := .venv/bin/pip
@@ -8,21 +8,37 @@ help:
 	@echo ""
 	@echo "  English Irregular Verb Trainer — Makefile"
 	@echo ""
-	@echo "  make up       Start app and DB with Docker Compose"
-	@echo "  make down     Stop and remove containers and volumes"
-	@echo "  make quiz     Start the quiz locally (requires local setup)"
-	@echo "  make stats    Show your progress locally"
-	@echo "  make test     Run pytest"
-	@echo "  make lint     Run ruff linter"
-	@echo "  make clean    Remove venv and cache"
+	@echo "  setup       Create venv and install dependencies"
+	@echo "  up          Start app and DB with Docker Compose"
+	@echo "  stop        Stop Docker Compose (keep volumes)"
+	@echo "  destroy     Stop and remove containers and volumes"
+	@echo "  quiz        Start the quiz locally"
+	@echo "  stats       Show your progress locally"
+	@echo "  test        Run pytest"
+	@echo "  lint        Run ruff linter"
+	@echo "  docs-serve  Serve MkDocs documentation locally"
+	@echo "  docs-build  Build static documentation site"
+	@echo "  clean       Remove venv and cache"
 	@echo ""
+
+## setup: Create virtual environment and install all dependencies
+setup:
+	python3 -m venv .venv
+	$(PIP) install --upgrade pip setuptools wheel
+	$(PIP) install -r requirements-dev.txt
+	$(PIP) install pre-commit
+	pre-commit install
 
 ## up: Start everything with Docker Compose
 up:
 	docker compose up -d
 
-## down: Stop everything and remove DB volume
-down:
+## stop: Stop containers without removing volumes
+stop:
+	docker compose down
+
+## destroy: Stop containers and remove volumes
+destroy:
 	docker compose down -v
 
 ## quiz: Launch the quiz locally
@@ -41,7 +57,15 @@ test:
 lint:
 	$(PYTHON) -m ruff check .
 
+## docs-serve: Serve documentation locally with live reload
+docs-serve:
+	$(PYTHON) -m mkdocs serve
+
+## docs-build: Build static documentation site
+docs-build:
+	$(PYTHON) -m mkdocs build
+
 ## clean: Remove venv and Python cache
 clean:
-	rm -rf .venv __pycache__ .pytest_cache
+	rm -rf .venv __pycache__ .pytest_cache htmlcov coverage.xml
 	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
