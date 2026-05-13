@@ -16,8 +16,10 @@ english-verb-trainer/
 │   ├── .gitignore              # Git exclusions
 │   ├── .dockerignore           # Docker build exclusions (venv, cache, docs, etc.)
 │   ├── .pre-commit-config.yaml # Pre-commit hooks configuration
-│   ├── mkdocs.yml              # Documentation site configuration
-│   └── requirements.txt        # Python dependencies
+│   ├── mkdocs.yml              # Documentation site configuration (site_url set)
+│   ├── requirements.txt        # Dev dependencies (includes requirements-prod.txt)
+│   ├── requirements-prod.txt   # Pinned production dependencies
+│   └── requirements-dev.txt    # Dev + docs dependencies
 │
 ├── 📁 Application Code
 │   ├── main.py                 # CLI entry point (Typer app)
@@ -65,14 +67,17 @@ english-verb-trainer/
 │       │   ├── docs.yml        # Docs deployment to GitHub Pages
 │       │   └── dependabot.yml  # Automatic dependency updates
 │       │
+│       └── ISSUE_TEMPLATE/
+│           ├── bug_report.md       # Bug report template
+│           └── feature_request.md  # Feature request template
 │
 ├── 📦 Docker
 │   └── entrypoint.sh           # Container startup script (seed + uvicorn)
 │
-├── 📄 Metadata
+├── 📄 Metadata & Licensing
 │   ├── README.md               # Main repository README
 │   ├── LICENSE                 # MIT license
-│   └── CHANGELOG.md            # Version history
+│   └── CHANGELOG.md            # Version history (Keep a Changelog)
 │
 └── 📁 Cache/Build (git ignored)
     ├── .venv/                  # Python virtual environment
@@ -174,20 +179,21 @@ Single-page application (SPA) with:
 ### 7. CI/CD Workflows
 
 **`.github/workflows/ci.yml`** — Runs on every push/PR:
-- Lint with ruff
-- Type check with mypy
-- Run pytest with coverage
-- Test matrix: Python 3.10, 3.11, 3.12
+- Lint with ruff + format check
+- Security scan with Bandit (SAST) + pip-audit (dependencies)
+- Run pytest with coverage across Python 3.10, 3.11, 3.12
+- Concurrency: cancels stale runs on the same branch
 
 **`.github/workflows/cd.yml`** — Runs on version tags (v1.0.0):
-- Run tests again (safety)
-- Build Docker image
-- Push to GitHub Container Registry
-- Create GitHub Release with changelog
+- Run tests (safety gate)
+- Vulnerability scan with Trivy (filesystem + Docker image)
+- Build Docker image with provenance attestation
+- Push to GitHub Container Registry with semver + SHA tags
+- Create GitHub Release with auto-generated changelog
 
-**`.github/workflows/docs.yml`** — Deploys documentation:
-- Builds MkDocs site
-- Pushes to GitHub Pages
+**`.github/workflows/docs.yml`** — Builds and deploys MkDocs documentation:
+- Triggers on all pushes to main (not just docs/ changes)
+- Deploys to GitHub Pages via `actions/deploy-pages@v4`
 
 **`.github/dependabot.yml`** — Automatic dependency updates:
 - Weekly checks for pip, Docker, and GitHub Actions updates
@@ -228,8 +234,8 @@ Unit tests that validate business logic in isolation. Uses in-memory SQLite.
 ### `docs/` — Documentation
 MkDocs source files. Auto-deployed to GitHub Pages on each commit to `main`.
 
-### `.github/workflows/` — Automation
-GitHub Actions workflows for CI, CD, and documentation deployment.
+### `.github/` — Automation
+Contains workflows (CI/CD/docs), Dependabot config, and issue templates for GitHub.
 
 ## File Naming Conventions
 
