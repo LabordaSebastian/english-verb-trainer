@@ -23,8 +23,11 @@ target-version = "py310"
 exclude = [".git", "__pycache__", ".venv", ".pytest_cache", ".ruff_cache"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "N", "W", "UP"]
-ignore = ["E501"]  # Line too long (handled by formatter)
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM", "C4"]
+ignore = [
+    "E501",  # Line too long (handled by formatter)
+    "B008",  # Depends() in FastAPI is not a regular function call
+]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -68,3 +71,7 @@ exclude_lines = [
     "if TYPE_CHECKING:",
 ]
 fail_under = 70
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv"]
+skips = ["B101"]  # Allow assert statements

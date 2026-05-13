@@ -47,6 +47,9 @@ build/
 # Improvement plan (local working doc)
 IMPROVEMENT_PLAN.md
 
+# Requirements lock files (if generated)
+requirements-lock.txt
+
 # MkDocs output
 site/
 

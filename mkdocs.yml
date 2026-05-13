@@ -1,6 +1,7 @@
 site_name: English Verb Trainer — DevOps Docs
 site_description: Complete technical documentation for the English Irregular Verb Trainer
 site_author: Sebastian Laborda
+site_url: https://labordasebastian.github.io/english-verb-trainer/
 
 repo_url: https://github.com/LabordaSebastian/english-verb-trainer
 repo_name: LabordaSebastian/english-verb-trainer

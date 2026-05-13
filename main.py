@@ -50,11 +50,11 @@ def _init_db():
         typer.echo(
             "\n❌  Cannot connect to PostgreSQL.\n"
             "    Make sure the container is running:\n\n"
-            "      cd terraform && terraform apply\n\n"
+            "      docker compose up -d db\n\n"
             f"    Error: {e}\n",
             err=True,
         )
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from None
 
 
 def _get_db():
