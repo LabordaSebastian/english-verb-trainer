@@ -245,7 +245,7 @@ The CLI reads these environment variables (if set):
 
 | Variable | Default | Example |
 |----------|---------|---------|
-| `DATABASE_URL` | `postgresql://trainer_user:PLACEHOLDER_PASSWORD@localhost:5432/english_trainer` | `postgresql://user:pass@host:5432/db` |
+| `DATABASE_URL` | *(required, no default)* | `postgresql://user:pass@host:5432/db` |
 | `ENVIRONMENT` | development | production, staging |
 
 Set variables via:
