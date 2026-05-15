@@ -183,9 +183,9 @@ CREATE TABLE user_attempts (
    - Logs UserAttempt
    - Returns: {correct: true, correct_past: "read", ...}
    ↓
-8. JavaScript updates UI:
-   - Show ✅ or ❌
-   - Show next question or results
+ 8. JavaScript updates UI:
+    - Show correct (green) or wrong (red) feedback
+    - Show next question or results
 ```
 
 ### CLI Flow

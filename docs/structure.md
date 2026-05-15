@@ -166,11 +166,28 @@ Contains tuple of 100 irregular verbs and `seed_verbs()` function to populate th
 
 ### 5. Frontend (`static/index.html`)
 
-Single-page application (SPA) with:
-- Vanilla JavaScript (no framework)
-- HTML5 + Fetch API
-- Dark mode CSS
-- Communicates with FastAPI backend via REST
+Single-page application (SPA) with 9 screens, all in a single HTML file:
+
+| Screen | Description |
+|--------|-------------|
+| **Home** | Verb count selector (10/20/50/75/100) + navigation |
+| **Quiz** | Verb form input (past tense + past participle) |
+| **Results** | Score circle + mistake list |
+| **Stats** | Accuracy metrics + hardest verbs ranking |
+| **Review** | 15 tense explanations with collapsible accordion |
+| **Tense Quiz Select** | Checkbox selection of tenses to practice |
+| **Tense Quiz** | Multiple-choice questions (usage + structure) |
+| **Tense Quiz Results** | Score + mistakes per tense |
+| **Tense Quiz Stats** | Per-tense accuracy (localStorage) |
+
+Key frontend characteristics:
+- **Vanilla JavaScript** (no framework), **HTML5**, **Fetch API**
+- **SVG icon sprite** — 11 icons (target, play, chart, book, refresh, trophy, check, x, flame, warning, star) replacing all emoji UI elements
+- **CSS custom properties** color system: `--purple: #6366f1`, `--blue: #4f46e5`, `--green: #22c55e`, `--red: #ef4444`, `--yellow: #f59e0b`, plus surface/border/text/muted tokens
+- **Glass morphism cards** with `backdrop-filter: blur(20px)`
+- **Accessible**: skip link, `:focus-visible` outlines, `role`/`aria` attributes, semantic labels
+- Communicates with FastAPI backend via REST at `/api/*`
+- `localStorage` for tense quiz statistics persistence
 
 ### 6. Testing (`tests/`)
 

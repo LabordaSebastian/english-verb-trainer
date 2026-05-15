@@ -3,22 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎯 English Verb Trainer</title>
+<title>English Verb Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#09090f;--surface:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);
-  --purple:#8b5cf6;--blue:#3b82f6;--green:#10b981;--red:#ef4444;--yellow:#f59e0b;
-  --text:#e2e8f0;--muted:#64748b;--radius:16px;
+  --bg:#0a0a0f;--surface:#141419;--border:#1e1e26;
+  --purple:#6366f1;--blue:#4f46e5;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;
+  --text:#e8e8ed;--muted:#6b6b7b;--radius:12px;
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
+/* Skip link */
+.skip-link{position:absolute;top:-100%;left:16px;padding:12px 20px;background:var(--purple);color:#fff;border-radius:0 0 8px 8px;font-weight:600;font-size:14px;z-index:1000;transition:top .2s}
+.skip-link:focus{top:0;outline:none}
+
+/* Focus visible */
+:focus-visible{outline:2px solid var(--purple);outline-offset:2px;border-radius:4px}
+.btn:focus-visible{outline:2px solid var(--purple);outline-offset:2px;border-radius:8px}
+.input-field:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+
 /* Animated background orbs */
-body::before,body::after{content:'';position:fixed;border-radius:50%;filter:blur(80px);opacity:.15;pointer-events:none;animation:drift 12s ease-in-out infinite alternate}
-body::before{width:600px;height:600px;background:var(--purple);top:-200px;left:-200px}
-body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:-150px;animation-delay:-6s}
-@keyframes drift{from{transform:translate(0,0)}to{transform:translate(60px,40px)}}
+body::before,body::after{content:'';position:fixed;border-radius:50%;filter:blur(100px);opacity:.1;pointer-events:none;animation:drift 20s ease-in-out infinite alternate}
+body::before{width:500px;height:500px;background:var(--purple);top:-150px;left:-150px}
+body::after{width:400px;height:400px;background:var(--blue);bottom:-100px;right:-100px;animation-delay:-10s}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(40px,30px)}}
 
 /* Layout */
 .app{max-width:680px;margin:0 auto;padding:24px 16px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
@@ -32,23 +41,24 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
 .card{background:var(--surface);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--radius);padding:32px;width:100%}
 
 /* Logo */
-.logo{font-size:40px;font-weight:900;text-align:center;letter-spacing:-1px;background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.subtitle{color:var(--muted);font-size:14px;text-align:center;margin-top:-8px}
+.logo{font-size:40px;font-weight:800;text-align:center;letter-spacing:-0.5px;background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{color:var(--muted);font-size:15px;text-align:center;margin-top:-8px}
 
 /* Buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;border-radius:12px;font-weight:600;font-size:15px;cursor:pointer;border:none;transition:all .2s;text-decoration:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;border-radius:12px;font-weight:600;font-size:15px;cursor:pointer;border:none;transition:all .2s ease;text-decoration:none}
 .btn-primary{background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff}
-.btn-primary:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 24px rgba(139,92,246,.35)}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 24px rgba(99,102,241,.35)}
+.btn-primary:active{transform:translateY(0);box-shadow:0 4px 12px rgba(99,102,241,.2)}
 .btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text)}
-.btn-secondary:hover{border-color:var(--purple);background:rgba(139,92,246,.1)}
+.btn-secondary:hover{border-color:var(--purple);background:rgba(99,102,241,.1)}
 .btn-sm{padding:10px 20px;font-size:13px}
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 
 /* Round selector */
 .rounds-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.round-btn{padding:10px 22px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-weight:600;font-size:14px;transition:all .2s}
-.round-btn.selected,.round-btn:hover{border-color:var(--purple);background:rgba(139,92,246,.15);color:var(--purple)}
+.round-btn{padding:10px 22px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-weight:500;font-size:14px;transition:all .2s}
+.round-btn.selected,.round-btn:hover{border-color:var(--purple);background:rgba(99,102,241,.1);color:var(--purple)}
 
 /* Progress bar */
 .progress-wrap{width:100%;background:rgba(255,255,255,.07);border-radius:99px;height:6px;overflow:hidden}
@@ -56,7 +66,7 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
 .progress-label{font-size:12px;color:var(--muted);text-align:right}
 
 /* Verb display */
-.verb-base{font-size:56px;font-weight:900;text-align:center;letter-spacing:-2px;background:linear-gradient(135deg,#fff,rgba(255,255,255,.7));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.verb-base{font-size:48px;font-weight:800;text-align:center;letter-spacing:-1px;background:linear-gradient(135deg,#fff,rgba(255,255,255,.7));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
 .verb-meaning{text-align:center;color:var(--muted);font-size:15px;margin-top:8px;font-style:italic}
 
 /* Inputs */
@@ -64,86 +74,111 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
 .input-group{flex:1;display:flex;flex-direction:column;gap:6px}
 .input-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
 .input-field{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--text);font-size:16px;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;width:100%}
-.input-field:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.15)}
-.input-field.correct{border-color:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,.15)}
+.input-field:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+.input-field.correct{border-color:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,.12)}
 .input-field.wrong{border-color:var(--red);box-shadow:0 0 0 3px rgba(239,68,68,.15)}
 .input-field:disabled{opacity:.6}
 
 /* Feedback */
-.feedback{width:100%;border-radius:12px;padding:16px 20px;font-weight:600;font-size:15px;display:none;animation:fadeIn .3s ease;line-height:1.5}
-.feedback.correct{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:var(--green)}
-.feedback.wrong{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red)}
-.feedback.show{display:block}
+.feedback{width:100%;border-radius:10px;padding:14px 18px;font-weight:500;font-size:15px;display:none;animation:fadeIn .3s ease;line-height:1.5}
+.feedback.correct{background:rgba(34,197,94,.08);border-left:3px solid var(--green);color:var(--green)}
+.feedback.wrong{background:rgba(239,68,68,.06);border-left:3px solid var(--red);color:var(--red)}
+.feedback.show{display:flex;align-items:center;gap:10px}
 .feedback .also{font-size:12px;color:var(--muted);margin-top:4px;font-weight:400}
 
 /* Results */
-.score-circle{width:140px;height:140px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto;border:4px solid var(--purple);background:rgba(139,92,246,.1)}
-.score-pct{font-size:36px;font-weight:900;background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.score-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.score-circle{width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto;border:3px solid rgba(99,102,241,.3);background:rgba(99,102,241,.06);position:relative}
+.score-circle::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(99,102,241,.1)}
+.score-pct{font-size:32px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.5px}
+.score-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 
 /* Wrong verbs list */
-.wrong-list{display:flex;flex-direction:column;gap:8px;width:100%;max-height:280px;overflow-y:auto}
-.wrong-item{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.15);border-radius:10px;font-size:13px}
-.wrong-item .verb-name{font-weight:700;color:var(--text)}
-.wrong-item .correct-forms{color:var(--muted)}
+.wrong-list{display:flex;flex-direction:column;gap:6px;width:100%;max-height:280px;overflow-y:auto}
+.wrong-item{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:rgba(239,68,68,.04);border-left:3px solid rgba(239,68,68,.3);border-radius:8px;font-size:13px}
+.wrong-item .verb-name{font-weight:600;color:var(--text)}
+.wrong-item .correct-forms{color:var(--muted);font-size:12px}
 
 /* Stats */
 .stat-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;width:100%}
 .stat-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
-.stat-num{font-size:28px;font-weight:800}
+.stat-num{font-size:28px;font-weight:700}
 .stat-name{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 
-.hardest-list{display:flex;flex-direction:column;gap:8px;width:100%}
-.hardest-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px}
-.hardest-verb{font-weight:700;width:110px;font-size:14px}
-.hardest-bar-wrap{flex:1;background:rgba(255,255,255,.07);border-radius:99px;height:6px;overflow:hidden}
-.hardest-bar{height:100%;background:linear-gradient(90deg,var(--red),var(--yellow));border-radius:99px}
-.hardest-count{font-size:12px;color:var(--muted);width:50px;text-align:right}
+.hardest-list{display:flex;flex-direction:column;gap:6px;width:100%}
+.hardest-item{display:flex;align-items:center;gap:12px;padding:8px 14px;background:transparent;border-bottom:1px solid var(--border);border-radius:0}
+.hardest-item:last-child{border-bottom:none}
+.hardest-verb{font-weight:600;width:110px;font-size:14px;letter-spacing:-0.2px}
+.hardest-bar-wrap{flex:1;background:rgba(255,255,255,.05);border-radius:99px;height:4px;overflow:hidden}
+.hardest-bar{height:100%;background:linear-gradient(90deg,var(--red),var(--yellow));border-radius:99px;transition:width .5s ease}
+.hardest-count{font-size:11px;color:var(--muted);width:50px;text-align:right}
 
 /* Spinner */
-.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spin .7s linear infinite;margin:16px auto}
+.spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;margin:16px auto}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* Action row */
 .action-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 
 /* Empty state */
-.empty{text-align:center;color:var(--muted);padding:32px;font-size:14px}
+.empty{text-align:center;color:var(--muted);padding:24px;font-size:14px;font-weight:400}
 
-/* Confetti particle */
-.confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;animation:confettiFall 1.2s ease-out forwards}
-@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+/* SVG Icon */
+.icon{width:16px;height:16px;display:inline-block;vertical-align:middle;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.icon-lg{width:20px;height:20px}
+.icon-sm{width:14px;height:14px}
+.icon-check{stroke-width:2.5;color:var(--green)}
+.icon-x{stroke-width:2.5;color:var(--red)}
 
 /* Scrollbar */
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
 
+/* Success pulse */
+@keyframes successPulse{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+.success-pulse{animation:successPulse .5s ease}
+
 /* Review section */
-.tense-card {background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;transition:all .2s;text-align:left;}
-.tense-header {padding:16px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:700;background:rgba(255,255,255,.02);}
-.tense-header:hover {background:rgba(255,255,255,.05);}
-.tense-title {color:var(--text);font-size:15px;text-transform:uppercase;letter-spacing:.5px;}
-.tense-icon {transition:transform .3s;color:var(--muted);font-size:12px;}
-.tense-content {padding:0 20px;max-height:0;overflow:hidden;transition:max-height .3s ease, padding .3s ease;opacity:0;}
-.tense-card.expanded {border-color:var(--purple);box-shadow:0 4px 20px rgba(139,92,246,.1);}
+.tense-card {background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px;transition:all .2s;text-align:left;}
+.tense-header {padding:14px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:600;}
+.tense-header:hover {background:rgba(255,255,255,.03);}
+.tense-title {color:var(--text);font-size:14px;text-transform:uppercase;letter-spacing:.4px;}
+.tense-icon {transition:transform .3s;color:var(--muted);font-size:11px;}
+.tense-content {padding:0 18px;max-height:0;overflow:hidden;transition:max-height .3s ease, padding .3s ease;opacity:0;}
+.tense-card.expanded {border-color:var(--purple);}
 .tense-card.expanded .tense-icon {transform:rotate(180deg);}
-.tense-card.expanded .tense-content {padding:20px;max-height:1000px;opacity:1;overflow-y:auto;}
-.tense-section {margin-bottom:16px;}
+.tense-card.expanded .tense-content {padding:18px;max-height:1000px;opacity:1;overflow-y:auto;}
+.tense-section {margin-bottom:14px;}
 .tense-section:last-child {margin-bottom:0;}
-.tense-section ul {margin:8px 0 0 20px;color:var(--muted);font-size:14px;line-height:1.5;}
-.tense-note {background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:var(--yellow);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;}
-.structure-block {margin-top:12px;background:rgba(0,0,0,.2);padding:12px;border-radius:8px;}
+.tense-section ul {margin:6px 0 0 18px;color:var(--muted);font-size:14px;line-height:1.6;}
+.tense-note {background:rgba(245,158,11,.06);border-left:3px solid var(--yellow);color:var(--yellow);padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:14px;}
+.structure-block {margin-top:10px;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.06);}
 .structure-type {font-weight:600;font-size:13px;color:var(--blue);margin-bottom:4px;}
-.structure-formula {font-family:monospace;font-size:13px;color:var(--text);background:rgba(255,255,255,.05);padding:6px;border-radius:4px;margin-bottom:6px;display:inline-block;border:1px solid rgba(255,255,255,.1);}
+.structure-formula {font-family:ui-monospace,SFMono-Regular,monospace;font-size:13px;color:var(--text);background:rgba(255,255,255,.04);padding:5px 8px;border-radius:4px;margin-bottom:6px;display:inline-block;border:1px solid rgba(255,255,255,.06);}
 .structure-examples {color:var(--muted);font-size:13px;line-height:1.6;}
 </style>
 </head>
 <body>
-<div class="app">
+<a href="#main-content" class="skip-link">Skip to content</a>
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <symbol id="icon-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="icon-chart" viewBox="0 0 24 24"><rect x="4" y="14" width="4" height="6"/><rect x="10" y="9" width="4" height="11"/><rect x="16" y="4" width="4" height="16"/></symbol>
+    <symbol id="icon-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0115.36-6.36L21 8M3 22v-6h6"/><path d="M21 12a9 9 0 01-15.36 6.36L3 16"/></symbol>
+    <symbol id="icon-trophy" viewBox="0 0 24 24"><path d="M6 9H4a2 2 0 01-2-2V5a2 2 0 012-2h2"/><path d="M18 9h2a2 2 0 002-2V5a2 2 0 00-2-2h-2"/><path d="M6 3h12v10a4 4 0 01-4 4h-4a4 4 0 01-4-4V3z"/><path d="M12 17v4"/><path d="M8 21h8"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></symbol>
+    <symbol id="icon-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+    <symbol id="icon-flame" viewBox="0 0 24 24"><path d="M12 2C8 6 4 10 4 14a8 8 0 0016 0c0-4-4-8-8-12z"/><path d="M12 22c-2 0-4-1.5-4-4 2 0 4-2 4-4 0 2 2 4 4 4 0 2.5-2 4-4 4z"/></symbol>
+    <symbol id="icon-warning" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+    <symbol id="icon-star" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></symbol>
+  </defs>
+</svg>
+<div class="app" id="main-content">
 
   <!-- ── HOME ───────────────────────────────────────── -->
   <div id="screen-home" class="screen active">
     <div style="text-align:center">
-      <div class="logo">🎯 Verb Trainer</div>
+      <div class="logo" role="heading" aria-level="1">Verb Trainer</div>
       <div class="subtitle">English Irregular Verbs — DevOps Edition</div>
     </div>
 
@@ -159,24 +194,24 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
         </div>
       </div>
       <button class="btn btn-primary" id="btn-start" style="width:100%;font-size:17px;padding:16px">
-        ▶&nbsp; Start Quiz
+<svg class="icon"><use href="#icon-play"/></svg>&nbsp; Start Quiz
       </button>
     </div>
 
     <div class="action-row">
-      <button class="btn btn-secondary btn-sm" id="btn-go-stats">📊 My Stats</button>
-      <button class="btn btn-secondary btn-sm" id="btn-go-review">📖 Review</button>
-      <button class="btn btn-secondary btn-sm" id="btn-go-tense-quiz">🎯 Tenses Quiz</button>
-      <button class="btn btn-secondary btn-sm" id="btn-seed">🌱 Reload Verbs</button>
+      <button class="btn btn-secondary btn-sm" id="btn-go-stats"><svg class="icon"><use href="#icon-chart"/></svg> My Stats</button>
+      <button class="btn btn-secondary btn-sm" id="btn-go-review"><svg class="icon"><use href="#icon-book"/></svg> Review</button>
+      <button class="btn btn-secondary btn-sm" id="btn-go-tense-quiz"><svg class="icon"><use href="#icon-target"/></svg> Tenses Quiz</button>
+      <button class="btn btn-secondary btn-sm" id="btn-seed"><svg class="icon"><use href="#icon-refresh"/></svg> Reload Verbs</button>
     </div>
-    <div id="seed-msg" style="font-size:13px;color:var(--muted);display:none"></div>
+    <div id="seed-msg" role="alert" style="font-size:13px;color:var(--muted);display:none"></div>
   </div>
 
   <!-- ── QUIZ ───────────────────────────────────────── -->
   <div id="screen-quiz" class="screen">
     <div style="width:100%;display:flex;flex-direction:column;gap:6px">
       <div class="progress-label" id="progress-label">Question 1 / 10</div>
-      <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+      <div class="progress-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-labelledby="progress-label"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
     </div>
 
     <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:20px">
@@ -187,16 +222,16 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
 
       <div class="inputs-row">
         <div class="input-group">
-          <span class="input-label">Past Tense</span>
+          <label class="input-label" for="input-past">Past Tense</label>
           <input class="input-field" id="input-past" type="text" placeholder="e.g. read" autocomplete="off" spellcheck="false">
         </div>
         <div class="input-group">
-          <span class="input-label">Past Participle</span>
+          <label class="input-label" for="input-part">Past Participle</label>
           <input class="input-field" id="input-part" type="text" placeholder="e.g. read" autocomplete="off" spellcheck="false">
         </div>
       </div>
 
-      <div class="feedback" id="feedback"></div>
+      <div class="feedback" id="feedback" role="alert" aria-live="polite"></div>
 
       <div class="action-row" style="width:100%">
         <button class="btn btn-primary" id="btn-check" style="flex:1">Check ✓</button>
@@ -207,7 +242,7 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
 
   <!-- ── RESULTS ─────────────────────────────────────── -->
   <div id="screen-results" class="screen">
-    <div class="logo" style="font-size:28px">Quiz Complete! 🏆</div>
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-trophy"/></svg> Quiz Complete</div>
 
     <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:24px">
       <div class="score-circle">
@@ -218,20 +253,20 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
       <div style="width:100%">
         <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">Mistakes</div>
         <div class="wrong-list" id="wrong-list">
-          <div class="empty">🎉 Perfect score! No mistakes.</div>
+          <div class="empty">Perfect score. No mistakes.</div>
         </div>
       </div>
     </div>
 
     <div class="action-row">
-      <button class="btn btn-primary" id="btn-play-again">▶ Play Again</button>
-      <button class="btn btn-secondary" id="btn-results-stats">📊 Stats</button>
+      <button class="btn btn-primary" id="btn-play-again"><svg class="icon"><use href="#icon-play"/></svg> Play Again</button>
+      <button class="btn btn-secondary" id="btn-results-stats"><svg class="icon"><use href="#icon-chart"/></svg> Stats</button>
     </div>
   </div>
 
   <!-- ── STATS ──────────────────────────────────────── -->
   <div id="screen-stats" class="screen">
-    <div class="logo" style="font-size:28px">📊 Your Progress</div>
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-chart"/></svg> Your Progress</div>
 
     <div id="stats-loading"><div class="spinner"></div></div>
 
@@ -244,9 +279,9 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
       </div>
 
       <div class="card">
-        <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px">🔥 Hardest Verbs</div>
+        <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px"><svg class="icon icon-sm"><use href="#icon-flame"/></svg> Hardest Verbs</div>
         <div class="hardest-list" id="hardest-list">
-          <div class="empty">No mistakes yet! Keep it up 🎉</div>
+          <div class="empty">No mistakes yet.</div>
         </div>
       </div>
     </div>
@@ -256,7 +291,7 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
 
   <!-- ── REVIEW ─────────────────────────────────────── -->
   <div id="screen-review" class="screen">
-    <div class="logo" style="font-size:28px">📖 Tense Review</div>
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-book"/></svg> Tense Review</div>
     <div style="width:100%;max-height:65vh;overflow-y:auto;padding-right:4px;" id="review-list">
       <!-- Content populated by JS -->
     </div>
@@ -265,7 +300,7 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
 
   <!-- ── TENSE QUIZ SELECT ──────────────────────────── -->
   <div id="screen-tense-select" class="screen">
-    <div class="logo" style="font-size:28px">🎯 Tenses Quiz</div>
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-target"/></svg> Tenses Quiz</div>
     <div style="font-size:14px;color:var(--muted);margin-bottom:16px;text-align:center;">Select the tenses you want to practice:</div>
 
     <div class="card" style="width:100%;max-height:50vh;overflow-y:auto;text-align:left;margin-bottom:20px;padding:12px;">
@@ -276,10 +311,10 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
 
     <div class="action-row" style="width:100%">
       <button class="btn btn-secondary" id="btn-tense-select-home" style="flex:1">← Back</button>
-      <button class="btn btn-primary" id="btn-start-tense-quiz" style="flex:1">Start Quiz ▶</button>
+      <button class="btn btn-primary" id="btn-start-tense-quiz" style="flex:1">Start Quiz <svg class="icon"><use href="#icon-play"/></svg></button>
     </div>
     <div style="margin-top:16px;">
-      <button class="btn btn-secondary btn-sm" id="btn-go-tense-stats">📊 View Stats</button>
+      <button class="btn btn-secondary btn-sm" id="btn-go-tense-stats"><svg class="icon"><use href="#icon-chart"/></svg> View Stats</button>
     </div>
   </div>
 
@@ -287,7 +322,7 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
   <div id="screen-tense-quiz" class="screen">
     <div style="width:100%;display:flex;flex-direction:column;gap:6px">
       <div class="progress-label" id="t-progress-label">Question 1 / 10</div>
-      <div class="progress-wrap"><div class="progress-bar" id="t-progress-bar" style="width:0%"></div></div>
+      <div class="progress-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-labelledby="t-progress-label"><div class="progress-bar" id="t-progress-bar" style="width:0%"></div></div>
     </div>
 
     <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:20px;width:100%">
@@ -308,7 +343,7 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
 
   <!-- ── TENSE QUIZ RESULTS ─────────────────────────── -->
   <div id="screen-tense-results" class="screen">
-    <div class="logo" style="font-size:28px">Quiz Complete! 🏆</div>
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-trophy"/></svg> Quiz Complete</div>
 
     <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:24px;width:100%">
       <div class="score-circle">
@@ -319,20 +354,20 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
       <div style="width:100%;max-height:40vh;overflow-y:auto;padding-right:4px;">
         <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">Mistakes</div>
         <div class="wrong-list" id="t-wrong-list">
-          <div class="empty">🎉 Perfect score! No mistakes.</div>
+          <div class="empty">Perfect score. No mistakes.</div>
         </div>
       </div>
     </div>
 
     <div class="action-row">
       <button class="btn btn-secondary" id="btn-tense-results-home">← Back to Home</button>
-      <button class="btn btn-secondary" id="btn-tense-results-stats">📊 View Stats</button>
+      <button class="btn btn-secondary" id="btn-tense-results-stats"><svg class="icon"><use href="#icon-chart"/></svg> View Stats</button>
     </div>
   </div>
 
   <!-- ── TENSE QUIZ STATS ───────────────────────────── -->
   <div id="screen-tense-stats" class="screen">
-    <div class="logo" style="font-size:28px">📊 Tense Quiz Stats</div>
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-chart"/></svg> Tense Quiz Stats</div>
 
     <div id="t-stats-content" style="width:100%;display:flex;flex-direction:column;gap:16px">
       <div class="stat-row" style="grid-template-columns:1fr 1fr 1fr;">
@@ -342,9 +377,9 @@ body::after{width:500px;height:500px;background:var(--blue);bottom:-150px;right:
       </div>
 
       <div class="card">
-        <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px">🔥 Frequent Mistakes</div>
+        <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px"><svg class="icon icon-sm"><use href="#icon-flame"/></svg> Frequent Mistakes</div>
         <div class="hardest-list" id="ts-mistakes-list" style="max-height:40vh;overflow-y:auto;padding-right:4px;">
-          <div class="empty">No mistakes yet! Keep it up 🎉</div>
+          <div class="empty">No mistakes yet.</div>
         </div>
       </div>
     </div>
@@ -407,23 +442,10 @@ function showScreen(id) {
   document.getElementById('screen-' + id).classList.add('active');
 }
 
-// ── Confetti ─────────────────────────────────────────
-function launchConfetti() {
-  const colors = ['#8b5cf6','#3b82f6','#10b981','#f59e0b','#ec4899'];
-  for (let i = 0; i < 50; i++) {
-    const p = document.createElement('div');
-    p.className = 'confetti-piece';
-    p.style.cssText = `
-      left:${Math.random()*100}vw;
-      top:${Math.random()*50}vh;
-      background:${colors[Math.floor(Math.random()*colors.length)]};
-      animation-delay:${Math.random()*0.6}s;
-      animation-duration:${0.8 + Math.random()*0.8}s;
-      transform:rotate(${Math.random()*360}deg);
-    `;
-    document.body.appendChild(p);
-    p.addEventListener('animationend', () => p.remove());
-  }
+// ── Success pulse ────────────────────────────────────
+function successPulse() {
+  const el = document.querySelector('.score-circle');
+  if (el) { el.classList.remove('success-pulse'); void el.offsetWidth; el.classList.add('success-pulse'); }
 }
 
 // ── Quiz ─────────────────────────────────────────────
@@ -436,7 +458,7 @@ async function startQuiz() {
   } catch (e) {
     showError(e.message);
     document.getElementById('btn-start').disabled = false;
-    document.getElementById('btn-start').innerHTML = '▶&nbsp; Start Quiz';
+    document.getElementById('btn-start').innerHTML = '<svg class="icon"><use href="#icon-play"/></svg>&nbsp; Start Quiz';
     return;
   }
 
@@ -445,7 +467,7 @@ async function startQuiz() {
   state.wrongs = [];
 
   document.getElementById('btn-start').disabled = false;
-  document.getElementById('btn-start').innerHTML = '▶&nbsp; Start Quiz';
+  document.getElementById('btn-start').innerHTML = '<svg class="icon"><use href="#icon-play"/></svg>&nbsp; Start Quiz';
 
   showScreen('quiz');
   renderQuestion();
@@ -459,7 +481,9 @@ function renderQuestion() {
   document.getElementById('verb-base').textContent = v.base.toUpperCase();
   document.getElementById('verb-meaning').textContent = v.meaning || '';
   document.getElementById('progress-label').textContent = `Question ${num} / ${total}`;
-  document.getElementById('progress-bar').style.width = `${((num - 1) / total) * 100}%`;
+  const pct = ((num - 1) / total) * 100;
+  document.getElementById('progress-bar').style.width = `${pct}%`;
+  document.querySelector('#screen-quiz .progress-wrap')?.setAttribute('aria-valuenow', Math.round(pct));
 
   const pastEl = document.getElementById('input-past');
   const partEl = document.getElementById('input-part');
@@ -519,13 +543,13 @@ async function checkAnswer() {
     // Use the actual input the user typed so alternative valid forms show correctly
     const pastVal = past.toLowerCase();
     const partVal = part.toLowerCase();
-    fb.innerHTML = `✅ Correct! &nbsp;<strong>${v.base.toUpperCase()} → ${pastVal} → ${partVal}</strong>`;
-    launchConfetti();
+    fb.innerHTML = `<svg class="icon icon-check"><use href="#icon-check"/></svg> Correct &nbsp;<strong>${v.base.toUpperCase()} → ${pastVal} → ${partVal}</strong>`;
+    document.querySelector('.card')?.classList.add('success-pulse');
   } else {
     pastEl.className = 'input-field wrong';
     partEl.className = 'input-field wrong';
     fb.className = 'feedback wrong show';
-    let html = `❌ Wrong! &nbsp;<strong>${v.base.toUpperCase()} → ${result.correct_past} → ${result.correct_participle}</strong>`;
+    let html = `<svg class="icon icon-x"><use href="#icon-x"/></svg> Wrong &nbsp;<strong>${v.base.toUpperCase()} → ${result.correct_past} → ${result.correct_participle}</strong>`;
     if (result.also_accepted) {
       html += `<div class="also">Also accepted: ${result.also_accepted}</div>`;
     }
@@ -538,7 +562,7 @@ async function checkAnswer() {
 
   const nextBtn = document.getElementById('btn-next');
   nextBtn.style.display = '';
-  nextBtn.textContent = state.index + 1 < state.verbs.length ? 'Next →' : 'See Results 🏆';
+  nextBtn.innerHTML = state.index + 1 < state.verbs.length ? 'Next →' : '<svg class="icon"><use href="#icon-trophy"/></svg> See Results';
 }
 
 function nextQuestion() {
@@ -560,7 +584,7 @@ function showResults() {
 
   const list = document.getElementById('wrong-list');
   if (state.wrongs.length === 0) {
-    list.innerHTML = '<div class="empty">🎉 Perfect score! No mistakes.</div>';
+    list.innerHTML = '<div class="empty">Perfect score. No mistakes.</div>';
   } else {
     list.innerHTML = state.wrongs.map(w =>
       `<div class="wrong-item">
@@ -571,7 +595,7 @@ function showResults() {
   }
 
   showScreen('results');
-  if (pct === 100) launchConfetti();
+  if (pct === 100) successPulse();
 }
 
 // ── Stats ─────────────────────────────────────────────
@@ -598,7 +622,7 @@ async function loadStats() {
   const maxErrors = data.hardest_verbs.length > 0 ? data.hardest_verbs[0].errors : 1;
   const hardestEl = document.getElementById('hardest-list');
   if (data.hardest_verbs.length === 0) {
-    hardestEl.innerHTML = '<div class="empty">No mistakes yet! Keep it up 🎉</div>';
+    hardestEl.innerHTML = '<div class="empty">No mistakes yet.</div>';
   } else {
     hardestEl.innerHTML = data.hardest_verbs.map(v =>
       `<div class="hardest-item">
@@ -654,15 +678,15 @@ document.getElementById('btn-seed').addEventListener('click', async () => {
   const btn = document.getElementById('btn-seed');
   const msg = document.getElementById('seed-msg');
   btn.disabled = true;
-  btn.textContent = '⏳ Loading…';
+  btn.innerHTML = 'Loading\u2026';
   try {
     const data = await api.seed();
-    msg.textContent = `✅ ${data.added} added, ${data.updated} updated.`;
+    msg.innerHTML = `<svg class="icon icon-check"><use href="#icon-check"/></svg> ${data.added} added, ${data.updated} updated.`;
   } catch (e) {
-    msg.textContent = `❌ ${e.message}`;
+    msg.innerHTML = `<svg class="icon icon-x"><use href="#icon-x"/></svg> ${e.message}`;
   }
   btn.disabled = false;
-  btn.textContent = '🌱 Reload Verbs';
+  btn.innerHTML = '<svg class="icon"><use href="#icon-refresh"/></svg> Reload Verbs';
   msg.style.display = 'block';
   setTimeout(() => { msg.style.display = 'none'; }, 3000);
 });
@@ -704,7 +728,7 @@ const tensesData = [
       { type: "Yes/No Questions", formula: "Am/Is/Are + sujeto + verbo -ing?", examples: [{en: "Are you studying?", es: "¿Estás estudiando?"}, {en: "Is he working?", es: "¿Él está trabajando?"}] },
       { type: "WH Questions", formula: "WH + am/is/are + sujeto + verbo -ing?", examples: [{en: "What are you doing?", es: "¿Qué estás haciendo?"}] }
     ],
-    note: "⚠️ No usar con verbos como know, like (I know the answer.)"
+    note: "No usar con verbos como know, like (I know the answer.)"
   },
   {
     name: "3. SIMPLE PAST",
@@ -807,7 +831,7 @@ const tensesData = [
     ]
   },
   {
-    name: "🌟 EXTRA: GOING TO",
+    name: "EXTRA: GOING TO",
     usage: ["Planes / intención"],
     structure: [
       { type: "Afirmativa", formula: "Sujeto + am/is/are + going to + verbo base", examples: [{en: "I'm going to study.", es: "Voy a estudiar."}] },
@@ -817,7 +841,7 @@ const tensesData = [
     ]
   },
   {
-    name: "🌟 EXTRA: WANT TO",
+    name: "EXTRA: WANT TO",
     usage: ["Deseos"],
     structure: [
       { type: "Afirmativa", formula: "Sujeto + want/wants to + verbo base", examples: [{en: "I want to travel.", es: "Quiero viajar."}] },
@@ -827,7 +851,7 @@ const tensesData = [
     ]
   },
   {
-    name: "🌟 EXTRA: HAVE TO",
+    name: "EXTRA: HAVE TO",
     usage: ["Obligación"],
     structure: [
       { type: "Afirmativa", formula: "Sujeto + have/has to + verbo base", examples: [{en: "I have to work.", es: "Tengo que trabajar."}] },
@@ -848,12 +872,12 @@ function renderTensesReview() {
       </div>
       <div class="tense-content">
         <div class="tense-section">
-          <strong>🔹 Uso:</strong>
+          <strong>Uso:</strong>
           <ul>${t.usage.map(u => `<li>${u}</li>`).join('')}</ul>
         </div>
         ${t.note ? `<div class="tense-note">${t.note}</div>` : ''}
         <div class="tense-section">
-          <strong>🔸 Estructura:</strong>
+          <strong>Estructura:</strong>
           ${t.structure.map(s => `
             <div class="structure-block">
               <div class="structure-type">${s.type}</div>
@@ -982,7 +1006,9 @@ function renderTenseQuestion() {
   const total = tenseQuizState.questions.length;
 
   document.getElementById('t-progress-label').textContent = `Question ${tenseQuizState.index + 1} / ${total}`;
-  document.getElementById('t-progress-bar').style.width = `${((tenseQuizState.index)/total)*100}%`;
+  const pct = ((tenseQuizState.index)/total)*100;
+  document.getElementById('t-progress-bar').style.width = `${pct}%`;
+  document.querySelector('#screen-tense-quiz .progress-wrap')?.setAttribute('aria-valuenow', Math.round(pct));
 
   document.getElementById('t-question-type').textContent = q.tenseName;
   document.getElementById('t-question-text').textContent = q.q;
@@ -1062,8 +1088,8 @@ function finishTenseQuiz() {
 
   const wrongList = document.getElementById('t-wrong-list');
   if (tenseQuizState.mistakes.length === 0) {
-    wrongList.innerHTML = '<div class="empty">🎉 Perfect score! No mistakes.</div>';
-    if (total > 0) launchConfetti();
+    wrongList.innerHTML = '<div class="empty">Perfect score. No mistakes.</div>';
+    if (total > 0) successPulse();
   } else {
     wrongList.innerHTML = tenseQuizState.mistakes.map(m => `
       <div class="wrong-item" style="padding:16px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:12px;border-left:3px solid var(--red);">
@@ -1101,7 +1127,7 @@ function loadTenseStats() {
 
   const mistakesList = document.getElementById('ts-mistakes-list');
   if (stats.mistakes.length === 0) {
-    mistakesList.innerHTML = '<div class="empty">No mistakes yet! Keep it up 🎉</div>';
+    mistakesList.innerHTML = '<div class="empty">No mistakes yet.</div>';
   } else {
     mistakesList.innerHTML = stats.mistakes.map(m => `
       <div class="wrong-item" style="padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;flex-direction:column;align-items:flex-start;">

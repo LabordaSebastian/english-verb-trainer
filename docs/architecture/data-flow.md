@@ -115,7 +115,7 @@ Detailed walkthrough of how data moves through the system.
 
   JavaScript receives response
   - Check: response.correct === true
-  - Show: ✅ Correct! READ → read → read
+  - Show: Correct feedback with verb forms
   - Move to next question
 ```
 

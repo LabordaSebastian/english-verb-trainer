@@ -22,6 +22,8 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
+    volumes:
+      - ./static:/app/static
     environment:
       DATABASE_URL: postgresql://trainer_user:${POSTGRES_PASSWORD:-PLACEHOLDER_PASSWORD}@db:5432/english_trainer
     depends_on:
