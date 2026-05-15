@@ -6,6 +6,12 @@ Welcome to the comprehensive technical documentation for the **English Irregular
 
 A hybrid application (CLI + Web UI) for practicing English irregular verbs, built with real-world DevOps tools:
 
+<p align="center">
+  <a href="https://raw.githubusercontent.com/LabordaSebastian/english-verb-trainer/main/promo_video_v2.mp4" target="_blank">
+    <img src="https://img.shields.io/badge/Watch%20Promo%20Video-6366f1?style=for-the-badge" alt="Watch Promo Video">
+  </a>
+</p>
+
 - **Backend**: FastAPI REST API + Typer CLI
 - **Database**: PostgreSQL 15
 - **Container Orchestration**: Docker + Docker Compose
