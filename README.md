@@ -72,6 +72,11 @@ En la documentación encontrarás:
 ```bash
 git clone https://github.com/LabordaSebastian/english-verb-trainer.git
 cd english-verb-trainer
+
+# Crear archivo de variables de entorno
+cp .env.example .env
+
+# Iniciar la aplicación
 docker compose up
 ```
 

@@ -54,6 +54,9 @@ body::after{width:400px;height:400px;background:var(--blue);bottom:-100px;right:
 .btn-sm{padding:10px 20px;font-size:13px}
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-home{width:100%;padding:20px 24px;font-size:17px;font-weight:700;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:14px;cursor:pointer;transition:all .2s ease;display:flex;align-items:center;gap:14px;justify-content:center;text-align:center}
+.btn-home:hover{border-color:var(--purple);background:rgba(99,102,241,.08);transform:translateY(-2px);box-shadow:0 8px 24px rgba(99,102,241,.15)}
+.btn-home:active{transform:translateY(0)}
 
 /* Round selector */
 .rounds-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
@@ -154,6 +157,12 @@ body::after{width:400px;height:400px;background:var(--blue);bottom:-100px;right:
 .structure-type {font-weight:600;font-size:13px;color:var(--blue);margin-bottom:4px;}
 .structure-formula {font-family:ui-monospace,SFMono-Regular,monospace;font-size:13px;color:var(--text);background:rgba(255,255,255,.04);padding:5px 8px;border-radius:4px;margin-bottom:6px;display:inline-block;border:1px solid rgba(255,255,255,.06);}
 .structure-examples {color:var(--muted);font-size:13px;line-height:1.6;}
+.vocab-phrase{font-size:14px;color:var(--muted);padding:6px 0 6px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.vocab-phrase:last-child{border-bottom:none}
+.vocab-subtitle{font-size:14px;font-weight:600;color:var(--blue);margin:14px 0 8px 0;text-transform:uppercase;letter-spacing:.4px}
+.vocab-subtitle:first-of-type{margin-top:0}
+.word-pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:18px}
+.word-pill{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);color:var(--purple);padding:8px 16px;border-radius:8px;font-size:15px;font-weight:500}
 </style>
 </head>
 <body>
@@ -171,6 +180,7 @@ body::after{width:400px;height:400px;background:var(--blue);bottom:-100px;right:
     <symbol id="icon-flame" viewBox="0 0 24 24"><path d="M12 2C8 6 4 10 4 14a8 8 0 0016 0c0-4-4-8-8-12z"/><path d="M12 22c-2 0-4-1.5-4-4 2 0 4-2 4-4 0 2 2 4 4 4 0 2.5-2 4-4 4z"/></symbol>
     <symbol id="icon-warning" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
     <symbol id="icon-star" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></symbol>
+    <symbol id="icon-message-square" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></symbol>
   </defs>
 </svg>
 <div class="app" id="main-content">
@@ -180,6 +190,29 @@ body::after{width:400px;height:400px;background:var(--blue);bottom:-100px;right:
     <div style="text-align:center">
       <div class="logo" role="heading" aria-level="1">Verb Trainer</div>
       <div class="subtitle">English Irregular Verbs — DevOps Edition</div>
+    </div>
+
+    <div style="width:100%;display:flex;flex-direction:column;gap:16px">
+      <button class="btn btn-home" id="btn-irregular-verbs">
+        <svg class="icon icon-lg"><use href="#icon-play"/></svg>
+        Practice Irregular Verbs
+      </button>
+      <button class="btn btn-home" id="btn-verb-tenses">
+        <svg class="icon icon-lg"><use href="#icon-target"/></svg>
+        Practice Verb Tenses
+      </button>
+      <button class="btn btn-home" id="btn-vocabulary">
+        <svg class="icon icon-lg"><use href="#icon-message-square"/></svg>
+        Practice Vocabulary
+      </button>
+    </div>
+  </div>
+
+  <!-- ── IRREGULAR VERBS MENU ──────────────────────── -->
+  <div id="screen-irregular-menu" class="screen">
+    <div style="text-align:center">
+      <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-play"/></svg> Irregular Verbs</div>
+      <div class="subtitle">Practice past tense and past participle forms</div>
     </div>
 
     <div class="card" style="text-align:center;display:flex;flex-direction:column;gap:20px">
@@ -201,8 +234,8 @@ body::after{width:400px;height:400px;background:var(--blue);bottom:-100px;right:
     <div class="action-row">
       <button class="btn btn-secondary btn-sm" id="btn-go-stats"><svg class="icon"><use href="#icon-chart"/></svg> My Stats</button>
       <button class="btn btn-secondary btn-sm" id="btn-go-review"><svg class="icon"><use href="#icon-book"/></svg> Review</button>
-      <button class="btn btn-secondary btn-sm" id="btn-go-tense-quiz"><svg class="icon"><use href="#icon-target"/></svg> Tenses Quiz</button>
       <button class="btn btn-secondary btn-sm" id="btn-seed"><svg class="icon"><use href="#icon-refresh"/></svg> Reload Verbs</button>
+      <button class="btn btn-secondary btn-sm" id="btn-irregular-home">← Back</button>
     </div>
     <div id="seed-msg" role="alert" style="font-size:13px;color:var(--muted);display:none"></div>
   </div>
@@ -385,6 +418,150 @@ body::after{width:400px;height:400px;background:var(--blue);bottom:-100px;right:
     </div>
 
     <button class="btn btn-secondary" id="btn-tense-stats-back">← Back</button>
+  </div>
+
+  <!-- ── VOCAB MENU ─────────────────────────────────── -->
+  <div id="screen-vocab-menu" class="screen">
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-message-square"/></svg> Practice Vocabulary</div>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:8px;text-align:center;">Choose a topic to practice</div>
+
+    <div style="width:100%;display:flex;flex-direction:column;gap:16px">
+      <button class="btn btn-home" id="btn-vocab-giving-opinion">
+        <svg class="icon icon-lg"><use href="#icon-message-square"/></svg>
+        Giving My Opinion
+      </button>
+      <button class="btn btn-home" id="btn-vocab-another">
+        <svg class="icon icon-lg"><use href="#icon-book"/></svg>
+        Another, The Other, Other
+      </button>
+    </div>
+
+    <button class="btn btn-secondary btn-sm" id="btn-vocab-home">← Back</button>
+  </div>
+
+  <!-- ── GIVING OPINION MENU ────────────────────────── -->
+  <div id="screen-vocab-giving-opinion" class="screen">
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-message-square"/></svg> Giving My Opinion</div>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:8px;text-align:center;">Phrases to express yourself in English</div>
+
+    <div style="width:100%;display:flex;flex-direction:column;gap:16px">
+      <button class="btn btn-home" id="btn-vocab-theory">
+        <svg class="icon icon-lg"><use href="#icon-book"/></svg>
+        Theory
+      </button>
+      <button class="btn btn-home" id="btn-vocab-quiz">
+        <svg class="icon icon-lg"><use href="#icon-target"/></svg>
+        Quiz
+      </button>
+    </div>
+
+    <button class="btn btn-secondary btn-sm" id="btn-vocab-giving-opinion-home">← Back</button>
+  </div>
+
+  <!-- ── VOCAB QUIZ SELECT ─────────────────────────── -->
+  <div id="screen-vocab-quiz-select" class="screen">
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-target"/></svg> Giving My Opinion — Quiz</div>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:8px;text-align:center;">Choose an activity to practice</div>
+
+    <div id="vocab-activity-list" style="width:100%;display:flex;flex-direction:column;gap:12px">
+    </div>
+
+    <button class="btn btn-secondary btn-sm" id="btn-vocab-quiz-select-home">← Back</button>
+  </div>
+
+  <!-- ── GIVING OPINION THEORY ─────────────────────── -->
+  <div id="screen-vocab-theory" class="screen">
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-book"/></svg> Giving My Opinion</div>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:8px;text-align:center;">Learn how to express your opinion in English</div>
+    <div style="width:100%;max-height:65vh;overflow-y:auto;padding-right:4px;" id="vocab-theory-list">
+      <!-- Populated by JS -->
+    </div>
+    <button class="btn btn-secondary" id="btn-vocab-theory-home" style="margin-top:16px;">← Back</button>
+  </div>
+
+  <!-- ── ANOTHER / OTHER THEORY ────────────────────── -->
+  <div id="screen-vocab-another-theory" class="screen">
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-book"/></svg> Another, The Other, Other</div>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:8px;text-align:center;">Learn the difference between another, other, the other, others</div>
+    <div style="width:100%;max-height:65vh;overflow-y:auto;padding-right:4px;" id="another-vocab-theory-list">
+    </div>
+    <button class="btn btn-secondary" id="btn-vocab-another-theory-home" style="margin-top:16px;">← Back</button>
+  </div>
+
+  <!-- ── VOCAB QUIZ ─────────────────────────────────── -->
+  <div id="screen-vocab-quiz" class="screen">
+    <div style="width:100%;display:flex;flex-direction:column;gap:6px">
+      <div class="progress-label" id="vq-progress-label">Question 1 / 23</div>
+      <div class="progress-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-labelledby="vq-progress-label"><div class="progress-bar" id="vq-progress-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:20px;width:100%">
+      <div style="width:100%;text-align:center;display:flex;flex-direction:column;gap:8px" id="vq-question-area">
+        <div style="font-size:15px;font-weight:500;color:var(--text);line-height:1.5" id="vq-question-text">Question text</div>
+      </div>
+
+      <div id="vq-options" style="width:100%;display:flex;flex-direction:column;gap:8px">
+      </div>
+
+      <div id="vq-word-area" style="width:100%;display:none;flex-direction:column;gap:14px">
+        <div class="word-pills" id="vq-word-pills"></div>
+        <input class="input-field" id="vq-text-input" type="text" placeholder="Type your answer..." autocomplete="off" spellcheck="false">
+      </div>
+
+      <div class="feedback" id="vq-feedback" role="alert" aria-live="polite"></div>
+
+      <div class="action-row" style="width:100%">
+        <button class="btn btn-primary" id="vq-btn-check" style="flex:1;display:none">Check ✓</button>
+        <button class="btn btn-secondary" id="vq-btn-next" style="flex:1;display:none">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── VOCAB QUIZ RESULTS ─────────────────────────── -->
+  <div id="screen-vocab-quiz-results" class="screen">
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-trophy"/></svg> Quiz Complete</div>
+
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:24px;width:100%">
+      <div class="score-circle">
+        <div class="score-pct" id="vq-result-pct">0%</div>
+        <div class="score-label" id="vq-result-label">0 / 0</div>
+      </div>
+
+      <div style="width:100%">
+        <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">Mistakes</div>
+        <div class="wrong-list" id="vq-wrong-list">
+          <div class="empty">Perfect score. No mistakes.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-primary" id="btn-vq-try-again"><svg class="icon"><use href="#icon-play"/></svg> Try Again</button>
+      <button class="btn btn-secondary" id="btn-vq-stats"><svg class="icon"><use href="#icon-chart"/></svg> Stats</button>
+      <button class="btn btn-secondary" id="btn-vq-results-home">← Back</button>
+    </div>
+  </div>
+
+  <!-- ── VOCAB QUIZ STATS ──────────────────────────── -->
+  <div id="screen-vocab-quiz-stats" class="screen">
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-chart"/></svg> Giving My Opinion — Stats</div>
+
+    <div style="width:100%;display:flex;flex-direction:column;gap:16px">
+      <div class="stat-row" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="stat-box"><div class="stat-num" id="vqs-total">0</div><div class="stat-name">Total</div></div>
+        <div class="stat-box"><div class="stat-num" style="color:var(--green)" id="vqs-correct">0</div><div class="stat-name">Correct</div></div>
+        <div class="stat-box"><div class="stat-num" style="color:var(--purple)" id="vqs-acc">0%</div><div class="stat-name">Accuracy</div></div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px"><svg class="icon icon-sm"><use href="#icon-warning"/></svg> Mistakes History</div>
+        <div class="hardest-list" id="vqs-mistakes-list" style="max-height:40vh;overflow-y:auto;padding-right:4px;">
+          <div class="empty">No mistakes yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-secondary" id="btn-vqs-back">← Back</button>
   </div>
 
 </div>
@@ -662,10 +839,66 @@ document.getElementById('btn-go-review').addEventListener('click', () => {
 });
 document.getElementById('btn-review-home').addEventListener('click', () => showScreen('home'));
 
-// Tense Quiz Listeners
-document.getElementById('btn-go-tense-quiz').addEventListener('click', () => {
+// Home screen main buttons
+document.getElementById('btn-irregular-verbs').addEventListener('click', () => {
+  showScreen('irregular-menu');
+});
+document.getElementById('btn-verb-tenses').addEventListener('click', () => {
   initTenseSelect();
 });
+document.getElementById('btn-vocabulary').addEventListener('click', () => {
+  showScreen('vocab-menu');
+});
+document.getElementById('btn-irregular-home').addEventListener('click', () => showScreen('home'));
+document.getElementById('btn-vocab-home').addEventListener('click', () => showScreen('home'));
+document.getElementById('btn-vocab-giving-opinion').addEventListener('click', () => {
+  showScreen('vocab-giving-opinion');
+});
+document.getElementById('btn-vocab-theory').addEventListener('click', () => {
+  if (document.getElementById('vocab-theory-list').children.length === 0) {
+    renderVocabTheory();
+  }
+  showScreen('vocab-theory');
+});
+document.getElementById('btn-vocab-quiz').addEventListener('click', () => {
+  renderVocabQuizSelect();
+  showScreen('vocab-quiz-select');
+});
+document.getElementById('btn-vocab-giving-opinion-home').addEventListener('click', () => showScreen('vocab-menu'));
+document.getElementById('btn-vocab-theory-home').addEventListener('click', () => showScreen('vocab-giving-opinion'));
+document.getElementById('btn-vocab-quiz-select-home').addEventListener('click', () => showScreen('vocab-giving-opinion'));
+
+document.getElementById('btn-vocab-another').addEventListener('click', () => {
+  if (document.getElementById('another-vocab-theory-list').children.length === 0) {
+    renderAnotherVocabTheory();
+  }
+  showScreen('vocab-another-theory');
+});
+document.getElementById('btn-vocab-another-theory-home').addEventListener('click', () => showScreen('vocab-menu'));
+
+// Vocab Quiz Listeners
+document.getElementById('vq-btn-check').addEventListener('click', checkVocabTextAnswer);
+document.getElementById('vq-btn-next').addEventListener('click', nextVocabQuestion);
+document.getElementById('btn-vq-try-again').addEventListener('click', () => {
+  startVocabQuiz(vocabQuizState.currentActivity);
+});
+document.getElementById('btn-vq-stats').addEventListener('click', loadVocabQuizStats);
+document.getElementById('btn-vq-results-home').addEventListener('click', () => showScreen('vocab-giving-opinion'));
+document.getElementById('btn-vqs-back').addEventListener('click', () => showScreen('vocab-giving-opinion'));
+
+// Enter key support for vocab quiz
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const quiz = document.getElementById('screen-vocab-quiz');
+    if (!quiz.classList.contains('active')) return;
+    const checkBtn = document.getElementById('vq-btn-check');
+    const nextBtn = document.getElementById('vq-btn-next');
+    if (checkBtn.style.display !== 'none') checkVocabTextAnswer();
+    else if (nextBtn.style.display !== 'none') nextVocabQuestion();
+  }
+});
+
+// Tense Quiz Listeners
 document.getElementById('btn-tense-select-home').addEventListener('click', () => showScreen('home'));
 document.getElementById('btn-start-tense-quiz').addEventListener('click', startTenseQuiz);
 document.getElementById('t-btn-next').addEventListener('click', nextTenseQuestion);
@@ -891,6 +1124,786 @@ function renderTensesReview() {
       </div>
     </div>
   `).join('');
+}
+
+// ── Vocabulary Theory ──────────────────────────────────
+
+const vocabTheoryData = [
+  {
+    name: "1. Ways to Ask Someone's Opinion",
+    phrases: [
+      "What do you think about/of…?",
+      "What's your opinion on…?",
+      "What are your thoughts on this?",
+      "What's your take on this?",
+      "How do you feel about…?",
+      "How does this make you feel?",
+      "Could you share your perspective on…?",
+      "What comes to your mind when you think about this?",
+      "What do you think?",
+      "Care to share your opinion?",
+      "I'd love to hear what you think.",
+      "What would you say about this?",
+    ],
+  },
+  {
+    name: "2. Ways to Give Your Opinion",
+    subsections: [
+      {
+        title: "To express your opinion:",
+        phrases: [
+          "In my opinion…",
+          "I think that…",
+          "I believe…",
+          "As far as I'm concerned…",
+          "From my point of view…",
+          "I feel that…",
+        ],
+      },
+      {
+        title: "To agree:",
+        phrases: [
+          "I agree.",
+          "I think so too.",
+          "I totally agree.",
+          "That's a great point!",
+          "I couldn't agree more.",
+          "I feel the same way.",
+          "You're absolutely right.",
+          "Absolutely!",
+          "Definitely!",
+        ],
+      },
+      {
+        title: "To disagree:",
+        phrases: [
+          "I don't think so.",
+          "I disagree because…",
+          "I see it differently.",
+          "That's not how I see it.",
+          "I have a different opinion.",
+          "I'm not sure I agree with that.",
+        ],
+      },
+      {
+        title: "To show uncertainty:",
+        phrases: [
+          "I'm not sure, but…",
+          "Maybe…",
+          "I guess…",
+          "I'm not certain, but…",
+          "It's hard to say, but…",
+          "I might be wrong, but…",
+        ],
+      },
+    ],
+  },
+  {
+    name: "3. Transitions & Linkers",
+    subsections: [
+      {
+        title: "To add more information:",
+        phrases: [
+          "Also, I think…",
+          "Besides that…",
+          "Another thing is…",
+          "In addition…",
+          "What I mean is…",
+          "It seems to me that…",
+        ],
+      },
+      {
+        title: "To give examples:",
+        phrases: [
+          "For example…",
+          "For instance…",
+          "Like…",
+          "Such as…",
+          "To give you an idea…",
+          "A good example is…",
+        ],
+      },
+      {
+        title: "To conclude / Summarizing:",
+        phrases: [
+          "So, I think…",
+          "That's why I believe…",
+          "In conclusion…",
+          "Overall, I think…",
+          "That's my opinion.",
+          "To sum it up…",
+          "In short…",
+          "All in all…",
+        ],
+      },
+    ],
+  },
+  {
+    name: "4. Useful Vocabulary",
+    subsections: [
+      {
+        title: "Positive Adjectives:",
+        phrases: [
+          "Amazing", "Impressive", "Wonderful", "Incredible",
+          "Excellent", "Enjoyable", "Great", "Fantastic",
+          "Awesome", "Brilliant", "Outstanding", "Pleasant",
+          "Lovely", "Charming", "Helpful", "Perfect",
+        ],
+      },
+      {
+        title: "Positive Expressions:",
+        phrases: [
+          "In my opinion, it's fantastic!",
+          "I really think it's wonderful.",
+          "I absolutely love it!",
+          "As far as I'm concerned, it's perfect.",
+          "I couldn't be happier with it.",
+          "It's one of the best!",
+          "I highly recommend it!",
+          "It's totally worth it!",
+        ],
+      },
+      {
+        title: "Negative Adjectives:",
+        phrases: [
+          "Awful", "Terrible", "Horrible", "Bad",
+          "Disappointing", "Boring", "Dull", "Unpleasant",
+          "Frustrating", "Annoying", "Ridiculous", "Unfair",
+          "Poor", "Waste of time", "Unreliable", "Pathetic",
+        ],
+      },
+      {
+        title: "Negative Expressions:",
+        phrases: [
+          "In my opinion, it's terrible.",
+          "I really don't like it.",
+          "I can't stand it.",
+          "As far as I'm concerned, it's awful.",
+          "I'm really disappointed.",
+          "It's not worth it.",
+          "I wouldn't recommend it.",
+          "It's a complete waste of time.",
+        ],
+      },
+    ],
+  },
+];
+
+function renderVocabTheory() {
+  const container = document.getElementById('vocab-theory-list');
+  container.innerHTML = vocabTheoryData.map((t) => `
+    <div class="tense-card">
+      <div class="tense-header" onclick="this.parentElement.classList.toggle('expanded')">
+        <div class="tense-title">${t.name}</div>
+        <div class="tense-icon">▼</div>
+      </div>
+      <div class="tense-content">
+        ${t.phrases ? t.phrases.map(p => `<div class="vocab-phrase">• ${p}</div>`).join('') : ''}
+        ${t.subsections ? t.subsections.map(s => `
+          <div class="vocab-subtitle">${s.title}</div>
+          ${s.phrases.map(p => `<div class="vocab-phrase">• ${p}</div>`).join('')}
+        `).join('') : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+const anotherVocabTheoryData = [
+  {
+    name: "1. ANOTHER (otro / otra)",
+    subsections: [
+      {
+        title: "Usage:",
+        phrases: [
+          "Se usa con sustantivos contables en singular.",
+          "Significa 'otro/otra' en el sentido de 'uno más'.",
+          "Se refiere a un adicional.",
+        ],
+      },
+      {
+        title: "Examples:",
+        phrases: [
+          "I need another pen. (Necesito otro bolígrafo.)",
+          "Can I have another cookie, please? (¿Puedo tener otra galleta, por favor?)",
+          "Let's try another cafe tomorrow. (Probemos otro café mañana.)",
+        ],
+      },
+    ],
+  },
+  {
+    name: "2. THE OTHER (el otro / la otra)",
+    subsections: [
+      {
+        title: "Usage:",
+        phrases: [
+          "Se usa con sustantivos contables en singular.",
+          "Se refiere a 'el otro / la otra de dos'.",
+          "Es específico: hay solo dos opciones y hablamos de la que es diferente.",
+          "Siempre se refiere a 2.",
+        ],
+      },
+      {
+        title: "Examples:",
+        phrases: [
+          "I have two sisters. One is older, the other is younger. (Tengo dos hermanas. Una es mayor, la otra es menor.)",
+          "We need two chairs. One is here, the other is in the bedroom. (Necesitamos dos sillas. Una está aquí, la otra en el dormitorio.)",
+        ],
+      },
+    ],
+  },
+  {
+    name: "3. THE OTHERS (los otros / las otras)",
+    subsections: [
+      {
+        title: "Usage:",
+        phrases: [
+          "Se usa para referirse a un grupo de personas o cosas, excluyendo una o varias que ya se mencionaron.",
+          "Equivale a 'los/las demás'.",
+          "Excluye a alguien/algo del grupo.",
+        ],
+      },
+      {
+        title: "Examples:",
+        phrases: [
+          "Some students finished early. The others are still working. (Algunos estudiantes terminaron temprano. Los demás todavía están trabajando.)",
+          "I don't like these shoes. I prefer the others. (No me gustan estos zapatos. Prefiero los otros.)",
+        ],
+      },
+    ],
+  },
+  {
+    name: "4. OTHER (otro / otra / otros / otras)",
+    subsections: [
+      {
+        title: "Usage:",
+        phrases: [
+          "Es un adjetivo.",
+          "Significa 'otro/otra/otros/otras' en general.",
+          "Se usa antes de un sustantivo y no se refiere a algo específico.",
+          "General, no específico.",
+        ],
+      },
+      {
+        title: "Examples:",
+        phrases: [
+          "I have other plans for the weekend. (Tengo otros planes para el fin de semana.)",
+          "Do you have any other questions? (¿Tienes otras preguntas?)",
+          "She didn't say anything else, just other things. (Ella no dijo nada más, solo otras cosas.)",
+        ],
+      },
+    ],
+  },
+  {
+    name: "5. OTHERS (otros / otras)",
+    subsections: [
+      {
+        title: "Usage:",
+        phrases: [
+          "Es un sustantivo.",
+          "Se usa para referirse a personas o cosas en general.",
+          "Equivale a 'otras personas / cosas'.",
+          "No se usa antes de un sustantivo.",
+          "General, sin necesidad de mencionar el sustantivo.",
+        ],
+      },
+      {
+        title: "Examples:",
+        phrases: [
+          "Some people like tea, others prefer coffee. (Algunas personas prefieren té, otras café.)",
+          "Help others whenever you can. (Ayuda a otras personas siempre que puedas.)",
+          "There are many opinions, others think differently. (Hay muchas opiniones, otras piensan diferente.)",
+        ],
+      },
+    ],
+  },
+  {
+    name: "6. Quick Summary",
+    phrases: [
+      "ANOTHER → Adjective — one more (singular countable) — not specific",
+      "THE OTHER → Adjective — the other of two — specific (always 2)",
+      "THE OTHERS → Noun — the rest (excludes someone) — group",
+      "OTHER → Adjective — another/others (before noun) — not specific",
+      "OTHERS → Noun — other people or things (in general) — not specific",
+    ],
+  },
+];
+
+function renderAnotherVocabTheory() {
+  const container = document.getElementById('another-vocab-theory-list');
+  container.innerHTML = anotherVocabTheoryData.map((t) => `
+    <div class="tense-card">
+      <div class="tense-header" onclick="this.parentElement.classList.toggle('expanded')">
+        <div class="tense-title">${t.name}</div>
+        <div class="tense-icon">▼</div>
+      </div>
+      <div class="tense-content">
+        ${t.phrases ? t.phrases.map(p => `<div class="vocab-phrase">• ${p}</div>`).join('') : ''}
+        ${t.subsections ? t.subsections.map(s => `
+          <div class="vocab-subtitle">${s.title}</div>
+          ${s.phrases.map(p => `<div class="vocab-phrase">• ${p}</div>`).join('')}
+        `).join('') : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Vocabulary Quiz Logic ──────────────────────────────
+
+const vocabQuizState = {
+  questions: [],
+  index: 0,
+  correct: 0,
+  mistakes: [],
+  currentActivity: null,
+};
+
+function normalize(str) {
+  return str.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+const vocabActivities = [
+  { id: "a1", title: "1. Choose the Question", desc: "Pick the best way to ask for someone's opinion" },
+  { id: "a2", title: "2. Order the Question", desc: "Unscramble words to form opinion questions" },
+  { id: "a3", title: "3. Match the Response", desc: "Match each question with the correct answer" },
+  { id: "a4", title: "4. Order the Sentence", desc: "Unscramble words to form opinion sentences" },
+  { id: "a5", title: "5. Complete the Sentence", desc: "Choose the correct word to complete each sentence" },
+];
+
+function renderVocabQuizSelect() {
+  const container = document.getElementById('vocab-activity-list');
+  container.innerHTML = vocabActivities.map(a => `
+    <button class="btn btn-home" onclick="startVocabQuiz('${a.id}')" style="text-align:left;justify-content:flex-start;gap:16px">
+      <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px">
+        <div style="font-size:16px;font-weight:600">${a.title}</div>
+        <div style="font-size:13px;font-weight:400;color:var(--muted)">${a.desc}</div>
+      </div>
+    </button>
+  `).join('');
+}
+
+const opinionQuizData = [
+  // ── Activity 1: Choose the best question (MCQ) ──
+  {
+    id: "a1_q1",
+    type: "mcq",
+    question: "You want to know what your friend thinks about the new book.",
+    options: [
+      "What time is the book?",
+      "What do you think about the new book?",
+      "How much is the book?",
+    ],
+    correct: 1,
+  },
+  {
+    id: "a1_q2",
+    type: "mcq",
+    question: "You want to know how your friend feels about math.",
+    options: [
+      "How do you feel about math?",
+      "Do you like math?",
+      "Where do you study math?",
+    ],
+    correct: 0,
+  },
+  {
+    id: "a1_q3",
+    type: "mcq",
+    question: "You want to know someone's opinion on online classes.",
+    options: [
+      "What's your opinion on online classes?",
+      "How are online classes?",
+      "When are online classes?",
+    ],
+    correct: 0,
+  },
+
+  // ── Activity 2: Unscramble questions ──
+  {
+    id: "a2_q1",
+    type: "unscramble",
+    question: "Put the words in order to form a question:",
+    words: ["what", "you", "think", "of", "this pizza", "do"],
+    correct: "What do you think of this pizza?",
+  },
+  {
+    id: "a2_q2",
+    type: "unscramble",
+    question: "Put the words in order to form a question:",
+    words: ["how", "you", "feel", "about", "this movie", "do"],
+    correct: "How do you feel about this movie?",
+  },
+  {
+    id: "a2_q3",
+    type: "unscramble",
+    question: "Put the words in order to form a question:",
+    words: ["what's", "your", "opinion", "on", "homework"],
+    correct: "What's your opinion on homework?",
+  },
+  {
+    id: "a2_q4",
+    type: "unscramble",
+    question: "Put the words in order to form a question:",
+    words: ["do", "you", "think", "that", "he", "is", "a", "good friend"],
+    correct: "Do you think that he is a good friend?",
+  },
+  {
+    id: "a2_q5",
+    type: "unscramble",
+    question: "Put the words in order to form a question:",
+    words: ["what", "you", "think", "of", "living", "in", "another country", "do"],
+    correct: "What do you think of living in another country?",
+  },
+
+  // ── Activity 3: Matching (MCQ per item) ──
+  {
+    id: "a3_q1",
+    type: "mcq",
+    question: "What do you think of the party?",
+    options: [
+      "I think it was fantastic!",
+      "He's amazing and very kind.",
+      "I feel a bit nervous, but I studied.",
+      "I don't like it. Animals should be free.",
+      "It was really fun! I loved it.",
+    ],
+    correct: 4,
+  },
+  {
+    id: "a3_q2",
+    type: "mcq",
+    question: "How do you feel about the test?",
+    options: [
+      "I think it was fantastic!",
+      "He's amazing and very kind.",
+      "I feel a bit nervous, but I studied.",
+      "I don't like it. Animals should be free.",
+      "It was really fun! I loved it.",
+    ],
+    correct: 2,
+  },
+  {
+    id: "a3_q3",
+    type: "mcq",
+    question: "What's your opinion on animals in zoos?",
+    options: [
+      "I think it was fantastic!",
+      "He's amazing and very kind.",
+      "I feel a bit nervous, but I studied.",
+      "I don't like it. Animals should be free.",
+      "It was really fun! I loved it.",
+    ],
+    correct: 3,
+  },
+  {
+    id: "a3_q4",
+    type: "mcq",
+    question: "Do you think the movie was good?",
+    options: [
+      "I think it was fantastic!",
+      "He's amazing and very kind.",
+      "I feel a bit nervous, but I studied.",
+      "I don't like it. Animals should be free.",
+      "It was really fun! I loved it.",
+    ],
+    correct: 0,
+  },
+  {
+    id: "a3_q5",
+    type: "mcq",
+    question: "What do you think about your new teacher?",
+    options: [
+      "I think it was fantastic!",
+      "He's amazing and very kind.",
+      "I feel a bit nervous, but I studied.",
+      "I don't like it. Animals should be free.",
+      "It was really fun! I loved it.",
+    ],
+    correct: 1,
+  },
+
+  // ── Activity 4: Unscramble sentences ──
+  {
+    id: "a4_q1",
+    type: "unscramble",
+    question: "Put the words in order to form a sentence:",
+    words: ["think", "delicious", "I", "the soup", "that", "is"],
+    correct: "I think that the soup is delicious.",
+  },
+  {
+    id: "a4_q2",
+    type: "unscramble",
+    question: "Put the words in order to form a sentence:",
+    words: ["don't", "like", "I", "this", "at all", "game"],
+    correct: "I don't like this game at all.",
+  },
+  {
+    id: "a4_q3",
+    type: "unscramble",
+    question: "Put the words in order to form a sentence:",
+    words: ["a great idea", "picnic", "I", "think", "a", "is"],
+    correct: "I think a picnic is a great idea.",
+  },
+  {
+    id: "a4_q4",
+    type: "unscramble",
+    question: "Put the words in order to form a sentence:",
+    words: ["was", "the concert", "amazing"],
+    correct: "The concert was amazing!",
+  },
+  {
+    id: "a4_q5",
+    type: "unscramble",
+    question: "Put the words in order to form a sentence:",
+    words: ["the cozy atmosphere", "I", "really", "like"],
+    correct: "I really like the cozy atmosphere.",
+  },
+
+  // ── Activity 5: Complete the sentence (MCQ) ──
+  {
+    id: "a5_q1",
+    type: "mcq",
+    question: "In my opinion, this book is _____.",
+    options: ["boring", "wonderful", "terrible"],
+    correct: 0,
+    acceptAny: true,
+  },
+  {
+    id: "a5_q2",
+    type: "mcq",
+    question: "I totally _____ with you.",
+    options: ["agree", "disagrees", "disagree"],
+    correct: 0,
+  },
+  {
+    id: "a5_q3",
+    type: "mcq",
+    question: "That's a fair _____.",
+    options: ["idea", "point", "example"],
+    correct: 1,
+  },
+  {
+    id: "a5_q4",
+    type: "mcq",
+    question: "I see what you mean, but I _____.",
+    options: ["agree", "don't think so", "agree with"],
+    correct: 1,
+  },
+  {
+    id: "a5_q5",
+    type: "mcq",
+    question: "_____, I love autumn.",
+    options: ["For instance", "In addition", "Instead"],
+    correct: 0,
+  },
+];
+
+function startVocabQuiz(activity) {
+  vocabQuizState.currentActivity = activity || null;
+  let pool = activity
+    ? opinionQuizData.filter(q => q.id.startsWith(activity))
+    : [...opinionQuizData];
+  pool.sort(() => Math.random() - 0.5);
+
+  vocabQuizState.questions = pool;
+  vocabQuizState.index = 0;
+  vocabQuizState.correct = 0;
+  vocabQuizState.mistakes = [];
+
+  showScreen('vocab-quiz');
+  renderVocabQuestion();
+}
+
+function renderVocabQuestion() {
+  const q = vocabQuizState.questions[vocabQuizState.index];
+  const total = vocabQuizState.questions.length;
+
+  document.getElementById('vq-progress-label').textContent = `Question ${vocabQuizState.index + 1} / ${total}`;
+  const pct = (vocabQuizState.index / total) * 100;
+  document.getElementById('vq-progress-bar').style.width = `${pct}%`;
+  document.querySelector('#screen-vocab-quiz .progress-wrap')?.setAttribute('aria-valuenow', Math.round(pct));
+
+  document.getElementById('vq-question-text').textContent = q.question;
+
+  const optsContainer = document.getElementById('vq-options');
+  const wordArea = document.getElementById('vq-word-area');
+  const wordPills = document.getElementById('vq-word-pills');
+  const textInput = document.getElementById('vq-text-input');
+  const feedback = document.getElementById('vq-feedback');
+  const checkBtn = document.getElementById('vq-btn-check');
+  const nextBtn = document.getElementById('vq-btn-next');
+
+  feedback.className = 'feedback';
+  feedback.innerHTML = '';
+  nextBtn.style.display = 'none';
+
+  if (q.type === 'mcq') {
+    optsContainer.style.display = 'flex';
+    wordArea.style.display = 'none';
+    checkBtn.style.display = 'none';
+    optsContainer.innerHTML = '';
+
+    q.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-secondary';
+      btn.style.width = '100%';
+      btn.style.textAlign = 'left';
+      btn.style.padding = '14px 20px';
+      btn.style.justifyContent = 'flex-start';
+      btn.style.fontSize = '15px';
+      btn.textContent = opt;
+      btn.onclick = () => checkVocabAnswer(idx);
+      optsContainer.appendChild(btn);
+    });
+  } else {
+    optsContainer.style.display = 'none';
+    optsContainer.innerHTML = '';
+    wordArea.style.display = 'flex';
+    checkBtn.style.display = 'block';
+    textInput.disabled = false;
+    textInput.value = '';
+    textInput.className = 'input-field';
+
+    wordPills.innerHTML = q.words.map(w => `<div class="word-pill">${w}</div>`).join('');
+  }
+}
+
+function checkVocabAnswer(selectedIdx) {
+  const q = vocabQuizState.questions[vocabQuizState.index];
+  const allBtns = document.getElementById('vq-options').querySelectorAll('button');
+
+  allBtns.forEach(b => { b.disabled = true; b.style.opacity = '0.7'; });
+  allBtns[selectedIdx].style.opacity = '1';
+
+  const isCorrect = q.acceptAny || selectedIdx === q.correct;
+
+  if (isCorrect) {
+    allBtns[selectedIdx].style.background = 'rgba(16, 185, 129, 0.15)';
+    allBtns[selectedIdx].style.borderColor = 'var(--green)';
+    allBtns[selectedIdx].style.color = 'var(--green)';
+    vocabQuizState.correct++;
+  } else {
+    allBtns[selectedIdx].style.background = 'rgba(239, 68, 68, 0.15)';
+    allBtns[selectedIdx].style.borderColor = 'var(--red)';
+    allBtns[selectedIdx].style.color = 'var(--red)';
+    allBtns[q.correct].style.opacity = '1';
+    allBtns[q.correct].style.background = 'rgba(16, 185, 129, 0.15)';
+    allBtns[q.correct].style.borderColor = 'var(--green)';
+    allBtns[q.correct].style.color = 'var(--green)';
+    vocabQuizState.mistakes.push({
+      id: q.id,
+      question: q.question,
+      userAnswer: q.options[selectedIdx],
+      correctAnswer: q.options[q.correct],
+    });
+  }
+
+  document.getElementById('vq-btn-next').style.display = 'block';
+  const pct = ((vocabQuizState.index + 1) / vocabQuizState.questions.length) * 100;
+  document.getElementById('vq-progress-bar').style.width = `${pct}%`;
+}
+
+function checkVocabTextAnswer() {
+  const q = vocabQuizState.questions[vocabQuizState.index];
+  const input = document.getElementById('vq-text-input');
+  const userAnswer = input.value.trim();
+  const feedback = document.getElementById('vq-feedback');
+
+  if (!userAnswer) {
+    showError('Please write your answer first!');
+    return;
+  }
+
+  const isCorrect = normalize(userAnswer) === normalize(q.correct);
+
+  if (isCorrect) {
+    input.className = 'input-field correct';
+    feedback.className = 'feedback correct show';
+    feedback.innerHTML = '<svg class="icon icon-check"><use href="#icon-check"/></svg> Correct!';
+    vocabQuizState.correct++;
+  } else {
+    input.className = 'input-field wrong';
+    feedback.className = 'feedback wrong show';
+    feedback.innerHTML = `<svg class="icon icon-x"><use href="#icon-x"/></svg> <span>Not quite.<br><span class="also">Correct answer: ${q.correct}</span></span>`;
+    vocabQuizState.mistakes.push({
+      id: q.id,
+      question: q.question,
+      userAnswer: userAnswer || '(empty)',
+      correctAnswer: q.correct,
+    });
+  }
+
+  input.disabled = true;
+  document.getElementById('vq-btn-check').style.display = 'none';
+  document.getElementById('vq-btn-next').style.display = 'block';
+  const pct = ((vocabQuizState.index + 1) / vocabQuizState.questions.length) * 100;
+  document.getElementById('vq-progress-bar').style.width = `${pct}%`;
+}
+
+function nextVocabQuestion() {
+  vocabQuizState.index++;
+  if (vocabQuizState.index >= vocabQuizState.questions.length) {
+    finishVocabQuiz();
+  } else {
+    renderVocabQuestion();
+  }
+}
+
+function finishVocabQuiz() {
+  showScreen('vocab-quiz-results');
+  const total = vocabQuizState.questions.length;
+  const pct = total > 0 ? Math.round((vocabQuizState.correct / total) * 100) : 0;
+
+  document.getElementById('vq-result-pct').textContent = `${pct}%`;
+  document.getElementById('vq-result-label').textContent = `${vocabQuizState.correct} / ${total}`;
+
+  const wrongList = document.getElementById('vq-wrong-list');
+  if (vocabQuizState.mistakes.length === 0) {
+    wrongList.innerHTML = '<div class="empty">Perfect score. No mistakes.</div>';
+    if (total > 0) successPulse();
+  } else {
+    wrongList.innerHTML = vocabQuizState.mistakes.map(m => `
+      <div class="wrong-item" style="padding:16px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:12px;border-left:3px solid var(--red);flex-direction:column;align-items:flex-start;">
+        <div style="color:var(--text);font-size:14px;margin-bottom:6px"><strong>${m.question}</strong></div>
+        <div style="color:var(--red);font-size:13px;margin-bottom:4px">✗ You answered: ${m.userAnswer}</div>
+        <div style="color:var(--green);font-size:13px;font-weight:600;background:rgba(16, 185, 129, 0.1);padding:4px 10px;border-radius:4px;display:inline-block;">✓ ${m.correctAnswer}</div>
+      </div>
+    `).join('');
+  }
+
+  if (total > 0) {
+    const stats = JSON.parse(localStorage.getItem('vocabQuizStats')) || { total: 0, correct: 0, mistakes: [] };
+    stats.total += total;
+    stats.correct += vocabQuizState.correct;
+
+    vocabQuizState.mistakes.forEach(m => {
+      stats.mistakes.unshift(m);
+    });
+    stats.mistakes = stats.mistakes.slice(0, 50);
+
+    localStorage.setItem('vocabQuizStats', JSON.stringify(stats));
+  }
+}
+
+function loadVocabQuizStats() {
+  showScreen('vocab-quiz-stats');
+  const stats = JSON.parse(localStorage.getItem('vocabQuizStats')) || { total: 0, correct: 0, mistakes: [] };
+
+  document.getElementById('vqs-total').textContent = stats.total;
+  document.getElementById('vqs-correct').textContent = stats.correct;
+  document.getElementById('vqs-acc').textContent = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) + '%' : '0%';
+
+  const mistakesList = document.getElementById('vqs-mistakes-list');
+  if (stats.mistakes.length === 0) {
+    mistakesList.innerHTML = '<div class="empty">No mistakes yet.</div>';
+  } else {
+    mistakesList.innerHTML = stats.mistakes.map(m => `
+      <div class="wrong-item" style="padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;flex-direction:column;align-items:flex-start;">
+        <div style="color:var(--text);font-size:14px;margin-bottom:6px"><strong>${m.question}</strong></div>
+        <div style="color:var(--red);font-size:13px;margin-bottom:4px">✗ ${m.userAnswer}</div>
+        <div style="color:var(--green);font-size:13px;font-weight:600;">✓ ${m.correctAnswer}</div>
+      </div>
+    `).join('');
+  }
 }
 
 // ── Tense Quiz Logic ─────────────────────────────────
