@@ -339,7 +339,7 @@ class SeedResponse(BaseModel):
 - Idempotent — safe to call multiple times
 - First call: `added=100, updated=0`
 - Subsequent calls: `added=0, updated=100` (refresh)
-- Runs automatically on app startup (via `entrypoint.sh`)
+- Runs automatically on app startup (via `docker/entrypoint.sh`)
 
 ## Static File Serving
 

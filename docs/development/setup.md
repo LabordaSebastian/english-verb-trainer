@@ -99,7 +99,7 @@ docker compose logs db | grep "database system is ready"
 ### 7. Initialize Database
 
 ```bash
-python main.py seed
+verb-trainer seed
 ```
 
 This creates tables and loads 100 irregular verbs.
@@ -108,7 +108,7 @@ This creates tables and loads 100 irregular verbs.
 
 ```bash
 # Test CLI
-python main.py quiz --rounds 3
+verb-trainer quiz --rounds 3
 
 # Test API (separate terminal, keep postgres running)
 pip install httpx
@@ -168,9 +168,9 @@ Open http://localhost:8000 in browser.
 ### Running the CLI
 
 ```bash
-python main.py quiz
-python main.py stats
-python main.py seed
+verb-trainer quiz
+verb-trainer stats
+verb-trainer seed
 ```
 
 ### Using Makefile (Linux/Mac)
@@ -195,7 +195,7 @@ make clean             # Remove venv and cache
 
 ```
 .
-├── main.py                 # CLI entry point
+├── app/cli.py              # CLI entry point
 ├── app/                    # Core logic
 │   ├── database.py
 │   ├── models.py
@@ -218,9 +218,9 @@ make clean             # Remove venv and cache
 ├── requirements-dev.txt        # Dev + testing + docs dependencies
 ├── requirements-prod.txt       # Pinned production dependencies
 ├── pyproject.toml              # Configuration
-├── Dockerfile                  # Container image (non-root user)
-├── .dockerignore               # Build exclusions
-├── docker-compose.yml          # Multi-container setup
+├── docker/Dockerfile           # Container image (non-root user)
+├── docker/.dockerignore        # Build exclusions
+├── docker/docker-compose.yml   # Multi-container setup
 ├── Makefile                    # Convenience tasks
 └── .github/
     ├── workflows/              # CI/CD pipeline definitions

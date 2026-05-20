@@ -9,7 +9,7 @@ High-level system design and technology choices.
 │                    User Interfaces                          │
 ├──────────────────────┬──────────────────────────────────────┤
 │  Web Browser (SPA)   │  Terminal (CLI)                      │
-│  http://localhost:8  │  python main.py quiz                 │
+│  http://localhost:8  │  verb-trainer quiz                 │
 │  000                 │                                      │
 └──────────────────────┬──────────────────────────────────────┘
                        │
@@ -191,9 +191,9 @@ CREATE TABLE user_attempts (
 ### CLI Flow
 
 ```
-1. User: python main.py quiz
+1. User: verb-trainer quiz
    ↓
-2. main.py (Typer):
+2. app/cli.py (Typer):
    - Initializes DB connection
    - Gets shuffled verbs
    ↓

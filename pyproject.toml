@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
-verb-trainer = "main:app"
+verb-trainer = "app.cli:app"
 
 [tool.ruff]
 line-length = 88

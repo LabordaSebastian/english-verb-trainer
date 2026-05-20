@@ -36,23 +36,23 @@ source .venv/bin/activate  # Linux/Mac
 .venv\Scripts\activate     # Windows PowerShell
 
 # Initialize database
-python main.py seed
+verb-trainer seed
 
 # Start quiz
-python main.py quiz
+verb-trainer quiz
 
 # View stats
-python main.py stats
+verb-trainer stats
 ```
 
 ### CLI Commands
 
 | Command | Description |
 |---------|-------------|
-| `python main.py quiz` | Start a random 10-question quiz |
-| `python main.py quiz --verb read --rounds 20` | Quiz on a specific verb, 20 questions |
-| `python main.py stats` | View your progress and hardest verbs |
-| `python main.py seed` | Load/refresh verbs in database |
+| `verb-trainer quiz` | Start a random 10-question quiz |
+| `verb-trainer quiz --verb read --rounds 20` | Quiz on a specific verb, 20 questions |
+| `verb-trainer stats` | View your progress and hardest verbs |
+| `verb-trainer seed` | Load/refresh verbs in database |
 
 ## 🛑 Stopping the Application
 
@@ -109,7 +109,7 @@ pip install -r requirements.txt
 Verify the app is working:
 
 ```bash
-# Should list available verbs (seed first via docker compose or python main.py seed)
+# Should list available verbs (seed first via docker compose or verb-trainer seed)
 curl http://localhost:8000/api/verbs/quiz?count=5
 ```
 

@@ -7,87 +7,83 @@ Complete map of the repository and what each directory contains.
 ```
 english-verb-trainer/
 │
-├── 📋 Configuration Files
-│   ├── pyproject.toml          # Python project metadata + tool configs (ruff, mypy, pytest, coverage)
-│   ├── docker-compose.yml      # Multi-container orchestration (PostgreSQL + FastAPI)
+├── app/                        # Core application logic
+│   ├── __init__.py
+│   ├── cli.py                  # CLI entry point (Typer — verb-trainer)
+│   ├── database.py             # SQLAlchemy engine + session factory
+│   ├── models.py               # ORM models (Verb, UserAttempt)
+│   ├── quiz.py                 # Business logic (validation, stats, shuffling)
+│   └── seed.py                 # Database seeding (100 irregular verbs)
+│
+├── api/                        # REST API (FastAPI)
+│   ├── __init__.py
+│   ├── main.py                 # API endpoints + static file serving
+│   └── schemas.py              # Pydantic models (request/response)
+│
+├── static/                     # Frontend (Single Page App)
+│   └── index.html              # HTML UI + JavaScript
+│
+├── docker/                     # Docker configuration
 │   ├── Dockerfile              # Container image definition
-│   ├── Makefile                # Convenience commands (make up, make test, etc.)
-│   ├── .env.example            # Environment variables template
-│   ├── .gitignore              # Git exclusions
-│   ├── .dockerignore           # Docker build exclusions (venv, cache, docs, etc.)
-│   ├── .pre-commit-config.yaml # Pre-commit hooks configuration
-│   ├── mkdocs.yml              # Documentation site configuration (site_url set)
-│   ├── requirements.txt        # Dev dependencies (includes requirements-prod.txt)
-│   ├── requirements-prod.txt   # Pinned production dependencies
-│   └── requirements-dev.txt    # Dev + docs dependencies
+│   ├── docker-compose.yml      # Multi-container orchestration (PostgreSQL + FastAPI)
+│   ├── entrypoint.sh           # Container startup script (seed + uvicorn)
+│   └── .dockerignore           # Docker build exclusions
 │
-├── 📁 Application Code
-│   ├── main.py                 # CLI entry point (Typer app)
-│   │
-│   ├── app/                    # Core application logic
-│   │   ├── __init__.py
-│   │   ├── database.py         # SQLAlchemy engine + session factory
-│   │   ├── models.py           # ORM models (Verb, UserAttempt)
-│   │   ├── quiz.py             # Business logic (validation, stats, shuffling)
-│   │   └── seed.py             # Database seeding (100 irregular verbs)
-│   │
-│   ├── api/                    # REST API (FastAPI)
-│   │   ├── __init__.py
-│   │   ├── main.py             # API endpoints + static file serving
-│   │   └── schemas.py          # Pydantic models (request/response)
-│   │
-│   └── static/                 # Frontend (Single Page App)
-│       └── index.html          # HTML UI + JavaScript
+├── tests/                      # Test suite
+│   ├── __init__.py
+│   ├── conftest.py             # Shared fixtures (db, sample_verb, three_verbs)
+│   ├── test_api.py             # FastAPI endpoint integration tests (TestClient)
+│   ├── test_cli.py             # Typer CLI command tests (CliRunner)
+│   ├── test_quiz.py            # Unit tests for quiz logic
+│   └── test_seed.py            # Unit tests for seed function
 │
-├── 🧪 Testing
-│   ├── tests/
-│   │   ├── __init__.py
-│   │   ├── conftest.py         # Shared fixtures (db, sample_verb, three_verbs)
-│   │   ├── test_api.py         # FastAPI endpoint integration tests (TestClient)
-│   │   ├── test_cli.py         # Typer CLI command tests (CliRunner)
-│   │   ├── test_quiz.py        # Unit tests for quiz logic
-│   │   └── test_seed.py        # Unit tests for seed function
-│   │
-│   └── .pytest_cache/          # Pytest cache (git ignored)
+├── docs/                       # MkDocs documentation source
+│   ├── index.md                # Homepage
+│   ├── quick-start.md          # Getting started guide
+│   ├── structure.md            # This file
+│   ├── cli-reference.md        # CLI commands
+│   ├── architecture/           # System design
+│   ├── api/                    # API documentation
+│   ├── database/               # Database schema
+│   └── development/            # Dev setup & contributing
 │
-├── 📚 Documentation
-│   ├── docs/                   # MkDocs source (this documentation)
-│   │   ├── index.md            # Homepage
-│   │   ├── quick-start.md      # Getting started guide
-│   │   ├── structure.md        # This file
-│   │   ├── cli-reference.md    # CLI commands
-│   │   ├── architecture/       # System design
-│   │   ├── api/                # API documentation
-│   │   ├── database/           # Database schema
-│   │   └── development/        # Dev setup & contributing
-│   │
-│   └── site/                   # Generated HTML (git ignored)
+├── assets/                     # Static assets (screenshots, diagrams)
+│   ├── Diagrama_infraestructura.png
+│   ├── home.png
+│   ├── quiz.png
+│   ├── results.png
+│   └── stats.png
 │
-├── 🚀 CI/CD
-│   └── .github/
-│       ├── workflows/
-│       │   ├── ci.yml          # Continuous Integration (lint + test)
-│       │   ├── cd.yml          # Continuous Delivery (release + Docker push)
-│       │   ├── docs.yml        # Docs deployment to GitHub Pages
-│       │   └── dependabot.yml  # Automatic dependency updates
-│       │
-│       └── ISSUE_TEMPLATE/
-│           ├── bug_report.md       # Bug report template
-│           └── feature_request.md  # Feature request template
+├── promo-video/                # Remotion promo video project
+│   ├── src/
+│   ├── out/                    # Rendered MP4s (gitignored)
+│   └── ...
 │
-├── 📦 Docker
-│   └── entrypoint.sh           # Container startup script (seed + uvicorn)
+├── .github/                    # CI/CD and project automation
+│   ├── workflows/
+│   │   ├── ci.yml              # Continuous Integration (lint + test)
+│   │   ├── cd.yml              # Continuous Delivery (release + Docker push)
+│   │   └── docs.yml            # Docs deployment to GitHub Pages
+│   ├── dependabot.yml          # Automatic dependency updates
+│   └── ISSUE_TEMPLATE/
+│       ├── bug_report.md
+│       └── feature_request.md
 │
-├── 📄 Metadata & Licensing
-│   ├── README.md               # Main repository README
-│   ├── LICENSE                 # MIT license
-│   └── CHANGELOG.md            # Version history (Keep a Changelog)
+├── .opencode/                  # Opencode AI skills configuration
 │
-└── 📁 Cache/Build (git ignored)
-    ├── .venv/                  # Python virtual environment
-    ├── __pycache__/            # Python bytecode cache
-    ├── .ruff_cache/            # Ruff linter cache
-    └── .pytest_cache/          # Pytest cache
+├── pyproject.toml              # Python project metadata + tool configs
+├── Makefile                    # Convenience commands (make up, make test, etc.)
+├── .env.example                # Environment variables template
+├── .pre-commit-config.yaml     # Pre-commit hooks
+├── mkdocs.yml                  # Documentation site config
+├── requirements.txt            # Dev dependencies
+├── requirements-dev.txt        # Dev + docs dependencies
+├── requirements-prod.txt       # Pinned production dependencies
+├── .gitignore                  # Git exclusions
+├── README.md                   # Main repository README
+├── CHANGELOG.md                # Version history
+├── LICENSE                     # MIT license
+└── AGENTS.md                   # AI agent instructions
 ```
 
 ## Key Files Explained
@@ -110,21 +106,21 @@ dependencies = [...]
 
 ### 2. Docker Configuration
 
-**`Dockerfile`** — Builds the container image:
+**`docker/Dockerfile`** — Builds the container image:
 - Non-root user for security
 - Python 3.12 slim base image
 - FastAPI + uvicorn to serve the app
 
-**`.dockerignore`** — Excludes development files from Docker build context:
+**`docker/.dockerignore`** — Excludes development files from Docker build context:
 - Virtual environment, git history, caches, docs, tests
 - Reduces build context size and improves security
 
-**`docker-compose.yml`** — Orchestrates multiple containers:
+**`docker/docker-compose.yml`** — Orchestrates multiple containers:
 - PostgreSQL 15 service with persistent volume
 - FastAPI app service with health checks
 - Credentials via environment variables (overridable via `.env`)
 
-**`entrypoint.sh`** — Container startup script:
+**`docker/entrypoint.sh`** — Container startup script:
 - Seeds database with 100 irregular verbs
 - Starts uvicorn web server on port 8000
 
@@ -147,6 +143,12 @@ Business logic functions:
 
 #### `app/seed.py`
 Contains tuple of 100 irregular verbs and `seed_verbs()` function to populate the database.
+
+#### `app/cli.py`
+Typer-based CLI entry point exposing three commands:
+- `verb-trainer seed` — Load verbs into PostgreSQL
+- `verb-trainer quiz` — Start an interactive quiz session
+- `verb-trainer stats` — Show user progress and hardest verbs
 
 ### 4. API Layer (`api/`)
 
@@ -182,16 +184,16 @@ Single-page application (SPA) with 9 screens, all in a single HTML file:
 
 Key frontend characteristics:
 - **Vanilla JavaScript** (no framework), **HTML5**, **Fetch API**
-- **SVG icon sprite** — 11 icons (target, play, chart, book, refresh, trophy, check, x, flame, warning, star) replacing all emoji UI elements
-- **CSS custom properties** color system: `--purple: #6366f1`, `--blue: #4f46e5`, `--green: #22c55e`, `--red: #ef4444`, `--yellow: #f59e0b`, plus surface/border/text/muted tokens
+- **SVG icon sprite** — 11 icons (target, play, chart, book, refresh, trophy, check, x, flame, warning, star)
+- **CSS custom properties** color system
 - **Glass morphism cards** with `backdrop-filter: blur(20px)`
-- **Accessible**: skip link, `:focus-visible` outlines, `role`/`aria` attributes, semantic labels
+- **Accessible**: skip link, `:focus-visible` outlines, `role`/`aria` attributes
 - Communicates with FastAPI backend via REST at `/api/*`
 - `localStorage` for tense quiz statistics persistence
 
 ### 6. Testing (`tests/`)
 
-52 unit/integration tests across 4 test files:
+Unit/integration tests across 4 test files:
 - **In-memory SQLite** for isolation (no PostgreSQL needed)
 - **pytest** as the test runner
 - **Fixtures** in `conftest.py` for shared test data
@@ -213,7 +215,7 @@ Key frontend characteristics:
 - Create GitHub Release with auto-generated changelog
 
 **`.github/workflows/docs.yml`** — Builds and deploys MkDocs documentation:
-- Triggers on all pushes to main (not just docs/ changes)
+- Triggers on all pushes to main
 - Deploys to GitHub Pages via `actions/deploy-pages@v4`
 
 **`.github/dependabot.yml`** — Automatic dependency updates:
@@ -224,7 +226,7 @@ Key frontend characteristics:
 
 ```mermaid
 graph TB
-    A["main.py<br/>(CLI Entry)"] --> B["app/database.py<br/>(SQLAlchemy)"]
+    A["app/cli.py<br/>(CLI Entry)"] --> B["app/database.py<br/>(SQLAlchemy)"]
     A --> C["app/models.py<br/>(ORM Models)"]
     A --> D["app/quiz.py<br/>(Business Logic)"]
     A --> E["app/seed.py<br/>(Data)"]
@@ -244,10 +246,13 @@ graph TB
 ## Important Directories
 
 ### `app/` — Core Logic
-Contains business logic, database models, and utilities. **Single source of truth** for application behavior.
+Contains business logic, database models, CLI entry point, and utilities. **Single source of truth** for application behavior.
 
 ### `api/` — REST Layer
 Exposes `app/` functionality as REST endpoints. Can be replaced with another interface (e.g., GraphQL) without touching core logic.
+
+### `docker/` — Container Configuration
+All Docker-related files in one place: Dockerfile, Compose, entrypoint, and dockerignore.
 
 ### `tests/` — Quality Assurance
 Unit and integration tests using in-memory SQLite for fast isolation.
@@ -265,14 +270,13 @@ Contains workflows (CI/CD/docs), Dependabot config, and issue templates for GitH
 | `module.py` | Public module | `quiz.py` |
 | `test_*.py` | Test file | `test_quiz.py` |
 | `conftest.py` | Pytest configuration | |
-| `*_test.py` | Alternative test file | Not used here |
-| `.*.yml` | Configuration | `.env`, `docker-compose.yml` |
+| `.*.yml` | Configuration | `.pre-commit-config.yaml` |
 | `*.md` | Markdown docs | `README.md` |
 
 ## Size Overview
 
 ```
-Source code:       ~500 lines (app + api)
+Source code:       ~700 lines (app + api)
 Tests:             ~160 lines
 Docs:              ~2000+ lines (this documentation!)
 Dependencies:      16 packages (production + dev)
@@ -288,9 +292,9 @@ POSTGRES_PASSWORD=your_secure_password_here
 DATABASE_URL=postgresql://trainer_user:${POSTGRES_PASSWORD}@localhost:5432/english_trainer
 ```
 
-> **Note:** `DATABASE_URL` is **required** — the application will not start without it. The default was removed to prevent accidental credential exposure.
+> **Note:** `DATABASE_URL` is **required** — the application will not start without it.
 
 Environment-specific configs can be managed via:
 - `.env` files (local development)
 - Docker Compose environment sections
-- Kubernetes ConfigMaps (Phase 3)
+- Kubernetes ConfigMaps

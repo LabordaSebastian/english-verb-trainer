@@ -2,6 +2,7 @@
 
 PYTHON := .venv/bin/python
 PIP    := .venv/bin/pip
+MODULE := app.cli
 
 ## help: Show available commands
 help:
@@ -43,11 +44,11 @@ destroy:
 
 ## quiz: Launch the quiz locally
 quiz:
-	$(PYTHON) main.py quiz
+	$(PYTHON) -m $(MODULE) quiz
 
 ## stats: Show quiz stats locally
 stats:
-	$(PYTHON) main.py stats
+	$(PYTHON) -m $(MODULE) stats
 
 ## test: Run pytest with verbose output
 test:

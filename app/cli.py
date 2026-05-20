@@ -1,10 +1,10 @@
 """English Irregular Verb Trainer — CLI entry point.
 
 Commands:
-  python main.py seed          Load 100 irregular verbs into PostgreSQL
-  python main.py quiz          Start a random quiz session
-  python main.py quiz --verb read   Practice a specific verb
-  python main.py stats         Show your progress summary
+  verb-trainer seed          Load 100 irregular verbs into PostgreSQL
+  verb-trainer quiz          Start a random quiz session
+  verb-trainer quiz --verb read   Practice a specific verb
+  verb-trainer stats         Show your progress summary
 """
 
 import typer
@@ -17,17 +17,14 @@ from app.seed import seed_verbs
 
 app = typer.Typer(
     name="verb-trainer",
-    help="🎯 English Irregular Verb Trainer — DevOps Edition",
+    help="English Irregular Verb Trainer",
     add_completion=False,
 )
 
 # ─── helpers ────────────────────────────────────────────────────────────────
 
 BANNER = """
-╔══════════════════════════════════════════════╗
-║   🎯  English Irregular Verb Trainer         ║
-║          DevOps Edition  |  Docker           ║
-╚══════════════════════════════════════════════╝
+  English Irregular Verb Trainer
 """
 
 
@@ -37,7 +34,7 @@ def _init_db():
         run_migrations()
     except OperationalError as e:
         typer.echo(
-            "\n❌  Cannot connect to PostgreSQL.\n"
+            "\n  Cannot connect to PostgreSQL.\n"
             "    Make sure the container is running:\n\n"
             "      docker compose up -d db\n\n"
             f"    Error: {e}\n",
@@ -57,9 +54,9 @@ def seed():
     try:
         added, updated = seed_verbs(db)
         if added:
-            typer.echo(f"\n✅  {added} verb(s) added, {updated} updated.\n")
+            typer.echo(f"\n  {added} verb(s) added, {updated} updated.\n")
         else:
-            typer.echo(f"\nℹ️   All verbs up to date ({updated} refreshed).\n")
+            typer.echo(f"\n  All verbs up to date ({updated} refreshed).\n")
     finally:
         db.close()
 
@@ -80,32 +77,28 @@ def quiz(
         typer.echo(BANNER)
         total_verbs = db.query(Verb).count()
         if total_verbs == 0:
-            typer.echo("⚠️  No verbs found. Run:  python main.py seed\n")
+            typer.echo("  No verbs found. Run:  verb-trainer seed\n")
             raise typer.Exit(code=1)
 
         correct_count = 0
         question_count = 0
 
-        typer.echo(f"  Starting quiz — {rounds} question(s). Type 'q' to quit.\n")
-        typer.echo("─" * 48)
+        typer.echo(f"  Starting quiz - {rounds} question(s). Type 'q' to quit.\n")
 
-        # Build the question list for this session
         if verb:
-            # Specific verb mode: repeat it for every round
             single = get_verb_by_base(db, base=verb)
             if single is None:
-                typer.echo(f"\n❌  Verb '{verb}' not found in the database.\n")
+                typer.echo(f"\n  Verb '{verb}' not found in the database.\n")
                 raise typer.Exit(code=1)
             question_list = [single] * rounds
         else:
-            # Random mode: shuffle all verbs, take up to `rounds` (no repeats)
             question_list = get_shuffled_verbs(db, limit=rounds)
             if not question_list:
-                typer.echo("⚠️  No verbs found. Run:  python main.py seed\n")
+                typer.echo("  No verbs found. Run:  verb-trainer seed\n")
                 raise typer.Exit(code=1)
             if len(question_list) < rounds:
                 typer.echo(
-                    f"  ℹ️   Only {len(question_list)} verbs available — "
+                    f"  Only {len(question_list)} verbs available - "
                     f"quiz will have {len(question_list)} question(s).\n"
                 )
                 rounds = len(question_list)
@@ -129,7 +122,7 @@ def quiz(
 
             parts = raw.split()
             if len(parts) < 2:
-                typer.echo("  ⚠️  Please enter TWO forms: past  participle")
+                typer.echo("  Please enter TWO forms: past  participle")
                 question_count -= 1
                 continue
 
@@ -139,11 +132,11 @@ def quiz(
             if is_correct:
                 correct_count += 1
                 typer.echo(
-                    f"\n  ✅  Correct!  {v.base.upper()} → {past_in.lower()} → {part_in.lower()}"
+                    f"\n  Correct!  {v.base.upper()} -> {past_in.lower()} -> {part_in.lower()}"
                 )
             else:
                 typer.echo(
-                    f"\n  ❌  Wrong!    {v.base.upper()} → {v.past} → {v.participle}"
+                    f"\n  Wrong!    {v.base.upper()} -> {v.past} -> {v.participle}"
                 )
                 if v.past_alt or v.participle_alt:
                     past_display = f"{v.past} / {v.past_alt}" if v.past_alt else v.past
@@ -153,16 +146,14 @@ def quiz(
                         else v.participle
                     )
                     typer.echo(
-                        f"             (also accepted: {past_display} → {part_display})"
+                        f"             (also accepted: {past_display} -> {part_display})"
                     )
-                typer.echo(f"             You answered: {past_in} → {part_in}")
-
-            typer.echo("─" * 48)
+                typer.echo(f"             You answered: {past_in} -> {part_in}")
 
         if question_count > 0:
             pct = round((correct_count / question_count) * 100, 1)
             typer.echo(
-                f"\n  📊  Result: {correct_count}/{question_count} correct ({pct}%)\n"
+                f"\n  Result: {correct_count}/{question_count} correct ({pct}%)\n"
             )
 
     finally:
@@ -178,19 +169,19 @@ def stats():
         data = get_stats(db)
 
         typer.echo(BANNER)
-        typer.echo(f"  📊  Total attempts : {data['total']}")
-        typer.echo(f"  ✅  Correct        : {data['correct']}")
-        typer.echo(f"  ❌  Wrong          : {data['wrong']}")
-        typer.echo(f"  🎯  Accuracy       : {data['accuracy']}%\n")
+        typer.echo(f"  Total attempts : {data['total']}")
+        typer.echo(f"  Correct        : {data['correct']}")
+        typer.echo(f"  Wrong          : {data['wrong']}")
+        typer.echo(f"  Accuracy       : {data['accuracy']}%\n")
 
         if data["hardest_verbs"]:
-            typer.echo("  🔥  Hardest verbs (most mistakes):")
+            typer.echo("  Hardest verbs (most mistakes):")
             for i, entry in enumerate(data["hardest_verbs"], 1):
                 typer.echo(
-                    f"      {i}. {entry['verb'].upper():<15} — {entry['errors']} error(s)"
+                    f"      {i}. {entry['verb'].upper():<15} - {entry['errors']} error(s)"
                 )
         else:
-            typer.echo("  🎉  No mistakes yet! Keep it up.")
+            typer.echo("  No mistakes yet! Keep it up.")
 
         typer.echo()
 

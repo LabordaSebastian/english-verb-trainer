@@ -191,10 +191,10 @@ Request: GET /api/stats
 
 ## CLI Request Flow
 
-### Running: python main.py quiz
+### Running: verb-trainer quiz
 
 ```
-1. main.py → app.command() decorator
+1. app/cli.py → app.command() decorator
    ↓
 2. Typer calls quiz() function
    ↓
@@ -225,7 +225,7 @@ Request: GET /api/stats
 
 ## Seeding Database
 
-### Running: python main.py seed
+### Running: verb-trainer seed
 
 ```
 1. _init_db() → Create tables if needed
@@ -315,7 +315,7 @@ Body: {verb_id: 999, past_given: "x", participle_given: "y"}
 ### Database Connection Failure
 
 ```
-main.py → _init_db()
+app/cli.py → _init_db()
    ↓
 Try: Base.metadata.create_all(bind=engine)
    ↓

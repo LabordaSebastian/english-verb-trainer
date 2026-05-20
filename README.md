@@ -117,9 +117,9 @@ Es el lenguaje principal de la aplicación. Contiene toda la lógica del quiz, l
 
 **¿Para qué se usa acá?**
 Define los comandos de la aplicación:
-- `python main.py quiz` — inicia el quiz
-- `python main.py seed` — carga los verbos en la base de datos
-- `python main.py stats` — muestra el progreso del usuario
+- `verb-trainer quiz` — inicia el quiz
+- `verb-trainer seed` — carga los verbos en la base de datos (requiere PostgreSQL)
+- `verb-trainer stats` — muestra el progreso del usuario
 
 **¿Por qué Typer?**
 - Genera automáticamente el `--help` de cada comando.
@@ -128,9 +128,9 @@ Define los comandos de la aplicación:
 
 ```bash
 # Ejemplos de uso con opciones
-python main.py quiz --verb go        # practica solo el verbo GO
-python main.py quiz --rounds 20      # quiz de 20 preguntas
-python main.py stats                 # ver tu progreso
+verb-trainer quiz --verb go        # practica solo el verbo GO
+verb-trainer quiz --rounds 20      # quiz de 20 preguntas
+verb-trainer stats                 # ver tu progreso
 ```
 
 ---
@@ -273,10 +273,17 @@ Verifica que el código sigue las convenciones de estilo de Python (PEP 8) antes
 ```
 english-verb-trainer/
 │
-├── 📄 main.py                  # Entry point CLI — define los comandos quiz/seed/stats
-├── 🐳 Dockerfile               # Imagen Docker de la aplicación
-├── 🐳 docker-compose.yml       # Orquestador (App + PostgreSQL)
-├── 🚀 entrypoint.sh            # Script de inicio del contenedor (seed + uvicorn)
+├── app/                        # Lógica core y CLI
+│   ├── cli.py                  # Entry point CLI (verb-trainer)
+│   ├── database.py             # Conexión SQLAlchemy a PostgreSQL
+│   ├── models.py               # Tablas: Verb y UserAttempt
+│   ├── quiz.py                 # Lógica: validación, estadísticas
+│   └── seed.py                 # 100 verbos irregulares precargados
+│
+├── docker/                     # Configuración Docker
+│   ├── Dockerfile              # Imagen Docker de la aplicación
+│   ├── docker-compose.yml      # Orquestador (App + PostgreSQL)
+│   └── entrypoint.sh           # Script de inicio del contenedor
 ├── 📋 Makefile                 # Comandos DevOps (make up, make down, make test)
 ├── 📦 requirements.txt         # Dependencias Python
 ├── ⚙️ pyproject.toml           # Configuración del proyecto Python
@@ -290,19 +297,17 @@ english-verb-trainer/
 ├── static/                     # Frontend SPA (Single Page App)
 │   └── index.html              # Interfaz web (Dark mode, JS)
 │
-├── app/                        # Lógica core y CLI
-│   ├── database.py             # Conexión SQLAlchemy a PostgreSQL
-│   ├── models.py               # Tablas: Verb y UserAttempt
-│   ├── quiz.py                 # Lógica: validación, estadísticas
-│   └── seed.py                 # 50 verbos irregulares precargados
-│
 ├── tests/                      # Tests unitarios
-│   └── test_quiz.py            # 18 tests con SQLite en memoria
+│   ├── test_api.py
+│   ├── test_cli.py
+│   ├── test_quiz.py
+│   └── test_seed.py
 │
 └── .github/
     └── workflows/
         ├── ci.yml              # CI: lint + pytest en cada push
-        └── cd.yml              # CD: Docker image + Release en cada tag
+        ├── cd.yml              # CD: Docker image + Release en cada tag
+        └── docs.yml            # Deploy documentación a GitHub Pages
 ```
 
 ---
@@ -322,19 +327,19 @@ english-verb-trainer/
 
 ```bash
 # Iniciar quiz aleatorio (10 preguntas)
-python main.py quiz
+verb-trainer quiz
 
 # Practicar un verbo específico
-python main.py quiz --verb read
+verb-trainer quiz --verb read
 
 # Quiz más largo
-python main.py quiz --rounds 20
+verb-trainer quiz --rounds 20
 
 # Ver tu progreso y verbos más difíciles
-python main.py stats
+verb-trainer stats
 
 # Recargar los verbos en la DB
-python main.py seed
+verb-trainer seed
 ```
 
 ### Comandos con Makefile (Linux/Mac)

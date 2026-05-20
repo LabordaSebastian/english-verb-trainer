@@ -1,6 +1,6 @@
 """Seed script — loads the 100 most common irregular English verbs into PostgreSQL.
 
-Run via:  python main.py seed
+Run via:  verb-trainer seed
 """
 
 from sqlalchemy.orm import Session

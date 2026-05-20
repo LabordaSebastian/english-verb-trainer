@@ -56,3 +56,12 @@ site/
 # OS
 .DS_Store
 Thumbs.db
+
+# CodeGraph (local tool cache)
+.codegraph/
+
+# mypy
+.mypy_cache/
+
+# ruff
+.ruff_cache/

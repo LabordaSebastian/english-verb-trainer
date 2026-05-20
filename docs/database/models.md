@@ -212,7 +212,7 @@ attempts = db.query(UserAttempt).filter_by(verb_id=verb.id).count()
 Done automatically via:
 
 ```python
-# In main.py and api/main.py
+# In app/cli.py and api/main.py
 from app.models import Base
 from app.database import engine
 
@@ -230,7 +230,7 @@ This:
 Verbs are populated via `app/seed.py`:
 
 ```python
-python main.py seed  # CLI
+verb-trainer seed  # CLI
 # or
 POST /api/seed       # HTTP endpoint
 ```

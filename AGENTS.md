@@ -31,7 +31,7 @@ pytest tests/test_api.py::test_quiz_api_returns_verbs -v
 
 ## Architecture
 
-- **CLI**: Typer (`main.py` → `verb-trainer` entrypoint)
+- **CLI**: Typer (`app/cli.py` → `verb-trainer` entrypoint)
 - **API**: FastAPI (`api/main.py` on port 8000)
 - **SPA**: Vanilla JS + HTML (`static/index.html`)
 - **Core logic**: `app/` (database, models, quiz logic, seed data)

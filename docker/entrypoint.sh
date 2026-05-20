@@ -3,7 +3,7 @@
 set -e
 
 echo "🌱 Seeding database..."
-python main.py seed
+python -m app.cli seed
 
 echo "🚀 Starting web server on port 8000..."
 exec uvicorn api.main:app --host 0.0.0.0 --port 8000

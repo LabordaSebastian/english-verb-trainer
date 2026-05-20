@@ -8,15 +8,15 @@ The English Verb Trainer CLI is built with **Typer**, which provides automatic `
 
 ```bash
 # Show all commands
-python main.py --help
+verb-trainer --help
 
 # Show help for a specific command
-python main.py quiz --help
+verb-trainer quiz --help
 ```
 
 ## Commands
 
-### `python main.py quiz`
+### `verb-trainer quiz`
 
 Start an interactive quiz session.
 
@@ -24,16 +24,16 @@ Start an interactive quiz session.
 
 ```bash
 # Default: 10 random questions
-python main.py quiz
+verb-trainer quiz
 
 # Specify number of questions
-python main.py quiz --rounds 20
+verb-trainer quiz --rounds 20
 
 # Practice a specific verb
-python main.py quiz --verb read
+verb-trainer quiz --verb read
 
 # Combine options
-python main.py quiz --verb go --rounds 15
+verb-trainer quiz --verb go --rounds 15
 ```
 
 #### Options
@@ -47,7 +47,7 @@ python main.py quiz --verb go --rounds 15
 #### Example Session
 
 ```
-$ python main.py quiz --verb read --rounds 3
+$ verb-trainer quiz --verb read --rounds 3
 
 ╔══════════════════════════════════════╗
 ║   🎯  English Irregular Verb Trainer ║
@@ -108,11 +108,11 @@ Your answer > read
 ⚠️  Please enter TWO forms: past  participle
 
 # Verb not found
-$ python main.py quiz --verb unknown
+$ verb-trainer quiz --verb unknown
 ❌  Verb 'unknown' not found in the database.
 
 # Database not running
-$ python main.py quiz
+$ verb-trainer quiz
 ❌  Cannot connect to PostgreSQL.
     Make sure the container is running:
 
@@ -121,14 +121,14 @@ $ python main.py quiz
 
 ---
 
-### `python main.py stats`
+### `verb-trainer stats`
 
 Display your quiz statistics and progress.
 
 #### Usage
 
 ```bash
-python main.py stats
+verb-trainer stats
 ```
 
 #### Output
@@ -170,7 +170,7 @@ Stats are automatically accumulated:
 
 ---
 
-### `python main.py seed`
+### `verb-trainer seed`
 
 Load or refresh the 100 irregular verbs in the database.
 
@@ -178,16 +178,16 @@ Load or refresh the 100 irregular verbs in the database.
 
 ```bash
 # Initial seed (first run)
-python main.py seed
+verb-trainer seed
 
 # Refresh verbs (e.g., after updates)
-python main.py seed
+verb-trainer seed
 ```
 
 #### Output
 
 ```
-$ python main.py seed
+$ verb-trainer seed
 
 🌱 Seeding database...
 
@@ -199,8 +199,8 @@ $ python main.py seed
 | Scenario | Command |
 |----------|---------|
 | First run after `docker compose up` | Run automatically in entrypoint.sh |
-| Manual database reset | `python main.py seed` |
-| Update verb data | Modify `app/seed.py` then `python main.py seed` |
+| Manual database reset | `verb-trainer seed` |
+| Update verb data | Modify `app/seed.py` then `verb-trainer seed` |
 
 #### Verbs Loaded
 
@@ -253,15 +253,15 @@ Set variables via:
 ```bash
 # Linux/Mac
 export DATABASE_URL=postgresql://...
-python main.py quiz
+verb-trainer quiz
 
 # Windows PowerShell
 $env:DATABASE_URL="postgresql://..."
-python main.py quiz
+verb-trainer quiz
 
 # Or create .env file
 echo 'DATABASE_URL=postgresql://...' > .env
-python main.py quiz
+verb-trainer quiz
 ```
 
 ---
@@ -276,7 +276,7 @@ The CLI uses standard exit codes:
 | `1` | Error | Database connection failed, verb not found |
 
 ```bash
-$ python main.py quiz --verb unknown
+$ verb-trainer quiz --verb unknown
 # Exit code: 1
 
 $ echo $?  # Check last exit code (Linux/Mac)
@@ -291,17 +291,17 @@ $ echo $?  # Check last exit code (Linux/Mac)
 
 ```bash
 # Run 3 sessions back-to-back
-for i in {1..3}; do python main.py quiz --rounds 5; done
+for i in {1..3}; do verb-trainer quiz --rounds 5; done
 ```
 
 ### 2. Focus on Weak Verbs
 
 ```bash
 # Check stats to find difficult verbs
-python main.py stats
+verb-trainer stats
 
 # Practice the hardest one (e.g., GO)
-python main.py quiz --verb go --rounds 10
+verb-trainer quiz --verb go --rounds 10
 ```
 
 ### 3. Generate Test Data
@@ -309,11 +309,11 @@ python main.py quiz --verb go --rounds 10
 ```bash
 # Run many quizzes to generate statistics
 for i in {1..10}; do
-  python main.py quiz --rounds 20
+  verb-trainer quiz --rounds 20
 done
 
 # View results
-python main.py stats
+verb-trainer stats
 ```
 
 ### 4. Reset Statistics
@@ -323,10 +323,10 @@ python main.py stats
 docker compose down -v
 
 # Reseed
-python main.py seed
+verb-trainer seed
 
 # Start fresh
-python main.py quiz
+verb-trainer quiz
 ```
 
 ---
@@ -343,7 +343,7 @@ python main.py quiz
 docker compose up -d
 
 # Then run CLI
-python main.py quiz
+verb-trainer quiz
 ```
 
 ### "No verbs found"
@@ -352,8 +352,8 @@ python main.py quiz
 
 **Solution**:
 ```bash
-python main.py seed
-python main.py quiz
+verb-trainer seed
+verb-trainer quiz
 ```
 
 ### "Module not found"
@@ -363,7 +363,7 @@ python main.py quiz
 **Solution**:
 ```bash
 pip install -r requirements.txt
-python main.py quiz
+verb-trainer quiz
 ```
 
 ### Quiz appears slow

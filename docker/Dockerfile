@@ -10,8 +10,7 @@ RUN pip install --no-cache-dir -r requirements-prod.txt
 COPY app/       ./app/
 COPY api/       ./api/
 COPY static/    ./static/
-COPY main.py    .
-COPY entrypoint.sh .
+COPY docker/entrypoint.sh .
 
 RUN chmod +x entrypoint.sh
 

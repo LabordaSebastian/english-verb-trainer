@@ -108,9 +108,9 @@ graph TB
 
 ```
 1. User (Terminal)
-   └─> python main.py quiz
+   └─> verb-trainer quiz
 
-2. CLI (main.py)
+2. CLI (app/cli.py)
    └─> @app.command()
        └─> quiz(verb, rounds)
            └─> Display questions
@@ -147,7 +147,7 @@ graph TB
                              │
         ┌────────────────────┼────────────────────┐
         │                    │                    │
-    app/database         api/main            main.py
+    app/database         api/main            app/cli
         │                    │                    │
         │            ┌───────┴────────┐          │
         │            │                │          │
@@ -178,7 +178,7 @@ FastAPI (ASGI Server - Uvicorn)
 ### CLI (Single-threaded)
 
 ```
-main.py
+app/cli.py
 │
 ├─ Runs questions sequentially
 │  1. Get question

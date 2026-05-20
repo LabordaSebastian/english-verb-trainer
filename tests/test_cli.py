@@ -28,8 +28,8 @@ def _init_test_db(db_session):
 class TestSeedCommand:
     def test_seed_success(self):
         with (
-            patch("main._init_db"),
-            patch("main.SessionLocal") as mock_session_local,
+            patch("app.cli._init_db"),
+            patch("app.cli.SessionLocal") as mock_session_local,
         ):
             from sqlalchemy import create_engine
             from sqlalchemy.orm import sessionmaker
@@ -45,7 +45,7 @@ class TestSeedCommand:
             session = session_factory()
             mock_session_local.return_value = session
 
-            from main import app
+            from app.cli import app
 
             result = runner.invoke(app, ["seed"])
             assert result.exit_code == 0
@@ -56,8 +56,8 @@ class TestQuizCommand:
     @pytest.mark.parametrize("rounds", [1, 3, 5])
     def test_quiz_with_rounds(self, rounds):
         with (
-            patch("main._init_db"),
-            patch("main.SessionLocal") as mock_session_local,
+            patch("app.cli._init_db"),
+            patch("app.cli.SessionLocal") as mock_session_local,
         ):
             from sqlalchemy import create_engine
             from sqlalchemy.orm import sessionmaker
@@ -73,7 +73,7 @@ class TestQuizCommand:
             _init_test_db(session)
             mock_session_local.return_value = session
 
-            from main import app
+            from app.cli import app
 
             result = runner.invoke(
                 app, ["quiz", "--rounds", str(rounds)], input="read read\n" * rounds
@@ -83,8 +83,8 @@ class TestQuizCommand:
 
     def test_quiz_empty_db_shows_warning(self):
         with (
-            patch("main._init_db"),
-            patch("main.SessionLocal") as mock_session_local,
+            patch("app.cli._init_db"),
+            patch("app.cli.SessionLocal") as mock_session_local,
         ):
             from sqlalchemy import create_engine
             from sqlalchemy.orm import sessionmaker
@@ -99,7 +99,7 @@ class TestQuizCommand:
             session = session_factory()
             mock_session_local.return_value = session
 
-            from main import app
+            from app.cli import app
 
             result = runner.invoke(app, ["quiz"])
             assert result.exit_code == 1
@@ -107,8 +107,8 @@ class TestQuizCommand:
 
     def test_quiz_specific_verb(self):
         with (
-            patch("main._init_db"),
-            patch("main.SessionLocal") as mock_session_local,
+            patch("app.cli._init_db"),
+            patch("app.cli.SessionLocal") as mock_session_local,
         ):
             from sqlalchemy import create_engine
             from sqlalchemy.orm import sessionmaker
@@ -124,7 +124,7 @@ class TestQuizCommand:
             _init_test_db(session)
             mock_session_local.return_value = session
 
-            from main import app
+            from app.cli import app
 
             result = runner.invoke(
                 app, ["quiz", "--verb", "read", "--rounds", "1"], input="read read\n"
@@ -134,8 +134,8 @@ class TestQuizCommand:
 
     def test_quiz_unknown_verb(self):
         with (
-            patch("main._init_db"),
-            patch("main.SessionLocal") as mock_session_local,
+            patch("app.cli._init_db"),
+            patch("app.cli.SessionLocal") as mock_session_local,
         ):
             from sqlalchemy import create_engine
             from sqlalchemy.orm import sessionmaker
@@ -151,7 +151,7 @@ class TestQuizCommand:
             _init_test_db(session)
             mock_session_local.return_value = session
 
-            from main import app
+            from app.cli import app
 
             result = runner.invoke(
                 app, ["quiz", "--verb", "xyzunknown"], input="read read\n"
@@ -163,8 +163,8 @@ class TestQuizCommand:
 class TestStatsCommand:
     def test_stats_empty(self):
         with (
-            patch("main._init_db"),
-            patch("main.SessionLocal") as mock_session_local,
+            patch("app.cli._init_db"),
+            patch("app.cli.SessionLocal") as mock_session_local,
         ):
             from sqlalchemy import create_engine
             from sqlalchemy.orm import sessionmaker
@@ -179,7 +179,7 @@ class TestStatsCommand:
             session = session_factory()
             mock_session_local.return_value = session
 
-            from main import app
+            from app.cli import app
 
             result = runner.invoke(app, ["stats"])
             assert result.exit_code == 0
@@ -187,8 +187,8 @@ class TestStatsCommand:
 
     def test_stats_with_data(self):
         with (
-            patch("main._init_db"),
-            patch("main.SessionLocal") as mock_session_local,
+            patch("app.cli._init_db"),
+            patch("app.cli.SessionLocal") as mock_session_local,
         ):
             from sqlalchemy import create_engine
             from sqlalchemy.orm import sessionmaker
@@ -226,7 +226,7 @@ class TestStatsCommand:
             session.commit()
             mock_session_local.return_value = session
 
-            from main import app
+            from app.cli import app
 
             result = runner.invoke(app, ["stats"])
             assert result.exit_code == 0
