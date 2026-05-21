@@ -70,3 +70,40 @@ class UserAttempt(Base):
 
     def __repr__(self) -> str:
         return f"<UserAttempt verb_id={self.verb_id} correct={self.is_correct}>"
+
+
+class VocabularyWord(Base):
+    """Stores a vocabulary word with its Spanish translation and category."""
+
+    __tablename__ = "vocabulary_words"
+
+    id = Column(Integer, primary_key=True, index=True)
+    english = Column(String(100), unique=True, nullable=False, index=True)
+    spanish = Column(String(150), nullable=False)
+    category = Column(String(50), nullable=False, index=True)
+
+    attempts: Mapped[list["VocabAttempt"]] = relationship(
+        "VocabAttempt", back_populates="word", cascade="all, delete-orphan"
+    )
+
+    def __repr__(self) -> str:
+        return f"<VocabularyWord english={self.english!r} spanish={self.spanish!r}>"
+
+
+class VocabAttempt(Base):
+    """Logs every vocabulary quiz attempt made by the user."""
+
+    __tablename__ = "vocab_attempts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    word_id = Column(Integer, ForeignKey("vocabulary_words.id"), nullable=False)
+    answer_given = Column(String(100), nullable=False)
+    is_correct = Column(Boolean, nullable=False)
+    attempted_at = Column(DateTime, default=datetime.utcnow)
+
+    word: Mapped[Optional["VocabularyWord"]] = relationship(
+        "VocabularyWord", back_populates="attempts"
+    )
+
+    def __repr__(self) -> str:
+        return f"<VocabAttempt word_id={self.word_id} correct={self.is_correct}>"

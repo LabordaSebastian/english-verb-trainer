@@ -564,6 +564,116 @@ body::after{width:400px;height:400px;background:var(--blue);bottom:-100px;right:
     <button class="btn btn-secondary" id="btn-vqs-back">← Back</button>
   </div>
 
+  <!-- ── VOCABULARY WORDS MENU ─────────────────────── -->
+  <div id="screen-vocab-words-menu" class="screen">
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-book"/></svg> Vocabulary Words</div>
+    <div class="subtitle">Practice the 1000 most common English words</div>
+
+    <div class="card" style="width:100%;max-height:55vh;overflow-y:auto;">
+      <div id="vocab-words-category-list" style="display:flex;flex-direction:column;gap:10px;">
+      </div>
+    </div>
+
+    <button class="btn btn-secondary btn-sm" id="btn-vocab-words-menu-home">← Back</button>
+  </div>
+
+  <!-- ── VOCABULARY WORDS QUIZ SELECT ──────────────── -->
+  <div id="screen-vocab-words-quiz-select" class="screen">
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-target"/></svg> Vocabulary Quiz</div>
+    <div class="subtitle" id="vocab-words-selected-category">Category: All</div>
+
+    <div class="card" style="text-align:center;display:flex;flex-direction:column;gap:20px">
+      <div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:12px">How many questions?</div>
+        <div class="rounds-row" id="vocab-words-rounds-row">
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-start-vocab-words-quiz" style="width:100%;font-size:17px;padding:16px">
+        <svg class="icon"><use href="#icon-play"/></svg>&nbsp; Start Quiz
+      </button>
+    </div>
+
+    <button class="btn btn-secondary btn-sm" id="btn-vocab-words-quiz-select-back">← Back</button>
+  </div>
+
+  <!-- ── VOCABULARY WORDS QUIZ ─────────────────────── -->
+  <div id="screen-vocab-words-quiz" class="screen">
+    <div style="width:100%;display:flex;flex-direction:column;gap:6px">
+      <div class="progress-label" id="vw-progress-label">Question 1 / 10</div>
+      <div class="progress-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-labelledby="vw-progress-label"><div class="progress-bar" id="vw-progress-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:20px">
+      <div style="width:100%;text-align:center;display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:14px;color:var(--muted);margin-bottom:4px;">Translate to English:</div>
+        <div class="verb-base" id="vw-spanish-word">manzana</div>
+        <div style="font-size:12px;color:var(--blue);margin-top:4px;" id="vw-category-label">Common Nouns</div>
+      </div>
+
+      <div style="width:100%;">
+        <label class="input-label" for="vw-input-answer">English word</label>
+        <input class="input-field" id="vw-input-answer" type="text" placeholder="Type the English word..." autocomplete="off" spellcheck="false">
+      </div>
+
+      <div class="feedback" id="vw-feedback" role="alert" aria-live="polite"></div>
+
+      <div class="action-row" style="width:100%">
+        <button class="btn btn-primary" id="vw-btn-check" style="flex:1">Check ✓</button>
+        <button class="btn btn-secondary" id="vw-btn-next" style="flex:1;display:none">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── VOCABULARY WORDS RESULTS ──────────────────── -->
+  <div id="screen-vocab-words-results" class="screen">
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-trophy"/></svg> Quiz Complete</div>
+
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:24px">
+      <div class="score-circle">
+        <div class="score-pct" id="vw-result-pct">0%</div>
+        <div class="score-label" id="vw-result-label">0 / 0</div>
+      </div>
+
+      <div style="width:100%">
+        <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">Mistakes</div>
+        <div class="wrong-list" id="vw-wrong-list">
+          <div class="empty">Perfect score. No mistakes.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-primary" id="btn-vw-play-again"><svg class="icon"><use href="#icon-play"/></svg> Play Again</button>
+      <button class="btn btn-secondary" id="btn-vw-stats"><svg class="icon"><use href="#icon-chart"/></svg> Stats</button>
+      <button class="btn btn-secondary" id="btn-vw-results-home">← Back</button>
+    </div>
+  </div>
+
+  <!-- ── VOCABULARY WORDS STATS ────────────────────── -->
+  <div id="screen-vocab-words-stats" class="screen">
+    <div class="logo" style="font-size:28px"><svg class="icon icon-lg"><use href="#icon-chart"/></svg> Vocabulary Stats</div>
+
+    <div id="vw-stats-loading"><div class="spinner"></div></div>
+
+    <div id="vw-stats-content" style="width:100%;display:none;flex-direction:column;gap:16px">
+      <div class="stat-row" style="grid-template-columns:1fr 1fr 1fr 1fr;">
+        <div class="stat-box"><div class="stat-num" id="vw-s-total">0</div><div class="stat-name">Total</div></div>
+        <div class="stat-box"><div class="stat-num" style="color:var(--green)" id="vw-s-correct">0</div><div class="stat-name">Correct</div></div>
+        <div class="stat-box"><div class="stat-num" style="color:var(--red)" id="vw-s-wrong">0</div><div class="stat-name">Wrong</div></div>
+        <div class="stat-box"><div class="stat-num" style="color:var(--purple)" id="vw-s-acc">0%</div><div class="stat-name">Accuracy</div></div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px"><svg class="icon icon-sm"><use href="#icon-flame"/></svg> Most Missed Words</div>
+        <div class="hardest-list" id="vw-hardest-list">
+          <div class="empty">No mistakes yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-secondary" id="btn-vw-stats-home">← Back</button>
+  </div>
+
 </div>
 
 <script>
@@ -907,6 +1017,17 @@ document.getElementById('btn-go-tense-stats').addEventListener('click', loadTens
 document.getElementById('btn-tense-results-stats').addEventListener('click', loadTenseStats);
 document.getElementById('btn-tense-stats-back').addEventListener('click', () => showScreen('tense-select'));
 
+// Vocabulary Words Quiz Listeners
+document.getElementById('btn-vocab-words-menu-home').addEventListener('click', () => showScreen('home'));
+document.getElementById('btn-vocab-words-quiz-select-back').addEventListener('click', () => showScreen('vocab-words-menu'));
+document.getElementById('btn-start-vocab-words-quiz').addEventListener('click', startVocabWordsQuiz);
+document.getElementById('vw-btn-check').addEventListener('click', checkVocabWordsAnswer);
+document.getElementById('vw-btn-next').addEventListener('click', nextVocabWordsQuestion);
+document.getElementById('btn-vw-play-again').addEventListener('click', () => showScreen('vocab-words-menu'));
+document.getElementById('btn-vw-stats').addEventListener('click', loadVocabWordsStats);
+document.getElementById('btn-vw-results-home').addEventListener('click', () => showScreen('vocab-words-menu'));
+document.getElementById('btn-vw-stats-home').addEventListener('click', () => showScreen('vocab-words-menu'));
+
 document.getElementById('btn-seed').addEventListener('click', async () => {
   const btn = document.getElementById('btn-seed');
   const msg = document.getElementById('seed-msg');
@@ -938,6 +1059,16 @@ document.addEventListener('keydown', e => {
 
     if (!state.checked) checkAnswer();
     else nextQuestion();
+  }
+});
+
+// Enter key support for vocabulary words quiz
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const quiz = document.getElementById('screen-vocab-words-quiz');
+    if (!quiz.classList.contains('active')) return;
+    if (!vwState.checked) checkVocabWordsAnswer();
+    else nextVocabWordsQuestion();
   }
 });
 
@@ -2150,6 +2281,276 @@ function loadTenseStats() {
       </div>
     `).join('');
   }
+}
+
+// ── Vocabulary Words Quiz ──────────────────────────────
+
+const vwState = {
+  rounds: 10,
+  words: [],
+  index: 0,
+  correct: 0,
+  wrongs: [],
+  checked: false,
+  selectedCategory: null,
+};
+
+const apiVocabWords = {
+  async getCategories() {
+    const r = await fetch('/api/vocab/categories');
+    if (!r.ok) throw new Error(`Failed to load categories (${r.status})`);
+    return r.json();
+  },
+  async getWords(count, category) {
+    const url = category
+      ? `/api/vocab/quiz?count=${count}&category=${encodeURIComponent(category)}`
+      : `/api/vocab/quiz?count=${count}`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(`Failed to load words (${r.status})`);
+    return r.json();
+  },
+  async submitAttempt(word_id, answer_given) {
+    const r = await fetch('/api/vocab/attempts', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({word_id, answer_given}),
+    });
+    if (!r.ok) throw new Error(`Failed to submit answer (${r.status})`);
+    return r.json();
+  },
+  async getStats() {
+    const r = await fetch('/api/vocab/stats');
+    if (!r.ok) throw new Error(`Failed to load stats (${r.status})`);
+    return r.json();
+  },
+  async seed() {
+    const r = await fetch('/api/vocab/seed', {method:'POST'});
+    if (!r.ok) throw new Error(`Failed to seed vocabulary (${r.status})`);
+    return r.json();
+  },
+};
+
+async function loadVocabWordsCategories() {
+  try {
+    const categories = await apiVocabWords.getCategories();
+    const container = document.getElementById('vocab-words-category-list');
+    container.innerHTML = `
+      <button class="btn btn-home" id="btn-vw-cat-all">
+        <svg class="icon icon-lg"><use href="#icon-star"/></svg>
+        All Categories
+      </button>
+      ${categories.map(c => `
+        <button class="btn btn-home" onclick="selectVocabWordsCategory('${c.name.replace(/'/g, "\\'")}')">
+          <svg class="icon icon-lg"><use href="#icon-book"/></svg>
+          ${c.name} <span style="color:var(--muted);font-size:13px;margin-left:auto;">(${c.count} words)</span>
+        </button>
+      `).join('')}
+    `;
+    document.getElementById('btn-vw-cat-all').addEventListener('click', () => selectVocabWordsCategory(null));
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+async function selectVocabWordsCategory(category) {
+  vwState.selectedCategory = category;
+  document.getElementById('vocab-words-selected-category').textContent =
+    category ? `Category: ${category}` : 'Category: All';
+
+  try {
+    const categories = await apiVocabWords.getCategories();
+    let maxWords = categories.reduce((sum, c) => sum + c.count, 0);
+    if (category) {
+      const cat = categories.find(c => c.name === category);
+      if (cat) maxWords = cat.count;
+    }
+
+    const roundsRow = document.getElementById('vocab-words-rounds-row');
+    const options = [10, 25, 50, 75, 100].filter(n => n <= maxWords);
+    if (options.length === 0) options.push(maxWords);
+
+    roundsRow.innerHTML = options.map((n, i) => `
+      <button class="round-btn ${i === 0 ? 'selected' : ''}" data-rounds="${n}">${n}</button>
+    `).join('');
+
+    roundsRow.querySelectorAll('.round-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        roundsRow.querySelectorAll('.round-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        vwState.rounds = parseInt(btn.dataset.rounds);
+      });
+    });
+
+    showScreen('vocab-words-quiz-select');
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+async function startVocabWordsQuiz() {
+  const btn = document.getElementById('btn-start-vocab-words-quiz');
+  btn.disabled = true;
+  btn.textContent = 'Loading...';
+
+  try {
+    vwState.words = await apiVocabWords.getWords(vwState.rounds, vwState.selectedCategory);
+  } catch (e) {
+    showError(e.message);
+    btn.disabled = false;
+    btn.innerHTML = '<svg class="icon"><use href="#icon-play"/></svg>&nbsp; Start Quiz';
+    return;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg class="icon"><use href="#icon-play"/></svg>&nbsp; Start Quiz';
+
+  vwState.index = 0;
+  vwState.correct = 0;
+  vwState.wrongs = [];
+
+  showScreen('vocab-words-quiz');
+  renderVocabWordsQuestion();
+}
+
+function renderVocabWordsQuestion() {
+  const w = vwState.words[vwState.index];
+  const total = vwState.words.length;
+  const num = vwState.index + 1;
+
+  document.getElementById('vw-spanish-word').textContent = w.spanish;
+  document.getElementById('vw-category-label').textContent = w.category;
+  document.getElementById('vw-progress-label').textContent = `Question ${num} / ${total}`;
+  const pct = ((num - 1) / total) * 100;
+  document.getElementById('vw-progress-bar').style.width = `${pct}%`;
+  document.querySelector('#screen-vocab-words-quiz .progress-wrap')?.setAttribute('aria-valuenow', Math.round(pct));
+
+  const input = document.getElementById('vw-input-answer');
+  input.value = '';
+  input.className = 'input-field';
+  input.disabled = false;
+
+  const fb = document.getElementById('vw-feedback');
+  fb.className = 'feedback';
+  fb.innerHTML = '';
+
+  document.getElementById('vw-btn-check').style.display = '';
+  document.getElementById('vw-btn-next').style.display = 'none';
+  vwState.checked = false;
+  input.focus();
+}
+
+async function checkVocabWordsAnswer() {
+  if (vwState.checked) return;
+  const answer = document.getElementById('vw-input-answer').value.trim();
+  if (!answer) return;
+
+  vwState.checked = true;
+  document.getElementById('vw-btn-check').disabled = true;
+
+  const w = vwState.words[vwState.index];
+  let result;
+  try {
+    result = await apiVocabWords.submitAttempt(w.id, answer);
+  } catch (e) {
+    showError(e.message);
+    vwState.checked = false;
+    document.getElementById('vw-btn-check').disabled = false;
+    return;
+  }
+
+  const input = document.getElementById('vw-input-answer');
+  const fb = document.getElementById('vw-feedback');
+  input.disabled = true;
+
+  if (result.correct) {
+    vwState.correct++;
+    input.className = 'input-field correct';
+    fb.className = 'feedback correct show';
+    fb.innerHTML = `<svg class="icon icon-check"><use href="#icon-check"/></svg> Correct! <strong>${w.spanish} → ${w.english}</strong>`;
+  } else {
+    input.className = 'input-field wrong';
+    fb.className = 'feedback wrong show';
+    fb.innerHTML = `<svg class="icon icon-x"><use href="#icon-x"/></svg> Wrong! <strong>${w.spanish} → ${result.correct_answer}</strong><div class="also">You answered: ${answer}</div>`;
+    vwState.wrongs.push({spanish: w.spanish, correct: w.english, yourAnswer: answer});
+  }
+
+  document.getElementById('vw-btn-check').disabled = false;
+  document.getElementById('vw-btn-check').style.display = 'none';
+
+  const nextBtn = document.getElementById('vw-btn-next');
+  nextBtn.style.display = '';
+  nextBtn.textContent = vwState.index + 1 < vwState.words.length ? 'Next →' : 'See Results';
+}
+
+function nextVocabWordsQuestion() {
+  vwState.index++;
+  if (vwState.index >= vwState.words.length) {
+    showVocabWordsResults();
+  } else {
+    renderVocabWordsQuestion();
+  }
+}
+
+function showVocabWordsResults() {
+  const total = vwState.words.length;
+  const pct = total > 0 ? Math.round((vwState.correct / total) * 100) : 0;
+
+  document.getElementById('vw-result-pct').textContent = pct + '%';
+  document.getElementById('vw-result-label').textContent = `${vwState.correct} / ${total} correct`;
+
+  const list = document.getElementById('vw-wrong-list');
+  if (vwState.wrongs.length === 0) {
+    list.innerHTML = '<div class="empty">Perfect score. No mistakes.</div>';
+  } else {
+    list.innerHTML = vwState.wrongs.map(w =>
+      `<div class="wrong-item">
+        <span class="verb-name">${w.spanish}</span>
+        <span class="correct-forms">You: ${w.yourAnswer} → Correct: ${w.correct}</span>
+      </div>`
+    ).join('');
+  }
+
+  showScreen('vocab-words-results');
+  if (pct === 100) successPulse();
+}
+
+async function loadVocabWordsStats() {
+  showScreen('vocab-words-stats');
+  document.getElementById('vw-stats-loading').style.display = 'block';
+  document.getElementById('vw-stats-content').style.display = 'none';
+
+  let data;
+  try {
+    data = await apiVocabWords.getStats();
+  } catch (e) {
+    showError(e.message);
+    document.getElementById('vw-stats-loading').style.display = 'none';
+    showScreen('vocab-words-menu');
+    return;
+  }
+
+  document.getElementById('vw-s-total').textContent = data.total;
+  document.getElementById('vw-s-correct').textContent = data.correct;
+  document.getElementById('vw-s-wrong').textContent = data.wrong;
+  document.getElementById('vw-s-acc').textContent = data.accuracy + '%';
+
+  const maxErrors = data.hardest_words.length > 0 ? data.hardest_words[0].errors : 1;
+  const hardestEl = document.getElementById('vw-hardest-list');
+  if (data.hardest_words.length === 0) {
+    hardestEl.innerHTML = '<div class="empty">No mistakes yet.</div>';
+  } else {
+    hardestEl.innerHTML = data.hardest_words.map(w =>
+      `<div class="hardest-item">
+        <span class="hardest-verb">${w.word.toUpperCase()}</span>
+        <span style="color:var(--muted);font-size:12px;flex:1;">${w.spanish}</span>
+        <div class="hardest-bar-wrap"><div class="hardest-bar" style="width:${(w.errors/maxErrors)*100}%"></div></div>
+        <span class="hardest-count">${w.errors} error${w.errors>1?'s':''}</span>
+      </div>`
+    ).join('');
+  }
+
+  document.getElementById('vw-stats-loading').style.display = 'none';
+  document.getElementById('vw-stats-content').style.display = 'flex';
 }
 </script>
 </body>

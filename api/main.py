@@ -10,12 +10,19 @@ from sqlalchemy.orm import Session
 from api.schemas import (
     AttemptRequest,
     AttemptResponse,
+    HardestWord,
     QuizVerb,
     SeedResponse,
     StatsResponse,
+    VocabAttemptRequest,
+    VocabAttemptResponse,
+    VocabCategory,
+    VocabQuizWord,
+    VocabSeedResponse,
+    VocabStatsResponse,
 )
 from app.database import get_db, run_migrations
-from app.models import Verb
+from app.models import Verb, VocabAttempt, VocabularyWord
 from app.quiz import get_shuffled_verbs, get_stats, validate_and_log
 
 # ── DB init ───────────────────────────────────────────────────────────────────
@@ -104,6 +111,129 @@ def seed_endpoint(db: Session = Depends(get_db)):
             status_code=409, detail="Database integrity error during seed"
         ) from None
     return SeedResponse(added=added, updated=updated)
+
+
+# ── Vocabulary API routes ───────────────────────────────────────────────────
+
+
+@app.get("/api/vocab/categories", response_model=list[VocabCategory], tags=["vocab"])
+def get_vocab_categories(db: Session = Depends(get_db)):
+    """Return available vocabulary categories with word counts."""
+    from sqlalchemy import func
+
+    rows = (
+        db.query(VocabularyWord.category, func.count(VocabularyWord.id))
+        .group_by(VocabularyWord.category)
+        .all()
+    )
+    return [VocabCategory(name=row[0], count=row[1]) for row in rows]
+
+
+@app.get("/api/vocab/quiz", response_model=list[VocabQuizWord], tags=["vocab"])
+def get_vocab_quiz_words(
+    count: int = 10,
+    category: str | None = None,
+    db: Session = Depends(get_db),
+):
+    """Return N shuffled vocabulary words for a quiz."""
+    query = db.query(VocabularyWord)
+    if category:
+        query = query.filter(VocabularyWord.category == category)
+    words = query.all()
+    import random
+
+    random.shuffle(words)
+    result = []
+    for w in words[:count]:
+        assert w.id is not None and w.english is not None
+        assert w.spanish is not None and w.category is not None
+        result.append(
+            VocabQuizWord(
+                id=w.id, english=w.english, spanish=w.spanish, category=w.category
+            )
+        )
+    return result
+
+
+@app.post("/api/vocab/attempts", response_model=VocabAttemptResponse, tags=["vocab"])
+def submit_vocab_attempt(attempt: VocabAttemptRequest, db: Session = Depends(get_db)):
+    """Validate a vocabulary answer and log the attempt."""
+    word = db.query(VocabularyWord).filter(VocabularyWord.id == attempt.word_id).first()
+    if not word:
+        raise HTTPException(
+            status_code=404, detail=f"Vocabulary word id={attempt.word_id} not found"
+        )
+
+    assert word.english is not None
+    is_correct = attempt.answer_given.strip().lower() == word.english.strip().lower()
+
+    db.add(
+        VocabAttempt(
+            word_id=attempt.word_id,
+            answer_given=attempt.answer_given,
+            is_correct=is_correct,
+        )
+    )
+    db.commit()
+
+    assert word.english is not None
+    return VocabAttemptResponse(
+        correct=is_correct,
+        correct_answer=word.english,
+    )
+
+
+@app.get("/api/vocab/stats", response_model=VocabStatsResponse, tags=["vocab"])
+def get_vocab_stats(db: Session = Depends(get_db)):
+    """Return vocabulary quiz statistics."""
+    total = db.query(VocabAttempt).count()
+    correct = db.query(VocabAttempt).filter(VocabAttempt.is_correct.is_(True)).count()
+    wrong = total - correct
+    accuracy = round((correct / total) * 100, 1) if total > 0 else 0.0
+
+    from sqlalchemy import func
+
+    hardest = (
+        db.query(
+            VocabularyWord.english,
+            VocabularyWord.spanish,
+            func.count(VocabAttempt.id).label("errors"),
+        )
+        .join(VocabAttempt, VocabularyWord.id == VocabAttempt.word_id)
+        .filter(VocabAttempt.is_correct.is_(False))
+        .group_by(VocabularyWord.id)
+        .order_by(func.count(VocabAttempt.id).desc())
+        .limit(10)
+        .all()
+    )
+
+    hardest_words = [
+        HardestWord(word=row[0], spanish=row[1], errors=row[2]) for row in hardest
+    ]
+
+    return VocabStatsResponse(
+        total=total,
+        correct=correct,
+        wrong=wrong,
+        accuracy=accuracy,
+        hardest_words=hardest_words,
+    )
+
+
+@app.post("/api/vocab/seed", response_model=VocabSeedResponse, tags=["vocab-admin"])
+def seed_vocab_endpoint(db: Session = Depends(get_db)):
+    """Seed or refresh the 1000 vocabulary words."""
+    from sqlalchemy.exc import IntegrityError
+
+    from app.vocab_seed import seed_vocabulary
+
+    try:
+        added, updated = seed_vocabulary(db)
+    except IntegrityError:
+        raise HTTPException(
+            status_code=409, detail="Database integrity error during vocab seed"
+        ) from None
+    return VocabSeedResponse(added=added, updated=updated)
 
 
 # ── SPA fallback — must be registered LAST ───────────────────────────────────

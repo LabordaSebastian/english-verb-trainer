@@ -14,6 +14,7 @@ from app.database import SessionLocal, run_migrations
 from app.models import Verb
 from app.quiz import get_shuffled_verbs, get_stats, get_verb_by_base, validate_and_log
 from app.seed import seed_verbs
+from app.vocab_seed import seed_vocabulary
 
 app = typer.Typer(
     name="verb-trainer",
@@ -185,6 +186,18 @@ def stats():
 
         typer.echo()
 
+    finally:
+        db.close()
+
+
+@app.command(name="vocab-seed")
+def vocab_seed():
+    """Load the 1000 most common English words into the database."""
+    _init_db()
+    db = SessionLocal()
+    try:
+        added, updated = seed_vocabulary(db)
+        typer.echo(f"\n  {added} word(s) added, {updated} updated.\n")
     finally:
         db.close()
 

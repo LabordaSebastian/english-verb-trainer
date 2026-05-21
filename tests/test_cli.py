@@ -49,7 +49,7 @@ class TestSeedCommand:
 
             result = runner.invoke(app, ["seed"])
             assert result.exit_code == 0
-            assert "✅" in result.stdout or "ℹ️" in result.stdout
+            assert "verb(s)" in result.stdout or "up to date" in result.stdout
 
 
 class TestQuizCommand:
