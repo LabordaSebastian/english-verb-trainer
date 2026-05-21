@@ -70,7 +70,9 @@ docker compose down -v
 
 ```bash
 make up       # Start containers
-make down     # Stop containers
+make stop     # Stop containers without removing volumes
+make down     # Stop containers and remove volumes
+make rebuild  # Rebuild and start containers (use after Python/API changes)
 make test     # Run tests
 make lint     # Check code style
 make quiz     # Start CLI quiz (requires local Python)
