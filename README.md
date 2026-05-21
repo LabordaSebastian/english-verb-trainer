@@ -77,15 +77,15 @@ cd english-verb-trainer
 cp .env.example .env
 
 # Iniciar la aplicación
-docker compose up
+docker compose -f docker/docker-compose.yml up
 ```
 
 Abrí **http://localhost:8000** en tu browser y listo. 🎯
 
 Docker Compose levanta automáticamente:
 - 🐘 PostgreSQL 15 (con datos persistentes)
-- 🌱 Carga los 100 verbos irregulares
-- 🚀 Web app en http://localhost:8000
+- 🌱 Carga los 100 verbos irregulares + 1000 palabras de vocabulario
+- 🚀 Web app en **http://localhost:8000**
 
 ---
 
@@ -141,12 +141,14 @@ verb-trainer stats                 # ver tu progreso
 [PostgreSQL](https://www.postgresql.org/) es uno de los motores de base de datos relacionales más populares y robustos del mundo. Es ampliamente utilizado en producción por empresas de todo tamaño.
 
 **¿Para qué se usa acá?**
-Almacena dos tablas:
+Almacena cuatro tablas:
 
 | Tabla | Contenido |
 |---|---|
 | `verbs` | Los 100 verbos irregulares (base, pasado, participio, formas alternativas) |
 | `user_attempts` | Cada intento del usuario: qué respondió, si fue correcto, y cuándo |
+| `vocabulary_words` | Las 1000 palabras más comunes del inglés con traducción y categoría |
+| `vocab_attempts` | Cada intento del quiz de vocabulario |
 
 Gracias a `user_attempts`, la aplicación puede mostrarte estadísticas reales: cuántos aciertos tuviste, cuál es tu precisión y qué verbos te cuestan más.
 
@@ -276,19 +278,15 @@ english-verb-trainer/
 ├── app/                        # Lógica core y CLI
 │   ├── cli.py                  # Entry point CLI (verb-trainer)
 │   ├── database.py             # Conexión SQLAlchemy a PostgreSQL
-│   ├── models.py               # Tablas: Verb y UserAttempt
+│   ├── models.py               # Tablas: Verb, UserAttempt, VocabularyWord, VocabAttempt
 │   ├── quiz.py                 # Lógica: validación, estadísticas
-│   └── seed.py                 # 100 verbos irregulares precargados
+│   ├── seed.py                 # 100 verbos irregulares precargados
+│   └── vocab_seed.py           # 1000 palabras de vocabulario precargadas
 │
 ├── docker/                     # Configuración Docker
 │   ├── Dockerfile              # Imagen Docker de la aplicación
 │   ├── docker-compose.yml      # Orquestador (App + PostgreSQL)
 │   └── entrypoint.sh           # Script de inicio del contenedor
-├── 📋 Makefile                 # Comandos DevOps (make up, make down, make test)
-├── 📦 requirements.txt         # Dependencias Python
-├── ⚙️ pyproject.toml           # Configuración del proyecto Python
-├── 🔒 .env.example             # Variables de entorno de ejemplo
-├── 🙈 .gitignore               # Archivos excluidos de Git
 │
 ├── api/                        # Backend REST (FastAPI)
 │   ├── main.py                 # Endpoints y servidor web
@@ -302,6 +300,12 @@ english-verb-trainer/
 │   ├── test_cli.py
 │   ├── test_quiz.py
 │   └── test_seed.py
+│
+├── docker-compose.yml          # Orquestador (App + PostgreSQL)
+├── Makefile                    # Comandos DevOps (make up, make stop, make test)
+├── pyproject.toml              # Configuración del proyecto Python
+├── .env.example                # Variables de entorno de ejemplo
+├── .gitignore                  # Archivos excluidos de Git
 │
 └── .github/
     └── workflows/
@@ -340,19 +344,30 @@ verb-trainer stats
 
 # Recargar los verbos en la DB
 verb-trainer seed
+
+# Cargar las 1000 palabras de vocabulario
+verb-trainer vocab-seed
 ```
 
 ### Comandos con Makefile (Linux/Mac)
 
 ```bash
 make up        # inicia Postgres y la Web App (Docker Compose)
-make down      # detiene y elimina todo
-make test      # corre los 18 tests
+make stop      # detiene contenedores (mantiene datos)
+make destroy   # detiene y elimina todo (incluye datos)
+make test      # corre los tests
 make lint      # verifica el estilo del código
 make quiz      # corre el modo terminal (requiere python local)
 make clean     # elimina el entorno virtual y caché
 make help      # muestra todos los comandos disponibles
 ```
+
+### Puertos
+
+| Servicio | URL |
+|---|---|
+| **Web App** | http://localhost:8000 |
+| **PostgreSQL** | localhost:5432 |
 
 ---
 
