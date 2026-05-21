@@ -2,8 +2,11 @@
 # entrypoint.sh — seed the DB then start the web server
 set -e
 
-echo "🌱 Seeding database..."
+echo "🌱 Seeding irregular verbs..."
 python -m app.cli seed
+
+echo "📖 Seeding vocabulary words..."
+python -m app.cli vocab-seed
 
 echo "🚀 Starting web server on port 8000..."
 exec uvicorn api.main:app --host 0.0.0.0 --port 8000

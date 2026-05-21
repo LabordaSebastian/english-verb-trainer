@@ -53,3 +53,23 @@ def run_migrations():
         if not exists:
             conn.execute(text("ALTER TABLE verbs ADD COLUMN meaning VARCHAR(150)"))
             conn.commit()
+
+    # Drop the unique constraint on vocabulary_words.english so words can
+    # appear in multiple categories with different Spanish meanings.
+    with engine.connect() as conn:
+        is_unique = conn.execute(
+            text(
+                "SELECT i.indisunique FROM pg_index i "
+                "JOIN pg_class c ON c.oid = i.indexrelid "
+                "WHERE c.relname = 'ix_vocabulary_words_english'"
+            )
+        ).scalar()
+        if is_unique:
+            conn.execute(text("DROP INDEX ix_vocabulary_words_english"))
+            conn.execute(
+                text(
+                    "CREATE INDEX ix_vocabulary_words_english "
+                    "ON vocabulary_words (english)"
+                )
+            )
+            conn.commit()

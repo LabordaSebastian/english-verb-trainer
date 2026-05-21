@@ -34,6 +34,10 @@ setup:
 up:
 	docker compose -f docker/docker-compose.yml up -d
 
+## rebuild: Rebuild and start containers (use after Python/API changes)
+rebuild:
+	docker compose -f docker/docker-compose.yml up -d --build
+
 ## stop: Stop containers without removing volumes
 stop:
 	docker compose -f docker/docker-compose.yml down

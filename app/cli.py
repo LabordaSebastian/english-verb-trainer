@@ -11,7 +11,7 @@ import typer
 from sqlalchemy.exc import OperationalError
 
 from app.database import SessionLocal, run_migrations
-from app.models import Verb
+from app.models import Verb, VocabAttempt, VocabularyWord
 from app.quiz import get_shuffled_verbs, get_stats, get_verb_by_base, validate_and_log
 from app.seed import seed_verbs
 from app.vocab_seed import seed_vocabulary

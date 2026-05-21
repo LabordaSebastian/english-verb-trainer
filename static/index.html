@@ -201,6 +201,10 @@ body::after{width:400px;height:400px;background:var(--blue);bottom:-100px;right:
         <svg class="icon icon-lg"><use href="#icon-target"/></svg>
         Practice Verb Tenses
       </button>
+      <button class="btn btn-home" id="btn-vocab-words">
+        <svg class="icon icon-lg"><use href="#icon-book"/></svg>
+        Vocabulary Words (1000)
+      </button>
       <button class="btn btn-home" id="btn-vocabulary">
         <svg class="icon icon-lg"><use href="#icon-message-square"/></svg>
         Practice Vocabulary
@@ -570,11 +574,17 @@ body::after{width:400px;height:400px;background:var(--blue);bottom:-100px;right:
     <div class="subtitle">Practice the 1000 most common English words</div>
 
     <div class="card" style="width:100%;max-height:55vh;overflow-y:auto;">
-      <div id="vocab-words-category-list" style="display:flex;flex-direction:column;gap:10px;">
+      <div id="vw-loading" style="text-align:center;padding:20px"><div class="spinner"></div></div>
+      <div id="vocab-words-category-list" style="display:none;flex-direction:column;gap:10px;">
       </div>
     </div>
 
-    <button class="btn btn-secondary btn-sm" id="btn-vocab-words-menu-home">← Back</button>
+    <div style="width:100%;display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button class="btn btn-secondary btn-sm" id="btn-vocab-words-menu-home">← Back</button>
+      <button class="btn btn-secondary btn-sm" id="btn-vw-seed"><svg class="icon"><use href="#icon-refresh"/></svg> Reload Vocabulary</button>
+      <button class="btn btn-secondary btn-sm" id="btn-vw-menu-stats"><svg class="icon"><use href="#icon-chart"/></svg> Stats</button>
+    </div>
+    <div id="vw-seed-msg" role="alert" style="font-size:13px;color:var(--muted);display:none"></div>
   </div>
 
   <!-- ── VOCABULARY WORDS QUIZ SELECT ──────────────── -->
@@ -959,6 +969,10 @@ document.getElementById('btn-verb-tenses').addEventListener('click', () => {
 document.getElementById('btn-vocabulary').addEventListener('click', () => {
   showScreen('vocab-menu');
 });
+document.getElementById('btn-vocab-words').addEventListener('click', () => {
+  showScreen('vocab-words-menu');
+  loadVocabWordsCategories();
+});
 document.getElementById('btn-irregular-home').addEventListener('click', () => showScreen('home'));
 document.getElementById('btn-vocab-home').addEventListener('click', () => showScreen('home'));
 document.getElementById('btn-vocab-giving-opinion').addEventListener('click', () => {
@@ -1019,14 +1033,46 @@ document.getElementById('btn-tense-stats-back').addEventListener('click', () => 
 
 // Vocabulary Words Quiz Listeners
 document.getElementById('btn-vocab-words-menu-home').addEventListener('click', () => showScreen('home'));
-document.getElementById('btn-vocab-words-quiz-select-back').addEventListener('click', () => showScreen('vocab-words-menu'));
+document.getElementById('btn-vocab-words-quiz-select-back').addEventListener('click', () => {
+  showScreen('vocab-words-menu');
+  loadVocabWordsCategories();
+});
 document.getElementById('btn-start-vocab-words-quiz').addEventListener('click', startVocabWordsQuiz);
 document.getElementById('vw-btn-check').addEventListener('click', checkVocabWordsAnswer);
 document.getElementById('vw-btn-next').addEventListener('click', nextVocabWordsQuestion);
-document.getElementById('btn-vw-play-again').addEventListener('click', () => showScreen('vocab-words-menu'));
+document.getElementById('btn-vw-play-again').addEventListener('click', () => {
+  showScreen('vocab-words-menu');
+  loadVocabWordsCategories();
+});
 document.getElementById('btn-vw-stats').addEventListener('click', loadVocabWordsStats);
-document.getElementById('btn-vw-results-home').addEventListener('click', () => showScreen('vocab-words-menu'));
+document.getElementById('btn-vw-results-home').addEventListener('click', () => {
+  showScreen('vocab-words-menu');
+  loadVocabWordsCategories();
+});
 document.getElementById('btn-vw-stats-home').addEventListener('click', () => showScreen('vocab-words-menu'));
+document.getElementById('btn-vw-menu-stats').addEventListener('click', () => {
+  showScreen('vocab-words-menu');
+  loadVocabWordsStats();
+});
+document.getElementById('btn-vw-seed').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-vw-seed');
+  const msg = document.getElementById('vw-seed-msg');
+  btn.disabled = true;
+  btn.innerHTML = 'Loading\u2026';
+  let isError = false;
+  try {
+    const data = await apiVocabWords.seed();
+    msg.innerHTML = `<svg class="icon icon-check"><use href="#icon-check"/></svg> ${data.added} loaded.`;
+    await loadVocabWordsCategories();
+  } catch (e) {
+    isError = true;
+    msg.innerHTML = `<svg class="icon icon-x"><use href="#icon-x"/></svg> ${e.message}`;
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<svg class="icon"><use href="#icon-refresh"/></svg> Reload Vocabulary';
+  msg.style.display = 'block';
+  if (!isError) setTimeout(() => { msg.style.display = 'none'; }, 3000);
+});
 
 document.getElementById('btn-seed').addEventListener('click', async () => {
   const btn = document.getElementById('btn-seed');
@@ -2293,12 +2339,19 @@ const vwState = {
   wrongs: [],
   checked: false,
   selectedCategory: null,
+  categories: null,
 };
+
+async function apiErr(r) {
+  let detail = '';
+  try { const b = await r.json(); detail = b.detail || ''; } catch {}
+  throw new Error(detail || `${r.status} ${r.statusText}`);
+}
 
 const apiVocabWords = {
   async getCategories() {
     const r = await fetch('/api/vocab/categories');
-    if (!r.ok) throw new Error(`Failed to load categories (${r.status})`);
+    if (!r.ok) await apiErr(r);
     return r.json();
   },
   async getWords(count, category) {
@@ -2306,7 +2359,7 @@ const apiVocabWords = {
       ? `/api/vocab/quiz?count=${count}&category=${encodeURIComponent(category)}`
       : `/api/vocab/quiz?count=${count}`;
     const r = await fetch(url);
-    if (!r.ok) throw new Error(`Failed to load words (${r.status})`);
+    if (!r.ok) await apiErr(r);
     return r.json();
   },
   async submitAttempt(word_id, answer_given) {
@@ -2315,31 +2368,34 @@ const apiVocabWords = {
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({word_id, answer_given}),
     });
-    if (!r.ok) throw new Error(`Failed to submit answer (${r.status})`);
+    if (!r.ok) await apiErr(r);
     return r.json();
   },
   async getStats() {
     const r = await fetch('/api/vocab/stats');
-    if (!r.ok) throw new Error(`Failed to load stats (${r.status})`);
+    if (!r.ok) await apiErr(r);
     return r.json();
   },
   async seed() {
     const r = await fetch('/api/vocab/seed', {method:'POST'});
-    if (!r.ok) throw new Error(`Failed to seed vocabulary (${r.status})`);
+    if (!r.ok) await apiErr(r);
     return r.json();
   },
 };
 
 async function loadVocabWordsCategories() {
+  document.getElementById('vw-loading').style.display = 'block';
+  document.getElementById('vocab-words-category-list').style.display = 'none';
+
   try {
-    const categories = await apiVocabWords.getCategories();
+    vwState.categories = await apiVocabWords.getCategories();
     const container = document.getElementById('vocab-words-category-list');
     container.innerHTML = `
       <button class="btn btn-home" id="btn-vw-cat-all">
         <svg class="icon icon-lg"><use href="#icon-star"/></svg>
         All Categories
       </button>
-      ${categories.map(c => `
+      ${(vwState.categories || []).map(c => `
         <button class="btn btn-home" onclick="selectVocabWordsCategory('${c.name.replace(/'/g, "\\'")}')">
           <svg class="icon icon-lg"><use href="#icon-book"/></svg>
           ${c.name} <span style="color:var(--muted);font-size:13px;margin-left:auto;">(${c.count} words)</span>
@@ -2347,7 +2403,13 @@ async function loadVocabWordsCategories() {
       `).join('')}
     `;
     document.getElementById('btn-vw-cat-all').addEventListener('click', () => selectVocabWordsCategory(null));
+    document.getElementById('vw-loading').style.display = 'none';
+    container.style.display = 'flex';
   } catch (e) {
+    document.getElementById('vw-loading').style.display = 'none';
+    const container = document.getElementById('vocab-words-category-list');
+    container.innerHTML = `<div class="empty">⚠️ Failed to load vocabulary data: ${e.message}<br>Click "Reload Vocabulary" to seed the database.</div>`;
+    container.style.display = 'flex';
     showError(e.message);
   }
 }
@@ -2357,34 +2419,35 @@ async function selectVocabWordsCategory(category) {
   document.getElementById('vocab-words-selected-category').textContent =
     category ? `Category: ${category}` : 'Category: All';
 
-  try {
-    const categories = await apiVocabWords.getCategories();
-    let maxWords = categories.reduce((sum, c) => sum + c.count, 0);
-    if (category) {
-      const cat = categories.find(c => c.name === category);
-      if (cat) maxWords = cat.count;
-    }
-
-    const roundsRow = document.getElementById('vocab-words-rounds-row');
-    const options = [10, 25, 50, 75, 100].filter(n => n <= maxWords);
-    if (options.length === 0) options.push(maxWords);
-
-    roundsRow.innerHTML = options.map((n, i) => `
-      <button class="round-btn ${i === 0 ? 'selected' : ''}" data-rounds="${n}">${n}</button>
-    `).join('');
-
-    roundsRow.querySelectorAll('.round-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        roundsRow.querySelectorAll('.round-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        vwState.rounds = parseInt(btn.dataset.rounds);
-      });
-    });
-
-    showScreen('vocab-words-quiz-select');
-  } catch (e) {
-    showError(e.message);
+  const cats = vwState.categories || [];
+  let maxWords = cats.reduce((sum, c) => sum + c.count, 0);
+  if (category) {
+    const cat = cats.find(c => c.name === category);
+    if (cat) maxWords = cat.count;
   }
+
+  if (maxWords === 0) {
+    showError('No vocabulary words found. Click "Reload Vocabulary" to seed the database.');
+    return;
+  }
+
+  const roundsRow = document.getElementById('vocab-words-rounds-row');
+  const options = [10, 25, 50, 75, 100].filter(n => n <= maxWords);
+  if (options.length === 0) options.push(maxWords);
+
+  roundsRow.innerHTML = options.map((n, i) => `
+    <button class="round-btn ${i === 0 ? 'selected' : ''}" data-rounds="${n}">${n}</button>
+  `).join('');
+
+  roundsRow.querySelectorAll('.round-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      roundsRow.querySelectorAll('.round-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      vwState.rounds = parseInt(btn.dataset.rounds);
+    });
+  });
+
+  showScreen('vocab-words-quiz-select');
 }
 
 async function startVocabWordsQuiz() {
@@ -2403,6 +2466,11 @@ async function startVocabWordsQuiz() {
 
   btn.disabled = false;
   btn.innerHTML = '<svg class="icon"><use href="#icon-play"/></svg>&nbsp; Start Quiz';
+
+  if (!vwState.words || vwState.words.length === 0) {
+    showError('No words available for this quiz. Try a different category or load vocabulary data.');
+    return;
+  }
 
   vwState.index = 0;
   vwState.correct = 0;

@@ -78,7 +78,7 @@ class VocabularyWord(Base):
     __tablename__ = "vocabulary_words"
 
     id = Column(Integer, primary_key=True, index=True)
-    english = Column(String(100), unique=True, nullable=False, index=True)
+    english = Column(String(100), nullable=False, index=True)
     spanish = Column(String(150), nullable=False)
     category = Column(String(50), nullable=False, index=True)
 

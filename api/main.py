@@ -119,14 +119,24 @@ def seed_endpoint(db: Session = Depends(get_db)):
 @app.get("/api/vocab/categories", response_model=list[VocabCategory], tags=["vocab"])
 def get_vocab_categories(db: Session = Depends(get_db)):
     """Return available vocabulary categories with word counts."""
-    from sqlalchemy import func
+    import logging
 
-    rows = (
-        db.query(VocabularyWord.category, func.count(VocabularyWord.id))
-        .group_by(VocabularyWord.category)
-        .all()
-    )
-    return [VocabCategory(name=row[0], count=row[1]) for row in rows]
+    from sqlalchemy import func
+    from sqlalchemy.exc import OperationalError
+
+    try:
+        rows = (
+            db.query(VocabularyWord.category, func.count(VocabularyWord.id))
+            .group_by(VocabularyWord.category)
+            .all()
+        )
+        return [VocabCategory(name=row[0], count=row[1]) for row in rows]
+    except OperationalError as e:
+        logging.error("Database unavailable for vocab categories: %s", e)
+        raise HTTPException(
+            status_code=503,
+            detail="Database unavailable. Make sure the database is running and seeded.",
+        ) from None
 
 
 @app.get("/api/vocab/quiz", response_model=list[VocabQuizWord], tags=["vocab"])
@@ -223,7 +233,9 @@ def get_vocab_stats(db: Session = Depends(get_db)):
 @app.post("/api/vocab/seed", response_model=VocabSeedResponse, tags=["vocab-admin"])
 def seed_vocab_endpoint(db: Session = Depends(get_db)):
     """Seed or refresh the 1000 vocabulary words."""
-    from sqlalchemy.exc import IntegrityError
+    import logging
+
+    from sqlalchemy.exc import IntegrityError, OperationalError
 
     from app.vocab_seed import seed_vocabulary
 
@@ -232,6 +244,17 @@ def seed_vocab_endpoint(db: Session = Depends(get_db)):
     except IntegrityError:
         raise HTTPException(
             status_code=409, detail="Database integrity error during vocab seed"
+        ) from None
+    except OperationalError as e:
+        logging.error("Database operational error during vocab seed: %s", e)
+        raise HTTPException(
+            status_code=503,
+            detail=f"Database unavailable. Make sure the database is running and seeded: {e}",
+        ) from None
+    except Exception as e:
+        logging.error("Unexpected error during vocab seed: %s", e)
+        raise HTTPException(
+            status_code=500, detail=f"Failed to seed vocabulary: {e}"
         ) from None
     return VocabSeedResponse(added=added, updated=updated)
 

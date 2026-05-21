@@ -441,7 +441,6 @@ VOCABULARY_WORDS = [
     ("pursue", "perseguir", "Common Verbs"),
     ("question", "cuestionar / preguntar", "Common Verbs"),
     ("react", "reaccionar", "Common Verbs"),
-    ("recognize", "reconocer", "Common Verbs"),
     ("relax", "relajarse", "Common Verbs"),
     ("remain", "permanecer", "Common Verbs"),
     ("remind", "recordar a alguien", "Common Verbs"),
@@ -868,7 +867,6 @@ VOCABULARY_WORDS = [
     ("song", "cancion", "Common Nouns"),
     ("color", "color", "Common Nouns"),
     ("language", "idioma / lengua", "Common Nouns"),
-    ("country", "pais", "Common Nouns"),
     ("state", "estado", "Common Nouns"),
     ("town", "pueblo", "Common Nouns"),
     ("village", "aldea / pueblo", "Common Nouns"),
@@ -1127,7 +1125,6 @@ VOCABULARY_WORDS = [
     ("audio", "audio", "Common Nouns"),
     ("file", "archivo", "Common Nouns"),
     ("folder", "carpeta", "Common Nouns"),
-    ("folder", "carpeta", "Common Nouns"),
     ("project", "proyecto", "Common Nouns"),
     ("task", "tarea", "Common Nouns"),
     ("goal", "meta / objetivo", "Common Nouns"),
@@ -1152,7 +1149,6 @@ VOCABULARY_WORDS = [
     ("climate", "clima", "Common Nouns"),
     ("population", "poblacion", "Common Nouns"),
     ("society", "sociedad", "Common Nouns"),
-    ("community", "comunidad", "Common Nouns"),
     ("neighbor", "vecino/a", "Common Nouns"),
     ("stranger", "extrano / desconocido", "Common Nouns"),
     ("couple", "pareja", "Common Nouns"),
@@ -1207,19 +1203,15 @@ VOCABULARY_WORDS = [
     ("guest", "huesped / invitado", "Common Nouns"),
     ("host", "anfitrion", "Common Nouns"),
     ("leader", "lider", "Common Nouns"),
-    ("member", "miembro", "Common Nouns"),
     ("citizen", "ciudadano/a", "Common Nouns"),
     ("human", "humano/a", "Common Nouns"),
     ("creature", "criatura", "Common Nouns"),
     ("species", "especie", "Common Nouns"),
     ("race", "raza", "Common Nouns"),
     ("nation", "nacion", "Common Nouns"),
-    ("population", "poblacion", "Common Nouns"),
     ("generation", "generacion", "Common Nouns"),
-    ("century", "siglo", "Common Nouns"),
     ("era", "era / epoca", "Common Nouns"),
     ("age", "era / edad", "Common Nouns"),
-    ("period", "periodo", "Common Nouns"),
     ("phase", "fase", "Common Nouns"),
     ("stage", "etapa / escenario", "Common Nouns"),
     ("step", "paso", "Common Nouns"),
@@ -1324,7 +1316,6 @@ VOCABULARY_WORDS = [
     ("idiom", "modismo", "Common Nouns"),
     ("slang", "jerga", "Common Nouns"),
     ("dialect", "dialecto", "Common Nouns"),
-    ("accent", "acento", "Common Nouns"),
     ("conversation", "conversacion", "Common Nouns"),
     ("discussion", "discusion", "Common Nouns"),
     ("debate", "debate", "Common Nouns"),
@@ -1338,12 +1329,10 @@ VOCABULARY_WORDS = [
     ("workshop", "taller", "Common Nouns"),
     ("course", "curso", "Common Nouns"),
     ("training", "entrenamiento", "Common Nouns"),
-    ("practice", "practica", "Common Nouns"),
     ("exercise", "ejercicio", "Common Nouns"),
     ("drill", "ejercicio / taladro", "Common Nouns"),
     ("homework", "tarea escolar", "Common Nouns"),
     ("assignment", "tarea / asignacion", "Common Nouns"),
-    ("project", "proyecto", "Common Nouns"),
     ("research", "investigacion", "Common Nouns"),
     ("experiment", "experimento", "Common Nouns"),
     ("discovery", "descubrimiento", "Common Nouns"),
@@ -1364,19 +1353,15 @@ VOCABULARY_WORDS = [
     ("contribution", "contribucion", "Common Nouns"),
     ("impact", "impacto", "Common Nouns"),
     ("influence", "influencia", "Common Nouns"),
-    ("effect", "efecto", "Common Nouns"),
     ("consequence", "consecuencia", "Common Nouns"),
     ("outcome", "resultado", "Common Nouns"),
-    ("result", "resultado", "Common Nouns"),
     ("product", "producto", "Common Nouns"),
-    ("result", "resultado", "Common Nouns"),
     ("output", "producto / salida", "Common Nouns"),
     ("input", "entrada / aporte", "Common Nouns"),
     ("source", "fuente", "Common Nouns"),
     ("origin", "origen", "Common Nouns"),
     ("beginning", "comienzo", "Common Nouns"),
     ("start", "inicio", "Common Nouns"),
-    ("middle", "medio", "Common Nouns"),
     ("end", "fin", "Common Nouns"),
     ("conclusion", "conclusion", "Common Nouns"),
     ("summary", "resumen", "Common Nouns"),
@@ -1390,12 +1375,10 @@ VOCABULARY_WORDS = [
     ("reference", "referencia", "Common Nouns"),
     ("citation", "cita", "Common Nouns"),
     ("quote", "cita", "Common Nouns"),
-    ("example", "ejemplo", "Common Nouns"),
     ("sample", "muestra", "Common Nouns"),
     ("model", "modelo", "Common Nouns"),
     ("pattern", "patron", "Common Nouns"),
     ("design", "diseno", "Common Nouns"),
-    ("plan", "plan", "Common Nouns"),
     ("blueprint", "plano", "Common Nouns"),
     ("sketch", "bosquejo", "Common Nouns"),
     ("drawing", "dibujo", "Common Nouns"),
@@ -1413,7 +1396,6 @@ VOCABULARY_WORDS = [
     ("stare", "mirada fija", "Common Nouns"),
     ("gaze", "mirada fija", "Common Nouns"),
     ("peek", "vistazo rapido", "Common Nouns"),
-    ("peek", "vistazo rapido", "Common Nouns"),
     ("observation", "observacion", "Common Nouns"),
     ("attention", "atencion", "Common Nouns"),
     ("focus", "enfoque", "Common Nouns"),
@@ -1427,7 +1409,6 @@ VOCABULARY_WORDS = [
     ("insight", "perspectiva", "Common Nouns"),
     ("wisdom", "sabiduria", "Common Nouns"),
     ("intelligence", "inteligencia", "Common Nouns"),
-    ("knowledge", "conocimiento", "Common Nouns"),
     ("learning", "aprendizaje", "Common Nouns"),
     ("teaching", "ensenanza", "Common Nouns"),
     ("instruction", "instruccion", "Common Nouns"),
@@ -1443,10 +1424,8 @@ VOCABULARY_WORDS = [
     ("need", "necesidad", "Common Nouns"),
     ("desire", "deseo", "Common Nouns"),
     ("wish", "deseo", "Common Nouns"),
-    ("dream", "sueno", "Common Nouns"),
     ("goal", "meta", "Common Nouns"),
     ("aim", "objetivo", "Common Nouns"),
-    ("purpose", "proposito", "Common Nouns"),
     ("intention", "intencion", "Common Nouns"),
     ("motive", "motivo", "Common Nouns"),
     ("motivation", "motivacion", "Common Nouns"),
@@ -1459,7 +1438,6 @@ VOCABULARY_WORDS = [
     ("relief", "alivio", "Common Nouns"),
     ("comfort", "consuelo / comodidad", "Common Nouns"),
     ("consolation", "consolacion", "Common Nouns"),
-    ("sympathy", "simpatia", "Common Nouns"),
     ("pity", "lastima", "Common Nouns"),
     ("mercy", "misericordia", "Common Nouns"),
     ("forgiveness", "perdon", "Common Nouns"),
@@ -1478,22 +1456,18 @@ VOCABULARY_WORDS = [
     ("obligation", "obligacion", "Common Nouns"),
     ("responsibility", "responsabilidad", "Common Nouns"),
     ("duty", "deber", "Common Nouns"),
-    ("task", "tarea", "Common Nouns"),
     ("job", "trabajo", "Common Nouns"),
     ("role", "rol / papel", "Common Nouns"),
     ("function", "funcion", "Common Nouns"),
     ("position", "posicion", "Common Nouns"),
     ("status", "estado", "Common Nouns"),
     ("rank", "rango", "Common Nouns"),
-    ("title", "titulo", "Common Nouns"),
-    ("name", "nombre", "Common Nouns"),
     ("label", "etiqueta", "Common Nouns"),
     ("tag", "etiqueta", "Common Nouns"),
     ("sign", "senal / letrero", "Common Nouns"),
     ("symbol", "simbolo", "Common Nouns"),
     ("mark", "marca", "Common Nouns"),
     ("indication", "indicacion", "Common Nouns"),
-    ("signal", "senal", "Common Nouns"),
     ("warning", "advertencia", "Common Nouns"),
     ("alert", "alerta", "Common Nouns"),
     ("notice", "aviso", "Common Nouns"),
@@ -1506,8 +1480,6 @@ VOCABULARY_WORDS = [
     ("reason", "razon", "Common Nouns"),
     ("evidence", "evidencia", "Common Nouns"),
     ("proof", "prueba", "Common Nouns"),
-    ("fact", "hecho", "Common Nouns"),
-    ("truth", "verdad", "Common Nouns"),
     ("reality", "realidad", "Common Nouns"),
     ("fiction", "ficcion", "Common Nouns"),
     ("fantasy", "fantasia", "Common Nouns"),
@@ -1517,14 +1489,12 @@ VOCABULARY_WORDS = [
     ("novelty", "novedad", "Common Nouns"),
     ("uniqueness", "singularidad", "Common Nouns"),
     ("similarity", "similitud", "Common Nouns"),
-    ("difference", "diferencia", "Common Nouns"),
     ("contrast", "contraste", "Common Nouns"),
     ("comparison", "comparacion", "Common Nouns"),
     ("analogy", "analogia", "Common Nouns"),
     ("metaphor", "metafora", "Common Nouns"),
     ("simile", "simil", "Common Nouns"),
     ("figure", "figura", "Common Nouns"),
-    ("image", "imagen", "Common Nouns"),
     ("picture", "imagen / foto", "Common Nouns"),
     ("illustration", "ilustracion", "Common Nouns"),
     ("diagram", "diagrama", "Common Nouns"),
@@ -1538,9 +1508,7 @@ VOCABULARY_WORDS = [
     ("register", "registro", "Common Nouns"),
     ("record", "registro", "Common Nouns"),
     ("document", "documento", "Common Nouns"),
-    ("file", "archivo", "Common Nouns"),
     ("report", "informe", "Common Nouns"),
-    ("summary", "resumen", "Common Nouns"),
     ("abstract", "resumen / abstracto", "Common Nouns"),
     ("outline", "esquema", "Common Nouns"),
     ("draft", "borrador", "Common Nouns"),
@@ -1559,17 +1527,13 @@ VOCABULARY_WORDS = [
     ("reflection", "reflexion", "Common Nouns"),
     ("contemplation", "contemplacion", "Common Nouns"),
     ("meditation", "meditacion", "Common Nouns"),
-    ("concentration", "concentracion", "Common Nouns"),
-    ("meditation", "meditacion", "Common Nouns"),
     ("relaxation", "relajacion", "Common Nouns"),
     ("rest", "descanso", "Common Nouns"),
     ("pause", "pausa", "Common Nouns"),
     ("break", "descanso / ruptura", "Common Nouns"),
     ("interval", "intervalo", "Common Nouns"),
     ("gap", "brecha / espacio", "Common Nouns"),
-    ("space", "espacio", "Common Nouns"),
     ("room", "espacio / habitacion", "Common Nouns"),
-    ("area", "area", "Common Nouns"),
     ("zone", "zona", "Common Nouns"),
     ("region", "region", "Common Nouns"),
     ("territory", "territorio", "Common Nouns"),
@@ -1646,18 +1610,14 @@ VOCABULARY_WORDS = [
     ("mark", "nota / marca", "Common Nouns"),
     ("grade", "calificacion", "Common Nouns"),
     ("rank", "clasificacion", "Common Nouns"),
-    ("position", "posicion", "Common Nouns"),
     ("place", "lugar / posicion", "Common Nouns"),
     ("standing", "posicion / estatus", "Common Nouns"),
-    ("reputation", "reputacion", "Common Nouns"),
-    ("image", "imagen", "Common Nouns"),
     ("brand", "marca", "Common Nouns"),
     ("logo", "logo", "Common Nouns"),
     ("slogan", "eslogan", "Common Nouns"),
     ("motto", "lema", "Common Nouns"),
     ("theme", "tema", "Common Nouns"),
     ("subject", "tema / materia", "Common Nouns"),
-    ("topic", "tema", "Common Nouns"),
     ("issue", "tema / problema", "Common Nouns"),
     ("matter", "asunto", "Common Nouns"),
     ("concern", "preocupacion", "Common Nouns"),
@@ -1669,34 +1629,25 @@ VOCABULARY_WORDS = [
     ("strain", "esfuerzo / tension", "Common Nouns"),
     ("burden", "carga", "Common Nouns"),
     ("load", "carga", "Common Nouns"),
-    ("weight", "peso", "Common Nouns"),
     ("mass", "masa", "Common Nouns"),
     ("volume", "volumen", "Common Nouns"),
     ("density", "densidad", "Common Nouns"),
     ("thickness", "grosor", "Common Nouns"),
-    ("width", "ancho", "Common Nouns"),
     ("breadth", "anchura", "Common Nouns"),
-    ("length", "longitud", "Common Nouns"),
-    ("height", "altura", "Common Nouns"),
-    ("depth", "profundidad", "Common Nouns"),
-    ("distance", "distancia", "Common Nouns"),
     ("range", "rango / alcance", "Common Nouns"),
     ("scope", "alcance", "Common Nouns"),
     ("extent", "alcance / extension", "Common Nouns"),
     ("scale", "escala", "Common Nouns"),
     ("proportion", "proporcion", "Common Nouns"),
-    ("ratio", "proporcion", "Common Nouns"),
     ("fraction", "fraccion", "Common Nouns"),
     ("portion", "porcion", "Common Nouns"),
     ("share", "parte / accion", "Common Nouns"),
     ("slice", "rebanada", "Common Nouns"),
     ("piece", "pieza", "Common Nouns"),
     ("segment", "segmento", "Common Nouns"),
-    ("section", "seccion", "Common Nouns"),
     ("division", "division", "Common Nouns"),
     ("department", "departamento", "Common Nouns"),
     ("branch", "rama / sucursal", "Common Nouns"),
-    ("office", "oficina", "Common Nouns"),
     ("bureau", "oficina / agencia", "Common Nouns"),
     ("agency", "agencia", "Common Nouns"),
     ("organization", "organizacion", "Common Nouns"),
@@ -1706,7 +1657,6 @@ VOCABULARY_WORDS = [
     ("plant", "planta / fabrica", "Common Nouns"),
     ("factory", "fabrica", "Common Nouns"),
     ("mill", "molino", "Common Nouns"),
-    ("workshop", "taller", "Common Nouns"),
     ("studio", "estudio", "Common Nouns"),
     ("laboratory", "laboratorio", "Common Nouns"),
     ("clinic", "clinica", "Common Nouns"),
@@ -1714,7 +1664,6 @@ VOCABULARY_WORDS = [
     ("shop", "tienda", "Common Nouns"),
     ("boutique", "boutique", "Common Nouns"),
     ("mall", "centro comercial", "Common Nouns"),
-    ("center", "centro", "Common Nouns"),
     ("complex", "complejo", "Common Nouns"),
     ("compound", "compuesto / recinto", "Common Nouns"),
     ("campus", "campus universitario", "Common Nouns"),
@@ -1758,8 +1707,6 @@ VOCABULARY_WORDS = [
     ("curve", "curva", "Common Nouns"),
     ("arc", "arco", "Common Nouns"),
     ("angle", "angulo", "Common Nouns"),
-    ("corner", "esquina", "Common Nouns"),
-    ("edge", "borde", "Common Nouns"),
     ("margin", "margen", "Common Nouns"),
     ("border", "frontera", "Common Nouns"),
     ("boundary", "limite", "Common Nouns"),
@@ -1767,11 +1714,7 @@ VOCABULARY_WORDS = [
     ("barrier", "barrera", "Common Nouns"),
     ("wall", "pared / muro", "Common Nouns"),
     ("fence", "cerca", "Common Nouns"),
-    ("gate", "porton", "Common Nouns"),
-    ("door", "puerta", "Common Nouns"),
-    ("window", "ventana", "Common Nouns"),
     ("glass", "vidrio", "Common Nouns"),
-    ("mirror", "espejo", "Common Nouns"),
     ("reflection", "reflejo", "Common Nouns"),
     ("shadow", "sombra", "Common Nouns"),
     ("shade", "sombra", "Common Nouns"),
@@ -1785,14 +1728,7 @@ VOCABULARY_WORDS = [
     ("sunrise", "amanecer", "Common Nouns"),
     ("sunset", "atardecer", "Common Nouns"),
     ("daylight", "luz del dia", "Common Nouns"),
-    ("darkness", "oscuridad", "Common Nouns"),
-    ("night", "noche", "Common Nouns"),
-    ("midnight", "medianoche", "Common Nouns"),
-    ("noon", "mediodia", "Common Nouns"),
-    ("afternoon", "tarde", "Common Nouns"),
     ("evening", "tarde / noche", "Common Nouns"),
-    ("morning", "manana", "Common Nouns"),
-    ("dawn", "amanecer", "Common Nouns"),
 
     # ── 8. Numbers & Quantifiers (60 words) ───────────────────────────────
     ("zero", "cero", "Numbers & Quantifiers"),
@@ -1879,7 +1815,6 @@ VOCABULARY_WORDS = [
     ("how heavy", "que tan pesado", "Question Words"),
     ("how fast", "que tan rapido", "Question Words"),
     ("how high", "que tan alto", "Question Words"),
-    ("how wide", "que tan ancho", "Question Words"),
     ("how thick", "que tan grueso", "Question Words"),
     ("how strong", "que tan fuerte", "Question Words"),
     ("how long ago", "hace cuanto tiempo", "Question Words"),
@@ -1950,7 +1885,6 @@ VOCABULARY_WORDS = [
     ("less than", "menos de", "Common Phrases"),
     ("no more than", "no mas de", "Common Phrases"),
     ("no less than", "no menos de", "Common Phrases"),
-    ("at least", "al menos", "Common Phrases"),
     ("at first", "al principio", "Common Phrases"),
     ("at last", "por fin / al fin", "Common Phrases"),
     ("at once", "de inmediato", "Common Phrases"),
@@ -1969,6 +1903,9 @@ def seed_vocabulary(
 ) -> tuple[int, int]:
     """Upsert vocabulary words — insert new ones and update existing ones.
 
+    Uses a (english, category) composite key for dedup so the same English
+    word can appear in multiple categories with different Spanish meanings.
+
     Args:
         db: Database session.
         word_list: List of word tuples (english, spanish, category).
@@ -1981,21 +1918,36 @@ def seed_vocabulary(
 
     words = VOCABULARY_WORDS if word_list is None else word_list
 
+    # Pre-load existing (english, category) pairs to avoid SQLAlchemy's
+    # unit-of-work batching issue where unflushed rows are invisible to
+    # subsequent queries within the same transaction.
+    existing_map: dict[tuple[str, str], VocabularyWord] = {
+        (w.english, w.category): w  # type: ignore
+        for w in db.query(VocabularyWord).all()
+    }
+
+    seen: set[tuple[str, str]] = set()
+
     added = updated = 0
+    new_words: list[VocabularyWord] = []
+
     for english, spanish, category in words:
-        existing = db.query(VocabularyWord).filter_by(english=english).first()
+        key = (english, category)
+        if key in seen:
+            continue  # skip exact duplicates within the list
+        seen.add(key)
+
+        existing = existing_map.get(key)
         if existing:
-            existing.spanish = spanish
-            existing.category = category
-            updated += 1
+            if existing.spanish != spanish:
+                existing.spanish = spanish
+                updated += 1
         else:
-            word = VocabularyWord(
-                english=english,
-                spanish=spanish,
-                category=category,
+            new_words.append(
+                VocabularyWord(english=english, spanish=spanish, category=category)
             )
-            db.add(word)
             added += 1
 
+    db.add_all(new_words)
     db.commit()
     return added, updated
