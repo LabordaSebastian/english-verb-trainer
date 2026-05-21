@@ -32,15 +32,15 @@ setup:
 
 ## up: Start everything with Docker Compose
 up:
-	docker compose up -d
+	docker compose -f docker/docker-compose.yml up -d
 
 ## stop: Stop containers without removing volumes
 stop:
-	docker compose down
+	docker compose -f docker/docker-compose.yml down
 
 ## destroy: Stop containers and remove volumes
 destroy:
-	docker compose down -v
+	docker compose -f docker/docker-compose.yml down -v
 
 ## quiz: Launch the quiz locally
 quiz:
