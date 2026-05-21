@@ -11,9 +11,10 @@ english-verb-trainer/
 │   ├── __init__.py
 │   ├── cli.py                  # CLI entry point (Typer — verb-trainer)
 │   ├── database.py             # SQLAlchemy engine + session factory
-│   ├── models.py               # ORM models (Verb, UserAttempt)
+│   ├── models.py               # ORM models (Verb, UserAttempt, VocabularyWord, VocabAttempt)
 │   ├── quiz.py                 # Business logic (validation, stats, shuffling)
-│   └── seed.py                 # Database seeding (100 irregular verbs)
+│   ├── seed.py                 # Database seeding (100 irregular verbs)
+│   └── vocab_seed.py           # Vocabulary seeding (1867 words, 10 categories)
 │
 ├── api/                        # REST API (FastAPI)
 │   ├── __init__.py
@@ -122,6 +123,7 @@ dependencies = [...]
 
 **`docker/entrypoint.sh`** — Container startup script:
 - Seeds database with 100 irregular verbs
+- Seeds database with 1867 vocabulary words across 10 categories
 - Starts uvicorn web server on port 8000
 
 ### 3. Application Modules
@@ -130,9 +132,15 @@ dependencies = [...]
 SQLAlchemy engine, session factory, and `run_migrations()` for schema management. Reads `DATABASE_URL` from environment.
 
 #### `app/models.py`
-Two ORM models:
+Four ORM models:
 - **Verb**: Stores irregular verbs (base, past, participle, alternatives)
 - **UserAttempt**: Logs each quiz attempt (answer, correctness, timestamp)
+- **VocabularyWord**: Stores vocabulary words (english, spanish, category)
+- **VocabAttempt**: Logs each vocabulary quiz attempt
+
+The `VocabularyWord.english` column intentionally has no `unique=True`
+constraint so the same word can appear across categories with different
+Spanish meanings.
 
 #### `app/quiz.py`
 Business logic functions:
@@ -145,26 +153,47 @@ Business logic functions:
 Contains tuple of 100 irregular verbs and `seed_verbs()` function to populate the database.
 
 #### `app/cli.py`
-Typer-based CLI entry point exposing three commands:
-- `verb-trainer seed` — Load verbs into PostgreSQL
+Typer-based CLI entry point exposing four commands:
+- `verb-trainer seed` — Load 100 irregular verbs into PostgreSQL
+- `verb-trainer vocab-seed` — Load 1867 vocabulary words into PostgreSQL
 - `verb-trainer quiz` — Start an interactive quiz session
 - `verb-trainer stats` — Show user progress and hardest verbs
 
 ### 4. API Layer (`api/`)
 
 **`api/main.py`** — FastAPI application with endpoints:
+
+*Verb tense quiz:*
 - `GET /api/verbs/quiz` — Get shuffled verbs for a quiz
 - `POST /api/attempts` — Submit an answer
 - `GET /api/stats` — View user statistics
 - `POST /api/seed` — Reload verb database
 
+*Vocabulary quiz:*
+- `GET /api/vocab/categories` — List categories with word counts
+- `GET /api/vocab/quiz` — Get shuffled vocabulary words
+- `POST /api/vocab/attempts` — Submit a vocabulary answer
+- `GET /api/vocab/stats` — View vocabulary statistics
+- `POST /api/vocab/seed` — Reload vocabulary database
+
 **`api/schemas.py`** — Pydantic models for request/response validation:
+
+*Verb tense quiz:*
 - `QuizVerb` — Verb data (without correct answers)
 - `AttemptRequest` — User's submitted answer (validates `verb_id > 0`)
 - `AttemptResponse` — Result with correct answer
 - `HardestVerb` — Typed entry in the hardest-verbs ranking
 - `StatsResponse` — User statistics with typed `list[HardestVerb]`
 - `SeedResponse` — Seed operation result
+
+*Vocabulary quiz:*
+- `VocabQuizWord` — Word data (english, spanish, category)
+- `VocabAttemptRequest` — User's submitted translation (validates `word_id > 0`)
+- `VocabAttemptResponse` — Result with correct answer
+- `VocabCategory` — Category name + word count
+- `HardestWord` — Word entry in hardest-words ranking (includes spanish)
+- `VocabStatsResponse` — Vocabulary statistics with typed `list[HardestWord]`
+- `VocabSeedResponse` — Vocabulary seed operation result
 
 ### 5. Frontend (`static/index.html`)
 
@@ -181,6 +210,11 @@ Single-page application (SPA) with 9 screens, all in a single HTML file:
 | **Tense Quiz** | Multiple-choice questions (usage + structure) |
 | **Tense Quiz Results** | Score + mistakes per tense |
 | **Tense Quiz Stats** | Per-tense accuracy (localStorage) |
+| **Vocab Words Menu** | Category list with word counts |
+| **Vocab Quiz Select** | Category + round count picker |
+| **Vocab Quiz** | Spanish→English translation input |
+| **Vocab Results** | Score + per-word mistake list |
+| **Vocab Stats** | Accuracy + hardest words ranking |
 
 Key frontend characteristics:
 - **Vanilla JavaScript** (no framework), **HTML5**, **Fetch API**

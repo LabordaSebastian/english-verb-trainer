@@ -372,6 +372,110 @@ db.commit()  # Fails: Foreign key constraint violated
 
 ---
 
+---
+
+## VocabularyWord Model
+
+### Definition
+
+```python
+class VocabularyWord(Base):
+    """Stores a vocabulary word with its Spanish translation and category."""
+
+    __tablename__ = "vocabulary_words"
+
+    id = Column(Integer, primary_key=True, index=True)
+    english = Column(String(100), nullable=False, index=True)
+    spanish = Column(String(150), nullable=False)
+    category = Column(String(50), nullable=False, index=True)
+
+    attempts = relationship(
+        "VocabAttempt", back_populates="word", cascade="all, delete-orphan"
+    )
+```
+
+Note: `english` has no `unique=True` constraint so the same word can appear in
+different categories with distinct Spanish meanings (e.g. "since" → "desde" in
+Prepositions vs "ya que" in Conjunctions).
+
+### Columns
+
+| Column | Type | Nullable | Index | Description |
+|--------|------|----------|-------|-------------|
+| `id` | INTEGER | ✗ | ✓ | Primary key, auto-increment |
+| `english` | VARCHAR(100) | ✗ | ✓ | English word or phrase |
+| `spanish` | VARCHAR(150) | ✗ | | Spanish translation |
+| `category` | VARCHAR(50) | ✗ | ✓ | Category name (e.g. "Adjectives") |
+
+### Example Data
+
+```
+id | english   | spanish          | category
+---|-----------|------------------|--------------------
+1  | since     | desde (tiempo)   | Prepositions
+2  | since     | ya que / puesto  | Conjunctions & Connectors
+3  | beautiful | hermoso/a        | Adjectives
+```
+
+---
+
+## VocabAttempt Model
+
+### Definition
+
+```python
+class VocabAttempt(Base):
+    """Logs every vocabulary quiz attempt made by the user."""
+
+    __tablename__ = "vocab_attempts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    word_id = Column(Integer, ForeignKey("vocabulary_words.id"), nullable=False)
+    answer_given = Column(String(100), nullable=False)
+    is_correct = Column(Boolean, nullable=False)
+    attempted_at = Column(DateTime, default=datetime.utcnow)
+
+    word = relationship("VocabularyWord", back_populates="attempts")
+```
+
+### Columns
+
+| Column | Type | Nullable | FK | Description |
+|--------|------|----------|----|-------------|
+| `id` | INTEGER | ✗ | | Primary key, auto-increment |
+| `word_id` | INTEGER | ✗ | ✓ | Foreign key to vocabulary_words |
+| `answer_given` | VARCHAR(100) | ✗ | | User's submitted English translation |
+| `is_correct` | BOOLEAN | ✗ | | True if answer was correct |
+| `attempted_at` | DATETIME | ✗ | | Timestamp of the attempt |
+
+---
+
+## Seed Data — Vocabulary
+
+The vocabulary seed in `app/vocab_seed.py` contains 1867 entries across 10 categories:
+
+| Category | Count | Example Words |
+|----------|-------|---------------|
+| Pronouns & Determiners | 80 | I, you, this, some, each |
+| Prepositions | 60 | in, on, at, since, until |
+| Conjunctions & Connectors | 50 | and, but, because, since |
+| Common Verbs | 200 | ask, call, change, work |
+| Adjectives | 150 | good, new, big, beautiful |
+| Adverbs | 100 | not, very, always, still |
+| Common Nouns | 200 | time, person, year, place |
+| Numbers & Quantifiers | 60 | zero, one, hundred, many |
+| Question Words | 50 | what, who, where, why |
+| Common Phrases | 50 | of course, in fact, at least |
+
+Irregular verb base forms from `app/seed.py` are excluded from the vocabulary list.
+
+The seed function uses a `(english, category)` composite key for dedup and
+pre-loads existing rows into a Python dict to avoid SQLAlchemy's bulk INSERT
+batching issue (unflushed rows are invisible to subsequent queries within the
+same transaction).
+
+---
+
 ## Data Types
 
 | Python | SQLAlchemy | PostgreSQL | Notes |

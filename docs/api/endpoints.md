@@ -443,6 +443,157 @@ http://localhost:8000/redoc
 
 ---
 
+---
+
+## Vocabulary Endpoints
+
+### GET /api/vocab/categories
+
+Return available vocabulary categories with word counts.
+
+#### Request
+
+```bash
+GET /api/vocab/categories
+```
+
+#### Response (200 OK)
+
+```json
+[
+  {"name": "Adjectives", "count": 150},
+  {"name": "Adverbs", "count": 100}
+]
+```
+
+#### Errors
+
+| Status | Reason |
+|--------|--------|
+| `503` | Database unavailable |
+
+---
+
+### GET /api/vocab/quiz
+
+Return N shuffled vocabulary words for a quiz.
+
+#### Request
+
+```bash
+GET /api/vocab/quiz?count=10&category=Adjectives
+```
+
+#### Query Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `count` | integer | 10 | Number of words to return |
+| `category` | string | null | Filter by category name |
+
+#### Response (200 OK)
+
+```json
+[
+  {"id": 1, "english": "beautiful", "spanish": "hermoso/a", "category": "Adjectives"}
+]
+```
+
+---
+
+### POST /api/vocab/attempts
+
+Submit a vocabulary answer and validate it.
+
+#### Request
+
+```bash
+POST /api/vocab/attempts
+Content-Type: application/json
+
+{
+  "word_id": 1,
+  "answer_given": "beautiful"
+}
+```
+
+#### Response (200 OK)
+
+```json
+{
+  "correct": true,
+  "correct_answer": "beautiful"
+}
+```
+
+#### Errors
+
+| Status | Reason |
+|--------|--------|
+| `404` | Word not found |
+
+---
+
+### GET /api/vocab/stats
+
+Return vocabulary quiz statistics.
+
+#### Request
+
+```bash
+GET /api/vocab/stats
+```
+
+#### Response (200 OK)
+
+```json
+{
+  "total": 47,
+  "correct": 32,
+  "wrong": 15,
+  "accuracy": 68.1,
+  "hardest_words": [
+    {"word": "beautiful", "spanish": "hermoso/a", "errors": 5}
+  ]
+}
+```
+
+---
+
+### POST /api/vocab/seed
+
+Seed or refresh the 1867 vocabulary words in the database.
+
+#### Request
+
+```bash
+POST /api/vocab/seed
+```
+
+#### Response (200 OK)
+
+```json
+{
+  "added": 1867,
+  "updated": 0
+}
+```
+
+#### Errors
+
+| Status | Reason |
+|--------|--------|
+| `409` | Integrity error |
+| `503` | Database unavailable |
+
+#### Notes
+
+- Idempotent — safe to call multiple times
+- Runs automatically on container start (via `docker/entrypoint.sh`)
+- Uses `(english, category)` composite key for dedup
+
+---
+
 ## Rate Limiting
 
 Currently **none** (all requests allowed).

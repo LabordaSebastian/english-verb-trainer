@@ -388,6 +388,166 @@ def test_attempt_request_invalid():
 
 ---
 
+---
+
+## Vocabulary Schemas
+
+### VocabQuizWord
+
+Word data sent to the browser for a vocabulary quiz question.
+
+```python
+class VocabQuizWord(BaseModel):
+    id: int
+    english: str
+    spanish: str
+    category: str
+```
+
+**Example**:
+```json
+{
+  "id": 1,
+  "english": "beautiful",
+  "spanish": "hermoso/a",
+  "category": "Adjectives"
+}
+```
+
+**Note**: The quiz shows `spanish` to the user and expects `english` as the answer.
+
+---
+
+### VocabAttemptRequest
+
+User's submitted vocabulary answer.
+
+```python
+class VocabAttemptRequest(BaseModel):
+    word_id: int = Field(..., gt=0)
+    answer_given: str
+```
+
+**Example**:
+```json
+{
+  "word_id": 1,
+  "answer_given": "beautiful"
+}
+```
+
+---
+
+### VocabAttemptResponse
+
+Result of submitting a vocabulary answer.
+
+```python
+class VocabAttemptResponse(BaseModel):
+    correct: bool
+    correct_answer: str
+```
+
+**Example**:
+```json
+{
+  "correct": true,
+  "correct_answer": "beautiful"
+}
+```
+
+---
+
+### VocabCategory
+
+Category summary for the vocabulary menu.
+
+```python
+class VocabCategory(BaseModel):
+    name: str
+    count: int
+```
+
+**Example**:
+```json
+{
+  "name": "Adjectives",
+  "count": 150
+}
+```
+
+---
+
+### HardestWord
+
+A single entry in the hardest-words vocabulary ranking.
+
+```python
+class HardestWord(BaseModel):
+    word: str
+    spanish: str
+    errors: int
+```
+
+**Example**:
+```json
+{
+  "word": "beautiful",
+  "spanish": "hermoso/a",
+  "errors": 5
+}
+```
+
+---
+
+### VocabStatsResponse
+
+Vocabulary quiz statistics.
+
+```python
+class VocabStatsResponse(BaseModel):
+    total: int
+    correct: int
+    wrong: int
+    accuracy: float
+    hardest_words: list[HardestWord]
+```
+
+**Example**:
+```json
+{
+  "total": 47,
+  "correct": 32,
+  "wrong": 15,
+  "accuracy": 68.09,
+  "hardest_words": [
+    {"word": "beautiful", "spanish": "hermoso/a", "errors": 5}
+  ]
+}
+```
+
+---
+
+### VocabSeedResponse
+
+Result of seeding vocabulary words.
+
+```python
+class VocabSeedResponse(BaseModel):
+    added: int
+    updated: int
+```
+
+**Example**:
+```json
+{
+  "added": 1867,
+  "updated": 0
+}
+```
+
+---
+
 ## See Also
 
 - [Pydantic Documentation](https://docs.pydantic.dev/)

@@ -26,6 +26,23 @@ erDiagram
         boolean is_correct
         timestamp attempted_at
     }
+
+    VOCABULARY_WORDS ||--o{ VOCAB_ATTEMPTS : has
+
+    VOCABULARY_WORDS {
+        int id PK
+        string english
+        string spanish
+        string category
+    }
+
+    VOCAB_ATTEMPTS {
+        int id PK
+        int word_id FK
+        string answer_given
+        boolean is_correct
+        timestamp attempted_at
+    }
 ```
 
 ## One-to-Many Relationship: Verb → UserAttempt
@@ -420,6 +437,70 @@ relationship(..., lazy="joined")      # Eager load with JOIN
 relationship(..., lazy="subquery")    # Eager load with subquery
 relationship(..., lazy="select")      # Default: load when accessed
 relationship(..., lazy="selectin")    # Load with separate SELECT
+```
+
+---
+
+---
+
+## One-to-Many Relationship: VocabularyWord → VocabAttempt
+
+### Overview
+
+One **VocabularyWord** can have many **VocabAttempt** records.
+
+```
+VocabularyWord (id=1, english="since", category="Prepositions")
+    ├── VocabAttempt (id=1, word_id=1, is_correct=true)
+    ├── VocabAttempt (id=2, word_id=1, is_correct=false)
+    └── VocabAttempt (id=3, word_id=1, is_correct=true)
+```
+
+### SQLAlchemy Definition
+
+```python
+class VocabularyWord(Base):
+    __tablename__ = "vocabulary_words"
+    id = Column(Integer, primary_key=True)
+    english = Column(String(100), nullable=False)
+    attempts = relationship(
+        "VocabAttempt", back_populates="word", cascade="all, delete-orphan"
+    )
+
+class VocabAttempt(Base):
+    __tablename__ = "vocab_attempts"
+    id = Column(Integer, primary_key=True)
+    word_id = Column(Integer, ForeignKey("vocabulary_words.id"), nullable=False)
+    word = relationship("VocabularyWord", back_populates="attempts")
+```
+
+### Query Patterns
+
+#### Get All Attempts for a Word
+
+```python
+word = db.query(VocabularyWord).filter_by(english="since", category="Prepositions").first()
+attempts = word.attempts
+```
+
+#### Get Hardest Words (Most Mistakes)
+
+```python
+from sqlalchemy import func
+
+hardest = db.query(
+    VocabularyWord.english,
+    VocabularyWord.spanish,
+    func.count(VocabAttempt.id).label("errors"),
+).join(
+    VocabAttempt, VocabularyWord.id == VocabAttempt.word_id
+).filter(
+    VocabAttempt.is_correct.is_(False)
+).group_by(
+    VocabularyWord.id
+).order_by(
+    func.count(VocabAttempt.id).desc()
+).limit(10).all()
 ```
 
 ---

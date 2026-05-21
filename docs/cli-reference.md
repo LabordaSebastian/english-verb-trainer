@@ -170,6 +170,52 @@ Stats are automatically accumulated:
 
 ---
 
+### `verb-trainer vocab-seed`
+
+Load or refresh the 1867 vocabulary words (across 10 categories) in the database.
+
+#### Usage
+
+```bash
+verb-trainer vocab-seed
+```
+
+#### Output
+
+```
+📖 1867 word(s) added, 0 updated.
+```
+
+#### When to Use
+
+| Scenario | Command |
+|----------|---------|
+| First run after `docker compose up` | Run automatically in entrypoint.sh |
+| Manual database reset | `verb-trainer seed` then `verb-trainer vocab-seed` |
+| Update word data | Modify `app/vocab_seed.py` then `verb-trainer vocab-seed` |
+
+#### Categories Loaded
+
+| Category | Words | Example |
+|----------|-------|---------|
+| Pronouns & Determiners | 80 | I, you, this, that |
+| Prepositions | 60 | in, on, at, since |
+| Conjunctions & Connectors | 50 | and, but, because, since |
+| Common Verbs | 200 | ask, call, work, learn |
+| Adjectives | 150 | good, new, big, beautiful |
+| Adverbs | 100 | not, very, always, still |
+| Common Nouns | 200 | time, person, year, place |
+| Numbers & Quantifiers | 60 | zero, one, hundred |
+| Question Words | 50 | what, who, where, why |
+| Common Phrases | 50 | of course, in fact |
+
+#### Upsert Behavior
+
+Uses `(english, category)` as the composite key for dedup — the same English
+word can appear in different categories with distinct Spanish meanings.
+
+---
+
 ### `verb-trainer seed`
 
 Load or refresh the 100 irregular verbs in the database.

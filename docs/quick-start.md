@@ -52,7 +52,8 @@ verb-trainer stats
 | `verb-trainer quiz` | Start a random 10-question quiz |
 | `verb-trainer quiz --verb read --rounds 20` | Quiz on a specific verb, 20 questions |
 | `verb-trainer stats` | View your progress and hardest verbs |
-| `verb-trainer seed` | Load/refresh verbs in database |
+| `verb-trainer seed` | Load/refresh 100 irregular verbs |
+| `verb-trainer vocab-seed` | Load/refresh 1867 vocabulary words |
 
 ## 🛑 Stopping the Application
 
